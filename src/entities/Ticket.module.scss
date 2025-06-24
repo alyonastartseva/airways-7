@@ -1,0 +1,162 @@
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  gap: 16px;
+}
+
+.leftBlock {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 280px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.airline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .logo {
+    width: 32px;
+    height: 32px;
+    background-color: #d4e400; 
+    border-radius: 50%;
+    background-image: url('/icons/plane-white.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 60%;
+  }
+}
+
+.flightInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.time {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+}
+
+.city,
+.date {
+  font-size: 14px;
+  color: gray;
+}
+
+.duration {
+  font-size: 14px;
+  color: #444;
+  display: grid;
+  grid-template-columns: 20px auto 20px;
+    .dottedLine {
+    position: relative;
+    width: 120px;
+    height: 24px;
+    margin: 6px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+     &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      right: 16px;
+      height: 1px;
+      border-top: 1px dashed #aaa;
+      transform: translateY(-50%);
+      z-index: 0;
+    }
+    }
+}
+
+.planeDeparture {
+    
+}
+
+.planeArrival {
+    
+}
+
+.durationText {
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
+
+.fares {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+
+.fareCard {
+  background: #f6f8fe;
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 140px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: black;
+}
+
+.selected {
+  background: #dceaff;
+  font-weight: bold;
+}
+
+.fareHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+}
+
+.fareName {
+  font-size: 14px;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.remainingSeats {
+  color: red;
+  font-size: 12px;
+}
+
+.icon {
+  font-size: 16px;
+  color: gray;
+}
+
+.active {
+  color: #2eb84d;
+}
+
+.featureIcons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
