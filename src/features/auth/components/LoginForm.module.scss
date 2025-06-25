@@ -1,0 +1,33 @@
+.formWrapper {
+  max-width: 600px;
+  padding: 44px 50px 16px 50px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+}
+
+.title {
+  text-align: start;
+  font-size: 36px;
+  margin-bottom: 24px;
+  font-weight: bold;
+}
+
+.registerLink {
+  text-align: center;
+  
+  a {
+    color: #4a4a4a;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.centeredButton {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+}
