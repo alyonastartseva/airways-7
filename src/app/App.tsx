@@ -1,9 +1,12 @@
+import TicketSearch from '../features/TicketSearch/ui/TicketSearch';
 import './App.css';
 
 function App() {
   return (
     <>
-      <div>App</div>
+      <div>
+        <TicketSearch />
+      </div>
     </>
   );
 }
