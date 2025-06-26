@@ -23,11 +23,19 @@
   margin-bottom: 12px;
 }
 
+.moreInfo{
+  color: #0fb7ff;
+  background-color:white;
+  border: 0;
+  font-weight: bold;
+}
+
 .airline {
   display: flex;
   align-items: center;
   gap: 8px;
-
+  margin-left: 20px;
+  color: #000;
   .logo {
     width: 32px;
     height: 32px;
@@ -57,14 +65,24 @@
 .date {
   font-size: 14px;
   color: gray;
+  display: flex;
+}
+
+.timeDuration{
+  display: flex;
+  color: #aaa;
+  justify-content: center;
+  gap: 5px;
+  align-items: center;
 }
 
 .duration {
   font-size: 14px;
   color: #444;
-  display: grid;
-  grid-template-columns: 20px auto 20px;
-    .dottedLine {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+        .dottedLine {
     position: relative;
     width: 120px;
     height: 24px;
@@ -72,8 +90,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-     &::before {
+         &::before {
       content: "";
       position: absolute;
       top: 50%;
@@ -88,16 +105,22 @@
 }
 
 .planeDeparture {
-    
+  display: flex;
 }
 
 .planeArrival {
-    
+    display: flex;
 }
 
 .durationText {
-    grid-column-start: 1;
-    grid-column-end: 4;
+  display: flex;
+}
+
+.departureReduction,
+.arrivalReduction {
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
 }
 
 .fares {
@@ -119,6 +142,7 @@
   gap: 4px;
   color: black;
 }
+
 
 .selected {
   background: #dceaff;

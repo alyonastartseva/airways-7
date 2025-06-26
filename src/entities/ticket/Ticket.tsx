@@ -2,7 +2,7 @@ import React from "react";
 import styles from './Ticket.module.scss';
 import type { TicketData } from "./TicketTypes";
 import { Tag } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons';
 import { FaSuitcaseRolling, FaSuitcase, FaExchangeAlt, FaChair, FaPlaneDeparture, FaPlaneArrival } from 'react-icons/fa';
 
 interface Props {
@@ -22,25 +22,26 @@ const Ticket: React.FC<Props> = ({ data }) => {
             <div className={styles.logo} />
             <span>{data.airline}</span>
           </div>
-          <Tag color="blue">Прямой рейс</Tag>
+          <button className={styles.moreInfo}>Прямой рейс <DownOutlined /></button>
         </div>
-
+        <div className={styles.timeDuration}>
+          <div className={styles.planeDeparture}><FaPlaneDeparture /></div>
+          <div className={styles.durationText}>В пути: {data.duration}</div>
+          <div className={styles.planeArrival}> <FaPlaneArrival /></div>
+        </div>
+            <div className={styles.duration}>
+            <div className={styles.time}>{data.departureTime}</div>
+           <div className={styles.departureReduction}>{data.departureReduction}</div>
+            <div className={styles.dottedLine} />
+            <div className={styles.arrivalReduction}>{data.arrivalReduction}</div>
+            <div className={styles.time}>{data.arrivalTime}</div>
+          </div>
         <div className={styles.flightInfo}>
           <div>
-            <div className={styles.time}>{data.departureTime}</div>
             <div className={styles.city}>{data.from}</div>
             <div className={styles.date}>{data.date}</div>
           </div>
-
-          <div className={styles.duration}>
-            <div className={styles.planeDeparture}><FaPlaneDeparture /></div>
-            <div className={styles.dottedLine} />
-           <div className={styles.planeArrival}> <FaPlaneArrival /></div>
-            <div className={styles.durationText}>В пути: {data.duration}</div>
-          </div>
-
           <div>
-            <div className={styles.time}>{data.arrivalTime}</div>
             <div className={styles.city}>{data.to}</div>
             <div className={styles.date}>{data.date}</div>
           </div>

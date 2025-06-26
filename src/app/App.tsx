@@ -4,7 +4,9 @@ import Ticket from "../entities/Ticket";
 const ticket ={
     airline: 'S7',
     departureTime: '12:00',
+    departureReduction: 'LED',
     arrivalTime: '13:30',
+    arrivalReduction:'MMK',
     duration: '1ч 30мин',
     from: 'Санкт-Петербург',
     to: 'Мурманск',

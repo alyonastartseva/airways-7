@@ -18,6 +18,8 @@ export interface TicketData{
     duration:string;
     from: string;
     to: string;
+    departureReduction: string;
+    arrivalReduction: string;
     date: string;
     fares: FareOption[];
 }
