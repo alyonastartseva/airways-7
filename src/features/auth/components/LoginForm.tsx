@@ -8,7 +8,7 @@ type LoginFormFields = {
   password: string;
 };
 
-const LoginForm: React.FC = () => {
+const LoginForm = () => {
   const onFinish: FormProps<LoginFormFields>['onFinish'] = (values) => {
     console.log('Login values:', values);
   };
@@ -31,7 +31,9 @@ const LoginForm: React.FC = () => {
         <Form.Item
           label="Пароль"
           name="password"
-          rules={[{ required: true, message: 'Введите пароль' }]}
+          rules={[{ required: true, message: 'Введите пароль' }, 
+            {min: 6, message: 'Пароль должен быть не менее 6 символов'},
+          ]}
         >
           <Input.Password placeholder="••••••••" />
         </Form.Item>
@@ -39,7 +41,7 @@ const LoginForm: React.FC = () => {
           Еще нет аккаунта? <Link to="/register">Зарегистрируйтесь</Link>
         </Form.Item>
         <Form.Item className={styles.centeredButton}>
-  <Button className={styles.centeredButton} type="primary" htmlType="submit">
+  <Button type="primary" htmlType="submit">
     Войти
   </Button>
 </Form.Item>
