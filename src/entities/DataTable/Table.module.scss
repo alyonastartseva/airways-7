@@ -13,11 +13,12 @@
   align-items: start;
   justify-content: center;
   overflow: hidden;  
+
+  font-style: italic;
 }
 
 .title {
   font-size: $text-xl;
-  font-style: italic;
 }
 
 .table-container { 
