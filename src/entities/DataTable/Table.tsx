@@ -1,0 +1,236 @@
+import styles from './Table.module.scss';
+import { useState, useEffect } from 'react';
+import Pagination from '../Pagination';
+
+type SortDirection = 'asc' | 'desc';
+type ColumnType = 'string' | 'number' | 'date';
+
+export interface  Column<T> {
+  key: string;
+  title: string;
+  type?: ColumnType;
+  sortable?: boolean;
+  width?: number;
+  render?: (value: any, row: T) => React.ReactNode;
+};
+
+interface Pagination {
+  current: number;
+  pageSize: number;
+  total: number;
+}
+
+interface ServerResponse<T> {
+  data: T[];
+  pagination: Pagination;
+}
+
+export interface TableProps<T> {
+  title: string;
+  columns: Column<T>[];
+  fetchData: (
+    params: {
+      page: number;
+      pageSize: number;
+      sortField?: string;
+      sortOrder?: SortDirection;
+    }
+  ) => Promise<ServerResponse<T>>;
+  rowKey?: string;
+  selectable?: boolean;
+  onRowClick?: (row: T) => void;
+  onSelectionChange?: (selectedRows: T[]) => void;
+};
+
+export const Table = <T,>({ 
+  title,
+  columns,
+  fetchData, 
+  rowKey = 'id', 
+  selectable = false,
+  onRowClick, 
+  onSelectionChange 
+}: TableProps<T>) => {
+  const [data, setData] = useState<T[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<Pagination>({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: SortDirection;
+  } | null>(null);
+  const [selectedRows, setSelectedRows] = useState<T[]>([]);
+
+  const loadData = async (page: number, pageSize: number) => {
+    setLoading(true);
+    try{
+      const response = await fetchData({ page, pageSize });
+      setData(response.data);
+      setPagination(response.pagination);
+      setError(null);
+    } catch (error) {
+      setError('Error fetching');
+      console.error('Fetch error', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData(pagination.current, pagination.pageSize);
+  }, []);
+
+  useEffect(() => {
+    const sortedData = [...data];
+    if (sortConfig) {
+      sortedData.sort((a, b) => {
+        const aValue = a[sortConfig.key as keyof T];
+        const bValue = b[sortConfig.key as keyof T];
+
+        if (aValue === bValue) return 0;
+        if (aValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (bValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
+
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return sortConfig.direction === 'asc' 
+            ? aValue.localeCompare(bValue) 
+            : bValue.localeCompare(aValue);
+        }
+
+        return sortConfig.direction === 'asc' 
+          ? (aValue > bValue ? 1 : -1)
+          : (aValue < bValue ? 1 : -1);
+      });
+    };
+    setData(sortedData);
+}, [sortConfig]);
+
+
+
+  const handlePageChange = (page: number) => {
+    setPagination(prev => ({
+      ...prev, 
+      current: page
+    }));
+    loadData(page, pagination.pageSize);
+  };
+
+  // const handlePageSizeChange = (size: number) => {
+  //   setPagination(prev => ({
+  //     ...prev,
+  //     pageSize: size,
+  //     current: 1
+  //   }));
+  //   loadData(1, size);
+  // };
+
+  const handleSort = (key: string) => {
+    const direction: SortDirection = 
+      sortConfig?.key === key && sortConfig.direction === 'asc' 
+        ? 'desc' 
+        : 'asc';
+    setSortConfig({key, direction});
+  }
+
+  const handleRowSelect = (row: T, checked: boolean) => {
+    const newSelected = checked ? [...selectedRows, row] 
+    : selectedRows.filter(r => r[rowKey as keyof T] !== row[rowKey as keyof T]);
+
+    setSelectedRows(newSelected);
+    onSelectionChange?.(newSelected);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    const newSelected = checked ? data : [];
+    setSelectedRows(newSelected);
+    onSelectionChange?.(newSelected);
+  };
+
+  if (loading) return <div>Loader...</div>;
+  if (error) return <div>Error</div>
+  
+  return (
+    <div className={styles['admin-table']}>
+      <h1>{title}</h1>
+      <div className={styles['table-container']}>
+        <table title={title}>
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th 
+                  key={column.key}
+                  style={{ width: column.width}}
+                  onClick={() => column.sortable && handleSort(column.key)}
+                  className={column.sortable ? `${styles.sortable}` : ''}
+                >
+                  <div className={styles['header-cell']}>
+                    {column.title}
+                  </div>
+                    {sortConfig?.key === column.key && (
+                      <span className={styles['sort-icon']}>
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                </th>
+              ))}
+              {selectable && (
+                <th className={styles.selector}>
+                  <input 
+                    type='checkbox' 
+                    checked={selectedRows.length === data.length && data.length > 0}
+                    onChange={(e) => handleSelectAll(e.target.checked)} 
+                  />
+                </th>
+              )}
+            </tr>
+          </thead>
+        
+          <tbody>
+            {data.map((row) => (
+              <tr 
+                key={String(row[rowKey as keyof T])}
+                onClick={() => onRowClick?.(row)}
+                className={onRowClick ? `${styles.clickable}` : ' '}
+              >
+                {columns.map(column => (
+                  <td 
+                    key={column.key} 
+                    className={`${styles['table-cell']} ${styles['ellipsis-cell']}`}
+                    style={{ width: column.width }}  
+                  >
+                    {column.render ? column.render(row[column.key as keyof T], row)
+                    : String(row[column.key as keyof T])
+                    }
+                  </td>
+                ))}
+
+                {selectable && (
+                  <td>
+                    <input
+                      type='checkbox'
+                      checked={selectedRows.some(r => r[rowKey as keyof T] === row[rowKey as keyof T])}
+                      onChange={(e) => handleRowSelect(row, e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Pagination 
+        totalItems={pagination.total}
+        itemsPerPage={pagination.pageSize}
+        currentPage={pagination.current}
+        onPageChange={handlePageChange}
+      />
+
+    </div>
+  )
+}

@@ -5,11 +5,11 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: <div><h1>App</h1>
-            <Link to={'/admin-table'}>Admin Table</Link>
+            <Link to={'/passenger-table'}>Passenger Table</Link>
         </div>
     },
     {
-        path: '/admin-table',
+        path: '/passenger-table',
         element: <PassangersTable />
     }
 ]
