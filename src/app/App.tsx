@@ -1,11 +1,12 @@
+import { SearchWidgets } from '../widgets/SearchWidgets';
 import './App.css';
 
-function App() {
+export default function App() {
   return (
-    <>
-      <div>App</div>
-    </>
+    <div className="app">
+      <main className="main">
+        <SearchWidgets />
+      </main>
+    </div>
   );
 }
-
-export default App;

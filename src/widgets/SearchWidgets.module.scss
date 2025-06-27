@@ -1,0 +1,28 @@
+.list {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccdce5;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.loadingItem {
+  text-align: center;
+  color: #666;
+}
+
+.results {
+  margin-top: 24px;
+}
+
+.resultItem {
+  padding: 12px;
+  border-bottom: 1px solid #e1e8f0;
+}
+
+.noResults {
+  padding: 12px;
+  color: #888;
+  text-align: center;
+}
