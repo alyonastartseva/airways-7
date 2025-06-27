@@ -1,9 +1,10 @@
+@import '../../shared/styles/color-variables.scss';
+
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin-top: 20px;
 }
 
 .pagination-button {
@@ -12,6 +13,7 @@
   border-radius: 4px;
   min-width: 36px;
   background-color: transparent;
+  border: 1px solid $color-border-table;
   color: rgba(0, 0, 0, 0.75);
 }
 
@@ -20,7 +22,7 @@
 }
 
 .pagination-button.active {
-  background-color: #007bff;
+  background-color: $color-primary;
   color: white;
 }
 

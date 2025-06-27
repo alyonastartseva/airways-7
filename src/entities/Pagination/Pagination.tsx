@@ -70,7 +70,7 @@ const Pagination = ({
   if (totalPages <= 1) return null;
 
   return (
-    <div className={classes.paginatn}>
+    <div className={classes.pagination}>
       <button
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}

@@ -155,7 +155,7 @@ export const Table = <T,>({
   
   return (
     <div className={styles['admin-table']}>
-      <h1>{title}</h1>
+      <h1 className={styles.title}>{title}</h1>
       <div className={styles['table-container']}>
         <table title={title}>
           <thead>
@@ -163,18 +163,49 @@ export const Table = <T,>({
               {columns.map((column) => (
                 <th 
                   key={column.key}
-                  style={{ width: column.width}}
+                  style={{ width: column.width }}
                   onClick={() => column.sortable && handleSort(column.key)}
-                  className={column.sortable ? `${styles.sortable}` : ''}
+                  className={column.sortable ? styles.sortable : ''}
                 >
                   <div className={styles['header-cell']}>
                     {column.title}
-                  </div>
-                    {sortConfig?.key === column.key && (
-                      <span className={styles['sort-icon']}>
-                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                    {column.sortable && (
+                      <span className={styles['sort-icons']}>
+                        <svg
+                          width="10"
+                          height="6"
+                          viewBox="0 0 10 6"
+                          fill="none"
+                          className={`${styles['sort-icon']} ${
+                            sortConfig?.key === column.key && sortConfig.direction === 'asc' 
+                              ? styles.active 
+                              : ''
+                          }`}
+                        >
+                          <path
+                            d="M5 0L9.33013 5.25H0.669873L5 0Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        <svg
+                          width="10"
+                          height="6"
+                          viewBox="0 0 10 6"
+                          fill="none"
+                          className={`${styles['sort-icon']} ${
+                            sortConfig?.key === column.key && sortConfig.direction === 'desc' 
+                              ? styles.active 
+                              : ''
+                          }`}
+                        >
+                          <path
+                            d="M5 6L0.669873 0.75H9.33013L5 6Z"
+                            fill="currentColor"
+                          />
+                        </svg>
                       </span>
                     )}
+                  </div>
                 </th>
               ))}
               {selectable && (
