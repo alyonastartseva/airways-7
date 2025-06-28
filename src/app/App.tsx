@@ -1,4 +1,4 @@
-import { SearchWidgets } from '../widgets/SearchWidgets';
+import { SearchWidgets } from '../widgets/WidgetsSearch/SearchWidgets';
 import './App.css';
 
 export default function App() {

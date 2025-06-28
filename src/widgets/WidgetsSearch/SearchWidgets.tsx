@@ -1,7 +1,7 @@
-import { useCategories } from '../shared/lib/useCategories';
-import { useDestinations } from '../shared/lib/useDestinations';
-import { useSearchTickets } from '../shared/lib/useSearchTickets';
 import styles from './SearchWidgets.module.scss';
+import { useCategories } from './hooks/useCategories';
+import { useDestinations } from './hooks/useDestinations';
+import { useSearchTickets } from './hooks/useSearchTickets';
 import React, { useRef } from 'react';
 
 export const SearchWidgets: React.FC = () => {
@@ -79,9 +79,9 @@ export const SearchWidgets: React.FC = () => {
       </form>
 
       <div className={styles.results}>
-        {results.map((r) => (
-          <div key={r.id} className={styles.resultItem}>
-            {r.from} → {r.to}: {r.price} ₽
+        {results.map((response) => (
+          <div key={response.id} className={styles.resultItem}>
+            {response.from} → {response.to}: {response.price} ₽
           </div>
         ))}
         {results.length === 0 && !searchLoading && (
