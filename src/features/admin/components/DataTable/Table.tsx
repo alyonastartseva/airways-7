@@ -1,48 +1,16 @@
 import styles from './Table.module.scss';
-import { useState, useEffect } from 'react';
-import Pagination from '../Pagination';
+import React, { useState, useEffect} from 'react';
+import Pagination from '../../../../shared/ui/Pagination';
+import type {
+  SortDirection,  
+  TableProps, 
+  Table as TableType
+} from '../../model/Table.types';
+import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
 
-type SortDirection = 'asc' | 'desc';
-type ColumnType = 'string' | 'number' | 'date';
 
-export interface  Column<T> {
-  key: string;
-  title: string;
-  type?: ColumnType;
-  sortable?: boolean;
-  width?: number;
-  render?: (value: any, row: T) => React.ReactNode;
-};
 
-interface Pagination {
-  current: number;
-  pageSize: number;
-  total: number;
-}
-
-interface ServerResponse<T> {
-  data: T[];
-  pagination: Pagination;
-}
-
-export interface TableProps<T> {
-  title: string;
-  columns: Column<T>[];
-  fetchData: (
-    params: {
-      page: number;
-      pageSize: number;
-      sortField?: string;
-      sortOrder?: SortDirection;
-    }
-  ) => Promise<ServerResponse<T>>;
-  rowKey?: string;
-  selectable?: boolean;
-  onRowClick?: (row: T) => void;
-  onSelectionChange?: (selectedRows: T[]) => void;
-};
-
-export const Table = <T,>({ 
+export const TableInner  = <T,>({ 
   title,
   columns,
   fetchData, 
@@ -54,7 +22,7 @@ export const Table = <T,>({
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<Pagination>({
+  const [pagination, setPagination] = useState<PaginationType>({
     current: 1,
     pageSize: 10,
     total: 0
@@ -177,7 +145,7 @@ export const Table = <T,>({
                           viewBox="0 0 10 6"
                           fill="none"
                           className={`${styles['sort-icon']} ${
-                            sortConfig?.key === column.key && sortConfig.direction === 'asc' 
+                            sortConfig?.key === column.key && sortConfig?.direction === 'asc' 
                               ? styles.active 
                               : ''
                           }`}
@@ -193,7 +161,7 @@ export const Table = <T,>({
                           viewBox="0 0 10 6"
                           fill="none"
                           className={`${styles['sort-icon']} ${
-                            sortConfig?.key === column.key && sortConfig.direction === 'desc' 
+                            sortConfig?.key === column.key && sortConfig?.direction === 'desc' 
                               ? styles.active 
                               : ''
                           }`}
@@ -264,4 +232,6 @@ export const Table = <T,>({
 
     </div>
   )
-}
+};
+
+export const Table = React.memo(TableInner) as TableType;

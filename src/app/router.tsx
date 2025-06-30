@@ -1,5 +1,5 @@
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'; 
-import PassangersTable from '../features/admin/components/PassangersTable';
+import PassangersTable from '../entities/PassangersTable';
 
 const router = createBrowserRouter([
     {

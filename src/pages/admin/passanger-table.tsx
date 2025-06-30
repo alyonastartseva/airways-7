@@ -1,4 +1,4 @@
-import PassangerTable from "../../features/admin/components/PassangersTable";
+import PassangerTable from "../../entities/PassangersTable";
 
 export const AdminPassangerPage = () => (
     <div>

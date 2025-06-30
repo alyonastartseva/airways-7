@@ -20,3 +20,15 @@ export type PaginationParams = {
     page: number; 
     limit?: number;
 }
+
+export interface Passenger {
+  id: number;
+  FIO: string;
+  gender: string;
+  phone: string | number;
+  birthDate: string;
+  serialNumber: string;
+  citizenship: string;
+  passportIssuingDate: string;
+  email: string;
+};

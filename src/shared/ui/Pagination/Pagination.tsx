@@ -1,13 +1,7 @@
 import classes from "./Pagination.module.scss";
 import { useEffect, useState } from "react";
+import type { PaginationProps } from "./Pagination.types";
 
-interface PaginationProps {
-  totalItems: number;
-  itemsPerPage: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
-  maxVisiblePages?: number;
-}
 
 const Pagination = ({
   totalItems,

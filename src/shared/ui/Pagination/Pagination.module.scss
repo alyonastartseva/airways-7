@@ -1,4 +1,4 @@
-@import '../../shared/styles/color-variables.scss';
+@use '../../../shared/styles/color-variables.scss' as *;
 
 .pagination {
   display: flex;

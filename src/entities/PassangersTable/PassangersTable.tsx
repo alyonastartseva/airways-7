@@ -1,18 +1,8 @@
-import { Table } from "../../../../entities/DataTable/Table";
-import type { Column } from "../../../../entities/DataTable/Table";
-import { getPassangers } from "../../api/passangers";
+import { Table } from "../../features/admin/components/DataTable/Table";
+import type { Column } from "../../shared/model/Column.types";
+import { getPassangers } from "./api/passangersApi";
+import type { Passenger } from './PassangersTable.types';
 
-interface Passenger {
-  id: number;
-  FIO: string;
-  gender: string;
-  phone: string | number;
-  birthDate: string;
-  serialNumber: string;
-  citizenship: string;
-  passportIssuingDate: string;
-  email: string;
-};
 
 const columns: Column<Passenger>[] = [
     { key: 'id', title: 'ID', sortable: true, width: 60},
