@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css';
 import { Router } from './router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
       staleTime: Infinity,
     },
   },
-})
+});
 
 function App() {
   return (

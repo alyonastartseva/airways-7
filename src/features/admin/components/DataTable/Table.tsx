@@ -1,23 +1,18 @@
-import styles from './Table.module.scss';
-import React, { useState, useEffect} from 'react';
 import Pagination from '../../../../shared/ui/Pagination';
-import type {
-  SortDirection,  
-  TableProps, 
-  Table as TableType
-} from '../../model/Table.types';
 import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
+import type { SortDirection, TableProps, Table as TableType } from '../../model/Table.types';
+import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
+import styles from './Table.module.scss';
+import React, { useState, useEffect, useMemo } from 'react';
 
-
-
-export const TableInner  = <T,>({ 
+export const TableInner = <T,>({
   title,
   columns,
-  fetchData, 
-  rowKey = 'id', 
+  fetchData,
+  rowKey = 'id',
   selectable = false,
-  onRowClick, 
-  onSelectionChange 
+  onRowClick,
+  onSelectionChange,
 }: TableProps<T>) => {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,7 +20,7 @@ export const TableInner  = <T,>({
   const [pagination, setPagination] = useState<PaginationType>({
     current: 1,
     pageSize: 10,
-    total: 0
+    total: 0,
   });
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -33,9 +28,11 @@ export const TableInner  = <T,>({
   } | null>(null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
+  const memoizedColumns = useMemo(() => columns, [columns]);
+
   const loadData = async (page: number, pageSize: number) => {
     setLoading(true);
-    try{
+    try {
       const response = await fetchData({ page, pageSize });
       setData(response.data);
       setPagination(response.pagination);
@@ -49,7 +46,7 @@ export const TableInner  = <T,>({
   };
 
   useEffect(() => {
-    loadData(pagination.current, pagination.pageSize);
+    loadData(1, 10);
   }, []);
 
   useEffect(() => {
@@ -64,25 +61,27 @@ export const TableInner  = <T,>({
         if (bValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
 
         if (typeof aValue === 'string' && typeof bValue === 'string') {
-          return sortConfig.direction === 'asc' 
-            ? aValue.localeCompare(bValue) 
+          return sortConfig.direction === 'asc'
+            ? aValue.localeCompare(bValue)
             : bValue.localeCompare(aValue);
         }
 
-        return sortConfig.direction === 'asc' 
-          ? (aValue > bValue ? 1 : -1)
-          : (aValue < bValue ? 1 : -1);
+        return sortConfig.direction === 'asc'
+          ? aValue > bValue
+            ? 1
+            : -1
+          : aValue < bValue
+            ? 1
+            : -1;
       });
-    };
+    }
     setData(sortedData);
-}, [sortConfig]);
-
-
+  }, [sortConfig]);
 
   const handlePageChange = (page: number) => {
-    setPagination(prev => ({
-      ...prev, 
-      current: page
+    setPagination((prev) => ({
+      ...prev,
+      current: page,
     }));
     loadData(page, pagination.pageSize);
   };
@@ -97,16 +96,15 @@ export const TableInner  = <T,>({
   // };
 
   const handleSort = (key: string) => {
-    const direction: SortDirection = 
-      sortConfig?.key === key && sortConfig.direction === 'asc' 
-        ? 'desc' 
-        : 'asc';
-    setSortConfig({key, direction});
-  }
+    const direction: SortDirection =
+      sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+    setSortConfig({ key, direction });
+  };
 
   const handleRowSelect = (row: T, checked: boolean) => {
-    const newSelected = checked ? [...selectedRows, row] 
-    : selectedRows.filter(r => r[rowKey as keyof T] !== row[rowKey as keyof T]);
+    const newSelected = checked
+      ? [...selectedRows, row]
+      : selectedRows.filter((r) => r[rowKey as keyof T] !== row[rowKey as keyof T]);
 
     setSelectedRows(newSelected);
     onSelectionChange?.(newSelected);
@@ -118,18 +116,33 @@ export const TableInner  = <T,>({
     onSelectionChange?.(newSelected);
   };
 
-  if (loading) return <div>Loader...</div>;
-  if (error) return <div>Error</div>
-  
+  if (loading)
+    return (
+      <SkeletonTable
+        title={title}
+        rowsCount={pagination.pageSize}
+        columnsCount={memoizedColumns.length}
+        columns={memoizedColumns}
+        pagination={pagination}
+      />
+    );
+
+  if (error) return <div>Error</div>;
+
   return (
     <div className={styles['admin-table']}>
       <h1 className={styles.title}>{title}</h1>
       <div className={styles['table-container']}>
         <table title={title}>
+          <colgroup>
+            {columns.map((col) => (
+              <col key={col.key} style={{ width: col.width }} />
+            ))}
+          </colgroup>
           <thead>
             <tr>
               {columns.map((column) => (
-                <th 
+                <th
                   key={column.key}
                   style={{ width: column.width }}
                   onClick={() => column.sortable && handleSort(column.key)}
@@ -145,15 +158,12 @@ export const TableInner  = <T,>({
                           viewBox="0 0 10 6"
                           fill="none"
                           className={`${styles['sort-icon']} ${
-                            sortConfig?.key === column.key && sortConfig?.direction === 'asc' 
-                              ? styles.active 
+                            sortConfig?.key === column.key && sortConfig?.direction === 'asc'
+                              ? styles.active
                               : ''
                           }`}
                         >
-                          <path
-                            d="M5 0L9.33013 5.25H0.669873L5 0Z"
-                            fill="currentColor"
-                          />
+                          <path d="M5 0L9.33013 5.25H0.669873L5 0Z" fill="currentColor" />
                         </svg>
                         <svg
                           width="10"
@@ -161,15 +171,12 @@ export const TableInner  = <T,>({
                           viewBox="0 0 10 6"
                           fill="none"
                           className={`${styles['sort-icon']} ${
-                            sortConfig?.key === column.key && sortConfig?.direction === 'desc' 
-                              ? styles.active 
+                            sortConfig?.key === column.key && sortConfig?.direction === 'desc'
+                              ? styles.active
                               : ''
                           }`}
                         >
-                          <path
-                            d="M5 6L0.669873 0.75H9.33013L5 6Z"
-                            fill="currentColor"
-                          />
+                          <path d="M5 6L0.669873 0.75H9.33013L5 6Z" fill="currentColor" />
                         </svg>
                       </span>
                     )}
@@ -178,40 +185,42 @@ export const TableInner  = <T,>({
               ))}
               {selectable && (
                 <th className={styles.selector}>
-                  <input 
-                    type='checkbox' 
+                  <input
+                    type="checkbox"
                     checked={selectedRows.length === data.length && data.length > 0}
-                    onChange={(e) => handleSelectAll(e.target.checked)} 
+                    onChange={(e) => handleSelectAll(e.target.checked)}
                   />
                 </th>
               )}
             </tr>
           </thead>
-        
+
           <tbody>
             {data.map((row) => (
-              <tr 
+              <tr
                 key={String(row[rowKey as keyof T])}
                 onClick={() => onRowClick?.(row)}
                 className={onRowClick ? `${styles.clickable}` : ' '}
               >
-                {columns.map(column => (
-                  <td 
-                    key={column.key} 
+                {columns.map((column) => (
+                  <td
+                    key={column.key}
                     className={`${styles['table-cell']} ${styles['ellipsis-cell']}`}
-                    style={{ width: column.width }}  
+                    style={{ width: column.width }}
                   >
-                    {column.render ? column.render(row[column.key as keyof T], row)
-                    : String(row[column.key as keyof T])
-                    }
+                    {column.render
+                      ? column.render(row[column.key as keyof T], row)
+                      : String(row[column.key as keyof T])}
                   </td>
                 ))}
 
                 {selectable && (
                   <td>
                     <input
-                      type='checkbox'
-                      checked={selectedRows.some(r => r[rowKey as keyof T] === row[rowKey as keyof T])}
+                      type="checkbox"
+                      checked={selectedRows.some(
+                        (r) => r[rowKey as keyof T] === row[rowKey as keyof T],
+                      )}
                       onChange={(e) => handleRowSelect(row, e.target.checked)}
                       onClick={(e) => e.stopPropagation()}
                     />
@@ -223,15 +232,16 @@ export const TableInner  = <T,>({
         </table>
       </div>
 
-      <Pagination 
-        totalItems={pagination.total}
-        itemsPerPage={pagination.pageSize}
-        currentPage={pagination.current}
-        onPageChange={handlePageChange}
-      />
-
+      <div style={{ minHeight: '50px' }}>
+        <Pagination
+          totalItems={pagination.total}
+          itemsPerPage={pagination.pageSize}
+          currentPage={pagination.current}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
-  )
+  );
 };
 
 export const Table = React.memo(TableInner) as TableType;
