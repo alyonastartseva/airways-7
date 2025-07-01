@@ -1,11 +1,15 @@
 import './App.css';
+import { Route, Routes } from 'react-router-dom';
+import Layout from '../widgets/layout/Layout';
 
-function App() {
+
+const App: React.FC = () => {
   return (
-    <>
-      <div>App</div>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+      </Route>
+    </Routes>
   );
-}
+};
 
 export default App;
