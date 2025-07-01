@@ -16,18 +16,35 @@ interface ApiPassenger {
   email: string;
 }
 
-export const getPassangers = async (params: {
-  page: number;
-  pageSize: number;
+const API_BASE = 'http://92.118.114.29:8080/api';
+
+export const getPassangers = async (params?: {
+  page?: number;
+  pageSize?: number;
   sortField?: string;
   sortOrder?: 'asc' | 'desc';
 }) => {
-  const query = new URLSearchParams({
-    page: params.page.toString(),
-    size: params.pageSize.toString(),
-  });
+  let url = `${API_BASE}/passengers`;
+  if (params) {
+    const query = new URLSearchParams();
 
-  const response = await fetch(`http://92.118.114.29:8080/api/passengers?${query}`, {
+    if (params.page !== undefined) {
+      query.append('page', params.page.toString());
+    }
+
+    if (params.pageSize !== undefined) {
+      query.append('size', params.pageSize.toString());
+    }
+
+    if (params.sortField) {
+      query.append('sort', `${params.sortField},${params.sortOrder ?? 'asc'}`);
+    }
+
+    if (Array.from(query).length > 0) {
+      url += `?${query}`;
+    }
+  }
+  const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -55,8 +72,8 @@ export const getPassangers = async (params: {
   return {
     data: tableData,
     pagination: {
-      current: params.page,
-      pageSize: params.pageSize,
+      current: params?.page ?? 1,
+      pageSize: params?.pageSize ?? 10,
       total: data.totalElements,
     },
   };

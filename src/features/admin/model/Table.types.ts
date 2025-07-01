@@ -12,7 +12,7 @@ export interface ServerResponse<T> {
 export interface TableProps<T> {
   title: string;
   columns: Column<T>[];
-  fetchData: (params: {
+  fetchData: (params?: {
     page: number;
     pageSize: number;
     sortField?: string;
@@ -22,6 +22,10 @@ export interface TableProps<T> {
   selectable?: boolean;
   onRowClick?: (row: T) => void;
   onSelectionChange?: (selectedRows: T[]) => void;
+  defaultSort: {
+    key: string;
+    direction: SortDirection;
+  };
 }
 
 export interface Table {

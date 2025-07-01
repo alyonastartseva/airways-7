@@ -4,6 +4,7 @@ import type { SortDirection, TableProps, Table as TableType } from '../../model/
 import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
 import React, { useState, useEffect, useMemo } from 'react';
+import { data } from 'react-router-dom';
 
 export const TableInner = <T,>({
   title,
@@ -13,8 +14,10 @@ export const TableInner = <T,>({
   selectable = false,
   onRowClick,
   onSelectionChange,
+  defaultSort,
 }: TableProps<T>) => {
-  const [data, setData] = useState<T[]>([]);
+  const [dataAll, setDataAll] = useState<T[]>([]);
+  const [displayData, setDisplayData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationType>({
@@ -25,65 +28,68 @@ export const TableInner = <T,>({
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: SortDirection;
-  } | null>(null);
+  } | null>(defaultSort || null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
   const memoizedColumns = useMemo(() => columns, [columns]);
 
-  const loadData = async (page: number, pageSize: number) => {
+  const loadAllData = async () => {
     setLoading(true);
     try {
-      const response = await fetchData({ page, pageSize });
-      setData(response.data);
-      setPagination(response.pagination);
+      const response = await fetchData();
+      setDataAll(response.data);
+      setPagination({ ...response.pagination, pageSize: pagination.pageSize });
       setError(null);
     } catch (error) {
       setError('Error fetching');
       console.error('Fetch error', error);
     } finally {
+      setSortConfig({ key: 'id', direction: 'asc' });
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData(1, 10);
+    loadAllData();
   }, []);
 
-  useEffect(() => {
-    const sortedData = [...data];
-    if (sortConfig) {
-      sortedData.sort((a, b) => {
-        const aValue = a[sortConfig.key as keyof T];
-        const bValue = b[sortConfig.key as keyof T];
+  const sortData = (data: T[]) => {
+    if (!sortConfig) return data;
 
-        if (aValue === bValue) return 0;
-        if (aValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (bValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
+    return [...data].sort((a, b) => {
+      const aValue = a[sortConfig.key as keyof T];
+      const bValue = b[sortConfig.key as keyof T];
 
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-          return sortConfig.direction === 'asc'
-            ? aValue.localeCompare(bValue)
-            : bValue.localeCompare(aValue);
-        }
+      if (aValue === bValue) return 0;
+      if (aValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (bValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
 
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
         return sortConfig.direction === 'asc'
-          ? aValue > bValue
-            ? 1
-            : -1
-          : aValue < bValue
-            ? 1
-            : -1;
-      });
-    }
-    setData(sortedData);
-  }, [sortConfig]);
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+
+      return sortConfig.direction === 'asc' ? (aValue > bValue ? 1 : -1) : aValue < bValue ? 1 : -1;
+    });
+  };
+
+  useEffect(() => {
+    const sortedData = sortData(dataAll);
+    const startIndex = (pagination.current - 1) * pagination.pageSize;
+    const endIndex = startIndex + pagination.pageSize;
+    setDisplayData(sortedData.slice(startIndex, endIndex));
+    setPagination((prev) => ({
+      ...prev,
+      total: dataAll.length,
+    }));
+  }, [dataAll, pagination.current, pagination.pageSize, sortConfig]);
 
   const handlePageChange = (page: number) => {
     setPagination((prev) => ({
       ...prev,
       current: page,
     }));
-    loadData(page, pagination.pageSize);
   };
 
   // const handlePageSizeChange = (size: number) => {
@@ -99,6 +105,7 @@ export const TableInner = <T,>({
     const direction: SortDirection =
       sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ key, direction });
+    setPagination((prev) => ({ ...prev, current: 1 }));
   };
 
   const handleRowSelect = (row: T, checked: boolean) => {
@@ -111,7 +118,7 @@ export const TableInner = <T,>({
   };
 
   const handleSelectAll = (checked: boolean) => {
-    const newSelected = checked ? data : [];
+    const newSelected = checked ? displayData : [];
     setSelectedRows(newSelected);
     onSelectionChange?.(newSelected);
   };
@@ -196,7 +203,7 @@ export const TableInner = <T,>({
           </thead>
 
           <tbody>
-            {data.map((row) => (
+            {displayData.map((row) => (
               <tr
                 key={String(row[rowKey as keyof T])}
                 onClick={() => onRowClick?.(row)}
