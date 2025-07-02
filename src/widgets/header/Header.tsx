@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import logo from '../../assets/icons/logo.svg';
 import styles from './Header.module.scss';
+import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
   return (
@@ -8,9 +9,11 @@ const Header: React.FC = () => {
       <div className={styles.inner}>
         <img src={logo} alt ="Logo" className={styles.logoIcon}/>
         <div className={styles.authButtons}>
-          <Button type="default">
+        <Link to="/login">
+        <Button type="default">
             Вход
           </Button>
+        </Link>
           <Button type="default">Регистрация</Button>
         </div>
       </div>
