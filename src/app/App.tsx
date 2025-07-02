@@ -1,11 +1,12 @@
-import { SearchWidgets } from '../widgets/WidgetsSearch/SearchWidgets';
+import TicketSearch from '../features/TicketSearch/TicketSearch';
 import './App.css';
 
 export default function App() {
   return (
     <div className="app">
-      <main className="main">
-        <SearchWidgets />
+      <header className="app-header"></header>
+      <main className="app-main">
+        <TicketSearch />
       </main>
     </div>
   );

@@ -1,0 +1,72 @@
+@import '../../shared/styles/color-variables.scss';
+@import '../../shared/styles/text-variables.scss';
+
+.searchTicketsBlock {
+  background-color: #fff;
+  border: 15px solid $color-border;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 50px;
+}
+
+.header {
+  color: $color-layout;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.searchForm {
+  overflow-x: auto;
+} 
+.row {
+  display: flex;
+  flex-wrap: wrap;      
+  gap: 1.5rem 2rem;       
+  align-items: flex-start;
+}
+
+.column {
+  flex: 1 1 280px;       
+  min-width: 250px;       
+  box-sizing: border-box;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  label {
+    font-size: $text-sm;
+    color: $color-text-primary;
+    margin-bottom: 0.5rem;
+  }
+
+  .input,
+  .datePicker,
+  .seatCategory {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: $text-base;
+  }
+
+  .datePicker {
+    margin-top: 0;
+  }
+}
+
+.radio {
+  margin-top: 1.5rem;
+}
+
+.button {
+  margin-top: 1.5rem;   
+  width: 100%;
+  max-width: 8rem;
+}
