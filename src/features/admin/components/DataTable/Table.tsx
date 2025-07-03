@@ -53,6 +53,7 @@ export const TableInner = <T,>({
     loadAllData();
   }, []);
 
+  console.log(dataAll);
   const sortData = (data: T[]) => {
     if (!sortConfig) return data;
 
@@ -134,11 +135,13 @@ export const TableInner = <T,>({
       />
     );
 
-  if (error) return <div>Error</div>;
+  if (error) return <div data-testid="error">Error</div>;
 
   return (
     <div className={styles['admin-table']}>
-      <h1 className={styles.title}>{title}</h1>
+      <h1 className={styles.title} data-testid="table-title">
+        {title}
+      </h1>
       <div className={styles['table-container']}>
         <table title={title}>
           <colgroup>

@@ -17,8 +17,10 @@ export const SkeletonTable = <T,>({
   pagination: PaginationType;
 }) => {
   return (
-    <div className={styles['skeleton-container']}>
-      <h1 className={styles.title}>{title}</h1>
+    <div data-testid="skeleton-loader" className={styles['skeleton-container']}>
+      <h1 data-testid="table-title" className={styles.title}>
+        {title}
+      </h1>
       <div className={styles['skeleton-wrapper']}>
         <div className={styles['skeleton-header']}>
           {Array.from({ length: columnsCount }).map((_, i) => (

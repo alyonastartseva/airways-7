@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
 import compression from 'vite-plugin-compression';
+import { defineConfig } from 'vitest/config';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,6 +13,11 @@ export default defineConfig({
     }),
     visualizer(),
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
+  },
   build: {
     minify: 'terser',
     terserOptions: {

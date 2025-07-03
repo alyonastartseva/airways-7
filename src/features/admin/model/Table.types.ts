@@ -22,7 +22,7 @@ export interface TableProps<T> {
   selectable?: boolean;
   onRowClick?: (row: T) => void;
   onSelectionChange?: (selectedRows: T[]) => void;
-  defaultSort: {
+  defaultSort?: {
     key: string;
     direction: SortDirection;
   };

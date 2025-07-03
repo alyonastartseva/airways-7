@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.app.json",
-  "include": ["src/**/*.ts", "src/**/*.tsx", "*.config.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "*.config.ts", "setupVitest.ts", "vitest.setup.ts"],
   "compilerOptions": {
     "noEmit": true
   }
