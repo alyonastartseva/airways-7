@@ -153,6 +153,7 @@ export const TableInner = <T,>({
             <tr>
               {columns.map((column) => (
                 <th
+                  data-testid={column.key === 'id' ? 'sort-id' : ''}
                   key={column.key}
                   style={{ width: column.width }}
                   onClick={() => column.sortable && handleSort(column.key)}
@@ -163,6 +164,7 @@ export const TableInner = <T,>({
                     {column.sortable && (
                       <span className={styles['sort-icons']}>
                         <svg
+                          data-testid={'sort-icon-asc'}
                           width="10"
                           height="6"
                           viewBox="0 0 10 6"
@@ -176,6 +178,7 @@ export const TableInner = <T,>({
                           <path d="M5 0L9.33013 5.25H0.669873L5 0Z" fill="currentColor" />
                         </svg>
                         <svg
+                          data-testid={'sort-icon-desc'}
                           width="10"
                           height="6"
                           viewBox="0 0 10 6"
@@ -214,6 +217,7 @@ export const TableInner = <T,>({
               >
                 {columns.map((column) => (
                   <td
+                    data-testid={`${column.key === 'id' ? 'test-id' : ''}`}
                     key={column.key}
                     className={`${styles['table-cell']} ${styles['ellipsis-cell']}`}
                     style={{ width: column.width }}
