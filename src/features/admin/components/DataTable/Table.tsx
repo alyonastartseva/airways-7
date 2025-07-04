@@ -134,9 +134,9 @@ export const TableInner = <T,>({
     return <Alert type="error" message={error} onClose={() => navigate('/')} closable={true} />;
 
   return (
-    <div className={styles['admin-table']}>
+    <div className={styles.adminTable}>
       <h1 className={styles.title}>{title}</h1>
-      <div className={styles['table-container']}>
+      <div className={styles.tableContainer}>
         <table title={title}>
           <colgroup>
             {columns.map((col) => (
@@ -152,10 +152,10 @@ export const TableInner = <T,>({
                   onClick={() => column.sortable && handleSort(column.key)}
                   className={column.sortable ? styles.sortable : ''}
                 >
-                  <div className={styles['header-cell']}>
+                  <div className={styles.headerCell}>
                     {column.title}
                     {column.sortable && (
-                      <span className={styles['sort-icons']}>
+                      <span className={styles.sortIcons}>
                         <SortIconAsc sortConfig={sortConfig} columnKey={column.key} />
                       </span>
                     )}
@@ -184,7 +184,7 @@ export const TableInner = <T,>({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className={`${styles['table-cell']} ${styles['ellipsis-cell']}`}
+                    className={`${styles.tableCell} ${styles.ellipsisCell}`}
                     style={{ width: column.width }}
                   >
                     {column.render

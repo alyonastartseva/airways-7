@@ -21,7 +21,6 @@ export const SortIconAsc = ({
       setIsDective(true);
       setIsActive(false);
     }
-    console.log('asc', columnKey);
   }, [sortConfig?.direction, columnKey]);
 
   return (
@@ -31,7 +30,7 @@ export const SortIconAsc = ({
         height="6"
         viewBox="0 0 10 6"
         fill="none"
-        className={`${styles['sort-icon']} ${
+        className={`${styles.sortIcon} ${
           sortConfig?.key === columnKey && isActiveAsc ? styles.active : ''
         }`}
       >
@@ -43,7 +42,7 @@ export const SortIconAsc = ({
         height="6"
         viewBox="0 0 10 6"
         fill="none"
-        className={`${styles['sort-icon']} ${
+        className={`${styles.sortIcon} ${
           sortConfig?.key === columnKey && isActiveDesc ? styles.active : ''
         }`}
       >
