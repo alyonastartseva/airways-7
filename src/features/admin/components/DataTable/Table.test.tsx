@@ -3,6 +3,7 @@ import { mockData, type MockPassengerType } from './mockData';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 
 interface MockColumnType {
   key: string;
@@ -67,6 +68,13 @@ const defaultProps: defaultPropsType = {
   rowKey: 'id',
 };
 
+const TestComponent = (props) => (
+  <MemoryRouter>
+    <Table {...props} />
+  </MemoryRouter>
+)
+  
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -74,12 +82,8 @@ beforeEach(() => {
 describe('Тесирование состояний', () => {
   it('Проверка успешного отображения данных после загрузки', async () => {
     render(
-      <Table
-        title={defaultProps.title}
-        columns={defaultProps.columns}
-        fetchData={defaultProps.fetchData}
-        rowKey={defaultProps.rowKey}
-      />,
+      <TestComponent {...defaultProps}/>,
+        
     );
 
     await waitFor(() => {
@@ -101,7 +105,7 @@ describe('Тесирование состояний', () => {
         }),
     );
 
-    render(<Table title="Test Table" columns={mockColumns} fetchData={delayedFetch} rowKey="id" />);
+    render(<TestComponent title="Test Table" columns={mockColumns} fetchData={delayedFetch} rowKey="id" />);
 
     expect(screen.getByTestId('skeleton-loader')).toBeInTheDocument();
     await waitFor(
@@ -115,7 +119,7 @@ describe('Тесирование состояний', () => {
   it('Проверка отображения ошибки пре неудачном запросе', async () => {
     const errorFetch = vi.fn().mockRejectedValue(new Error('Fetch failed'));
 
-    render(<Table {...defaultProps} fetchData={errorFetch} />);
+    render(<TestComponent {...defaultProps} fetchData={errorFetch} />);
 
     await waitFor(() => {
       expect(screen.getByTestId('error')).toBeInTheDocument();
@@ -125,13 +129,13 @@ describe('Тесирование состояний', () => {
 
 describe('Тестирование заголовка', () => {
   it('Проверка наличия data-testid="table-title"', () => {
-    render(<Table {...defaultProps} />);
+    render(<TestComponent {...defaultProps} />);
 
     expect(screen.getByTestId('table-title')).toHaveTextContent('Test Table');
   });
 
   it('Проверка корректного отображения переданного заголовка таблицы', () => {
-    render(<Table {...defaultProps} />);
+    render(<TestComponent {...defaultProps} />);
 
     expect(screen.getByTestId('table-title')).toHaveStyle({
       fontSize: '$text-xl',
@@ -141,7 +145,7 @@ describe('Тестирование заголовка', () => {
 
 describe('Тестирование сортировки', () => {
   it('Проверка реакции на клик по заголовкам сортируемых колонок', async () => {
-    render(<Table {...defaultProps} />);
+    render(<TestComponent {...defaultProps} />);
     await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
 
     const th = screen.getByTestId('sort-id');
@@ -160,7 +164,7 @@ describe('Тестирование сортировки', () => {
   });
 
   it('Проверка правильности сортировки (по возрастанию/убыванию)', async () => {
-    render(<Table {...defaultProps} />);
+    render(<TestComponent {...defaultProps} />);
     await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
 
     const th = screen.getByTestId('sort-id');
@@ -196,7 +200,7 @@ describe('Тестирование сортировки', () => {
       return header?.querySelector('[class*=_active_]');
     };
 
-    render(<Table {...defaultProps} />);
+    render(<TestComponent {...defaultProps} />);
     await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
 
     const columnName = mockColumns[1].title;
