@@ -1,11 +1,14 @@
+
+import { PAGINATION_CONFIG } from '../../config/config';
+
 import classes from './Pagination.module.scss';
 import type { PaginationProps } from './Pagination.types';
 import { useEffect, useState } from 'react';
 
 const Pagination = ({
-  totalItems,
-  itemsPerPage,
-  currentPage,
+  totalItems = PAGINATION_CONFIG.DEFAULTS.total,
+  itemsPerPage = PAGINATION_CONFIG.DEFAULTS.pageSize,
+  currentPage = PAGINATION_CONFIG.DEFAULTS.page,
   onPageChange,
   maxVisiblePages = 5,
 }: PaginationProps) => {
@@ -53,7 +56,8 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
-        className={classes['pagination-button']}
+
+        className={classes.paginationButton}
         aria-label="Go to first page"
       >
         <Lt />
@@ -62,7 +66,8 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className={classes['pagination-button']}
+
+        className={classes.paginationButton}
         aria-label="Go to previous page"
       >
         <Lt />
@@ -72,13 +77,15 @@ const Pagination = ({
         <>
           <button
             onClick={() => onPageChange(1)}
-            className={`${classes['pagination-button']} ${
+
+            className={`${classes.paginationButton} ${
               classes[`${1 === currentPage ? 'active' : ''}`]
             }`}
           >
             1
           </button>
-          {visiblePages[0] > 2 && <span className={classes['paginatio-ellipsis']}>...</span>}
+
+          {visiblePages[0] > 2 && <span className={classes.paginationEllipsis}>...</span>}
         </>
       )}
 
@@ -86,7 +93,8 @@ const Pagination = ({
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`${classes['pagination-button']} ${
+
+          className={`${classes.paginationButton} ${
             classes[`${page === currentPage ? 'active' : ''}`]
           }`}
         >
@@ -97,11 +105,12 @@ const Pagination = ({
       {visiblePages[visiblePages.length - 1] < totalPages && (
         <>
           {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-            <span className={classes['pagintaion-ellipsis']}>..</span>
+
+            <span className={classes.paginationEllipsis}>..</span>
           )}
           <button
             onClick={() => onPageChange(totalPages)}
-            className={`${classes['pagination-button']} ${
+            className={`${classes.paginationButton} ${
               classes[totalPages === currentPage ? 'active' : '']
             }`}
           >
@@ -115,7 +124,8 @@ const Pagination = ({
           onPageChange(Math.min(totalPages, currentPage + 1));
         }}
         disabled={currentPage === totalPages}
-        className={classes['pagination-button']}
+
+        className={classes.paginationButton}
         aria-label="Go to next page"
       >
         <Gt />
@@ -123,7 +133,8 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
-        className={classes['pagination-button']}
+
+        className={classes.paginationButton}
         aria-label="Go to last page"
       >
         <Gt />

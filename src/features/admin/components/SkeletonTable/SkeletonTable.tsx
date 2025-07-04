@@ -1,3 +1,4 @@
+import { PAGINATION_CONFIG } from '../../../../shared/config/config';
 import type { Column } from '../../../../shared/model/Column.types';
 import Pagination from '../../../../shared/ui/Pagination';
 import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
@@ -5,7 +6,7 @@ import styles from './SkeletonTable.module.scss';
 
 export const SkeletonTable = <T,>({
   title,
-  rowsCount = 10,
+  rowsCount = PAGINATION_CONFIG.DEFAULTS.pageSize,
   columnsCount,
   columns,
   pagination,
@@ -17,28 +18,27 @@ export const SkeletonTable = <T,>({
   pagination: PaginationType;
 }) => {
   return (
-    <div data-testid="skeleton-loader" className={styles['skeleton-container']}>
-      <h1 data-testid="table-title" className={styles.title}>
-        {title}
-      </h1>
-      <div className={styles['skeleton-wrapper']}>
-        <div className={styles['skeleton-header']}>
+
+    <div data-testid="skeleton-loader" className={styles.skeletonContainer}>
+      <h1 data-testid="table-title" className={styles.title}>{title}</h1>
+      <div className={styles.skeletonWrapper}>
+        <div className={styles.skeletonHeader}>
           {Array.from({ length: columnsCount }).map((_, i) => (
             <div
               key={`header-${i}`}
-              className={styles['skeleton-th']}
+              className={styles.skeletonTh}
               style={{ width: columns[i]?.width }}
             />
           ))}
         </div>
 
-        <div className={styles['skeleton-body']}>
+        <div className={styles.skeletonBody}>
           {Array.from({ length: rowsCount }).map((_, rowIndex) => (
-            <div key={`row-${rowIndex}`} className={styles['skeleton-row']}>
+            <div key={`row-${rowIndex}`} className={styles.skeletonRow}>
               {Array.from({ length: columnsCount }).map((_, colIndex) => (
                 <div
                   key={`cell-${rowIndex}-${colIndex}`}
-                  className={styles['skeleton-td']}
+                  className={styles.skeletonTd}
                   style={{ width: columns[colIndex]?.width }}
                 />
               ))}
@@ -46,9 +46,9 @@ export const SkeletonTable = <T,>({
           ))}
         </div>
       </div>
-      <div style={{ minHeight: '50px' }}>
+      <div className={styles.pagination}>
         <Pagination
-          totalItems={pagination.total}
+          totalItems={pagination.total || PAGINATION_CONFIG.DEFAULTS.total}
           itemsPerPage={pagination.pageSize}
           currentPage={pagination.current}
           onPageChange={() => {}}
