@@ -1,10 +1,13 @@
 import Pagination from '../../../../shared/ui/Pagination';
 import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
-import type { SortDirection, TableProps, Table as TableType } from '../../model/Table.types';
+import { SortIconAsc } from '../../../../shared/ui/SortIcons/SortIcons';
+import type { SortDirection } from '../../../../shared/ui/SortIcons/SortIcons.types';
+import type { TableProps, Table as TableType } from '../../model/Table.types';
 import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
+import { Alert } from 'antd';
 import React, { useState, useEffect, useMemo } from 'react';
-import { data } from 'react-router-dom';
+import { data, useNavigate } from 'react-router-dom';
 
 export const TableInner = <T,>({
   title,
@@ -30,6 +33,8 @@ export const TableInner = <T,>({
     direction: SortDirection;
   } | null>(defaultSort || null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
+
+  const navigate = useNavigate();
 
   const memoizedColumns = useMemo(() => columns, [columns]);
 
@@ -92,15 +97,6 @@ export const TableInner = <T,>({
     }));
   };
 
-  // const handlePageSizeChange = (size: number) => {
-  //   setPagination(prev => ({
-  //     ...prev,
-  //     pageSize: size,
-  //     current: 1
-  //   }));
-  //   loadData(1, size);
-  // };
-
   const handleSort = (key: string) => {
     const direction: SortDirection =
       sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
@@ -134,7 +130,8 @@ export const TableInner = <T,>({
       />
     );
 
-  if (error) return <div>Error</div>;
+  if (error)
+    return <Alert type="error" message={error} onClose={() => navigate('/')} closable={true} />;
 
   return (
     <div className={styles['admin-table']}>
@@ -159,32 +156,7 @@ export const TableInner = <T,>({
                     {column.title}
                     {column.sortable && (
                       <span className={styles['sort-icons']}>
-                        <svg
-                          width="10"
-                          height="6"
-                          viewBox="0 0 10 6"
-                          fill="none"
-                          className={`${styles['sort-icon']} ${
-                            sortConfig?.key === column.key && sortConfig?.direction === 'asc'
-                              ? styles.active
-                              : ''
-                          }`}
-                        >
-                          <path d="M5 0L9.33013 5.25H0.669873L5 0Z" fill="currentColor" />
-                        </svg>
-                        <svg
-                          width="10"
-                          height="6"
-                          viewBox="0 0 10 6"
-                          fill="none"
-                          className={`${styles['sort-icon']} ${
-                            sortConfig?.key === column.key && sortConfig?.direction === 'desc'
-                              ? styles.active
-                              : ''
-                          }`}
-                        >
-                          <path d="M5 6L0.669873 0.75H9.33013L5 6Z" fill="currentColor" />
-                        </svg>
+                        <SortIconAsc sortConfig={sortConfig} columnKey={column.key} />
                       </span>
                     )}
                   </div>
@@ -239,7 +211,7 @@ export const TableInner = <T,>({
         </table>
       </div>
 
-      <div style={{ minHeight: '50px' }}>
+      <div className={styles.pagination}>
         <Pagination
           totalItems={pagination.total}
           itemsPerPage={pagination.pageSize}

@@ -11,3 +11,8 @@ export interface PaginationProps {
   onPageChange: (page: number) => void;
   maxVisiblePages?: number;
 }
+
+export type PaginationParams = {
+  page: number;
+  limit?: number;
+};

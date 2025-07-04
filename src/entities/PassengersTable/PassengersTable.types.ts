@@ -1,10 +1,10 @@
-interface PassportData { 
+interface PassportData {
   middleName: string;
   gender: string;
   serialNumberPassport: string;
   passportIssuingDate: Date;
   passportIssuingCountry: string;
-};
+}
 
 export interface ApiPassenger {
   id: number;
@@ -14,11 +14,6 @@ export interface ApiPassenger {
   phoneNumber: string | number;
   passport: PassportData;
   email: string;
-};
-
-export type PaginationParams = {
-    page: number; 
-    limit?: number;
 }
 
 export interface Passenger {
@@ -31,4 +26,4 @@ export interface Passenger {
   citizenship: string;
   passportIssuingDate: string;
   email: string;
-};
+}
