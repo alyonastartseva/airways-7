@@ -1,8 +1,7 @@
 import type { Column } from '../../../shared/model/Column.types';
 import type { Pagination } from '../../../shared/ui/Pagination/Pagination.types';
+import type { SortDirection } from '../../../shared/ui/SortIcons/SortIcons.types';
 import { type JSX } from 'react';
-
-export type SortDirection = 'asc' | 'desc';
 
 export interface ServerResponse<T> {
   data: T[];

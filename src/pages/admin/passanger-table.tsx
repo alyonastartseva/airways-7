@@ -1,8 +1,8 @@
-import PassangerTable from "../../entities/PassangersTable";
+import PassangerTable from '../../entities/PassengersTable';
 
 export const AdminPassangerPage = () => (
-    <div>
-        <h1>Пассажиры</h1>
-        <PassangerTable />
-    </div>
-)
+  <div>
+    <h1>Пассажиры</h1>
+    <PassangerTable />
+  </div>
+);

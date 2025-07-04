@@ -1,4 +1,4 @@
-import PassangersTable from '../entities/PassangersTable';
+import PassangersTable from '../entities/PassengersTable';
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
 
 const router = createBrowserRouter([
