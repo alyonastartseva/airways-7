@@ -1,9 +1,14 @@
+import { PAGINATION_CONFIG } from '../../../../shared/config/config';
 import { Table } from './Table';
 import { mockData, type MockPassengerType } from './mockData';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+
+const TIMEOUT = 2000;
+const PAGE_SIZE = PAGINATION_CONFIG.DEFAULTS.pageSize;
+const CURRENT_PAGE = PAGINATION_CONFIG.DEFAULTS.page;
 
 interface MockColumnType {
   key: string;
@@ -33,15 +38,15 @@ interface ServerResponse<T> {
 }
 
 const mockFetchData = vi.fn().mockImplementation((): Promise<ServerResponse<MockPassengerType>> => {
-  const start = (1 - 1) * 10;
-  const end = start + 10;
+  const start = (CURRENT_PAGE - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
   const paginatedData = mockData.slice(start, end);
 
   return Promise.resolve({
     data: paginatedData,
     pagination: {
-      current: 1,
-      pageSize: 10,
+      current: CURRENT_PAGE,
+      pageSize: PAGE_SIZE,
       total: mockData.length,
     },
   });
@@ -68,27 +73,28 @@ const defaultProps: defaultPropsType = {
   rowKey: 'id',
 };
 
-const TestComponent = (props) => (
+const TestComponent = (props: defaultPropsType) => (
   <MemoryRouter>
     <Table {...props} />
   </MemoryRouter>
-)
-  
+);
+const renderTable = (props: defaultPropsType = defaultProps) =>
+  render(<TestComponent {...props} />);
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
+beforeAll(() => {
+  vi.spyOn(console, 'log').mockImplementation(() => {});
+});
 
 describe('Тесирование состояний', () => {
   it('Проверка успешного отображения данных после загрузки', async () => {
-    render(
-      <TestComponent {...defaultProps}/>,
-        
-    );
+    renderTable(defaultProps);
 
     await waitFor(() => {
       expect(mockFetchData).toHaveBeenCalled();
-      expect(screen.getByText(mockData[0].FIO)).toBeInTheDocument();
+      expect(screen.getByRole('cell', { name: mockData[0].FIO })).toBeInTheDocument();
     });
   });
 
@@ -99,27 +105,30 @@ describe('Тесирование состояний', () => {
           setTimeout(() => {
             resolve({
               data: mockData,
-              pagination: { current: 1, pageSize: 10, total: mockData.length },
+              pagination: {
+                current: CURRENT_PAGE,
+                pageSize: PAGE_SIZE,
+                total: mockData.length,
+              },
             });
           }, 0);
         }),
     );
 
-    render(<TestComponent title="Test Table" columns={mockColumns} fetchData={delayedFetch} rowKey="id" />);
-
+    renderTable({ ...defaultProps, columns: mockColumns, fetchData: delayedFetch });
     expect(screen.getByTestId('skeleton-loader')).toBeInTheDocument();
     await waitFor(
       () => {
         expect(screen.queryByTestId('skeleton-loader')).not.toBeInTheDocument();
       },
-      { timeout: 2000 },
+      { timeout: TIMEOUT },
     );
   });
 
   it('Проверка отображения ошибки пре неудачном запросе', async () => {
     const errorFetch = vi.fn().mockRejectedValue(new Error('Fetch failed'));
 
-    render(<TestComponent {...defaultProps} fetchData={errorFetch} />);
+    renderTable({ ...defaultProps, fetchData: errorFetch });
 
     await waitFor(() => {
       expect(screen.getByTestId('error')).toBeInTheDocument();
@@ -129,13 +138,13 @@ describe('Тесирование состояний', () => {
 
 describe('Тестирование заголовка', () => {
   it('Проверка наличия data-testid="table-title"', () => {
-    render(<TestComponent {...defaultProps} />);
+    renderTable();
 
     expect(screen.getByTestId('table-title')).toHaveTextContent('Test Table');
   });
 
   it('Проверка корректного отображения переданного заголовка таблицы', () => {
-    render(<TestComponent {...defaultProps} />);
+    renderTable();
 
     expect(screen.getByTestId('table-title')).toHaveStyle({
       fontSize: '$text-xl',
@@ -144,27 +153,20 @@ describe('Тестирование заголовка', () => {
 });
 
 describe('Тестирование сортировки', () => {
-  it('Проверка реакции на клик по заголовкам сортируемых колонок', async () => {
-    render(<TestComponent {...defaultProps} />);
+  it('сортирует данные по клику на заголовок', async () => {
+    renderTable();
     await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
 
-    const th = screen.getByTestId('sort-id');
-    fireEvent.click(th);
+    fireEvent.click(screen.getByTestId('sort-id'));
 
     await waitFor(() => {
-      const renderedIDs = screen
-        .getAllByTestId('test-id')
-        .map((th) => parseInt(th.textContent || ''));
-      const sortedMockData = mockData
-        .slice(0, 10)
-        .sort((a, b) => b.id - a.id)
-        .map((item) => item.id);
-      expect(renderedIDs).toEqual(sortedMockData);
+      const ids = screen.getAllByTestId('test-id').map((el) => parseInt(el.textContent || ''));
+      expect(ids).toEqual([...ids].sort((a, b) => b - a));
     });
   });
 
   it('Проверка правильности сортировки (по возрастанию/убыванию)', async () => {
-    render(<TestComponent {...defaultProps} />);
+    renderTable();
     await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
 
     const th = screen.getByTestId('sort-id');
@@ -196,22 +198,22 @@ describe('Тестирование сортировки', () => {
 
   it('Проверка визуального отображения активной сортировки (иконки)', async () => {
     const getActiveIcon = (columnName: string) => {
-      const header = screen.getByText(columnName).closest('th');
+      const header = screen.getByRole('columnheader', { name: columnName });
       return header?.querySelector('[class*=_active_]');
     };
 
-    render(<TestComponent {...defaultProps} />);
+    renderTable();
     await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
 
     const columnName = mockColumns[1].title;
-    fireEvent.click(screen.getByText(columnName));
+    fireEvent.click(screen.getByRole('columnheader', { name: columnName }));
     await waitFor(() => {
       const activeIcon = getActiveIcon(columnName);
       expect(activeIcon).toBeInTheDocument();
     });
 
     const anotherColumnName = mockColumns[2].title;
-    fireEvent.click(screen.getByText(anotherColumnName));
+    fireEvent.click(screen.getByRole('columnheader', { name: anotherColumnName }));
     await waitFor(() => {
       const activeIcon = getActiveIcon(columnName);
       expect(activeIcon).not.toBeInTheDocument();

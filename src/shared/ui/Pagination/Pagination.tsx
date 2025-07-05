@@ -1,6 +1,4 @@
-
 import { PAGINATION_CONFIG } from '../../config/config';
-
 import classes from './Pagination.module.scss';
 import type { PaginationProps } from './Pagination.types';
 import { useEffect, useState } from 'react';
@@ -52,11 +50,10 @@ const Pagination = ({
   if (totalPages <= 1) return null;
 
   return (
-    <nav className={classes.pagination}>
+    <nav className={classes.pagination} aria-label="pagination">
       <button
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
-
         className={classes.paginationButton}
         aria-label="Go to first page"
       >
@@ -66,7 +63,6 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-
         className={classes.paginationButton}
         aria-label="Go to previous page"
       >
@@ -77,7 +73,6 @@ const Pagination = ({
         <>
           <button
             onClick={() => onPageChange(1)}
-
             className={`${classes.paginationButton} ${
               classes[`${1 === currentPage ? 'active' : ''}`]
             }`}
@@ -91,9 +86,9 @@ const Pagination = ({
 
       {visiblePages.map((page) => (
         <button
+          aria-label={`Go to page ${String(page)}`}
           key={page}
           onClick={() => onPageChange(page)}
-
           className={`${classes.paginationButton} ${
             classes[`${page === currentPage ? 'active' : ''}`]
           }`}
@@ -105,10 +100,10 @@ const Pagination = ({
       {visiblePages[visiblePages.length - 1] < totalPages && (
         <>
           {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-
             <span className={classes.paginationEllipsis}>..</span>
           )}
           <button
+            aria-label="last-page"
             onClick={() => onPageChange(totalPages)}
             className={`${classes.paginationButton} ${
               classes[totalPages === currentPage ? 'active' : '']
@@ -124,7 +119,6 @@ const Pagination = ({
           onPageChange(Math.min(totalPages, currentPage + 1));
         }}
         disabled={currentPage === totalPages}
-
         className={classes.paginationButton}
         aria-label="Go to next page"
       >
@@ -133,7 +127,6 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
-
         className={classes.paginationButton}
         aria-label="Go to last page"
       >

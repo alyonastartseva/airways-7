@@ -131,9 +131,16 @@ export const TableInner = <T,>({
       />
     );
 
-
   if (error)
-    return <Alert data-testid="error" type="error" message={error} onClose={() => navigate('/')} closable={true} />;
+    return (
+      <Alert
+        data-testid="error"
+        type="error"
+        message={error}
+        onClose={() => navigate('/')}
+        closable={true}
+      />
+    );
 
   return (
     <div className={styles.adminTable}>
@@ -158,7 +165,6 @@ export const TableInner = <T,>({
                   <div className={styles.headerCell}>
                     {column.title}
                     {column.sortable && (
-
                       <span className={styles.sortIcons}>
                         <SortIconAsc sortConfig={sortConfig} columnKey={column.key} />
                       </span>
