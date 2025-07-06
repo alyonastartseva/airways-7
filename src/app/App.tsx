@@ -1,20 +1,13 @@
 import './App.css';
 import { Router } from './router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: Infinity,
-    },
-  },
-});
+import { store } from './store';
+import { Provider } from 'react-redux';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
       <Router />
-    </QueryClientProvider>
+    </Provider>
   );
 }
 
