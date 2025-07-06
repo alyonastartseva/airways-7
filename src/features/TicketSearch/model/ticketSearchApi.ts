@@ -1,23 +1,7 @@
+import type { Category, Destination, SearchCriteria } from '../model/types.ts';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-interface Category {
-  id: string;
-  name: string;
-}
-interface Destination {
-  id: string;
-  name: string;
-}
-interface SearchCriteria {
-  currentLocation: string;
-  destination: string;
-  passengers: number;
-  dateFrom?: string;
-  dateTo?: string;
-  tripType: 'roundTrip' | 'oneWay';
-  noTransfer: boolean;
-  seatType: string;
-}
+const settingLimit = 20;
 
 export const ticketSearchApi = createApi({
   reducerPath: 'ticketSearchApi',
@@ -26,12 +10,14 @@ export const ticketSearchApi = createApi({
     getCategories: builder.query<Category[], void>({
       query: () => 'categories',
     }),
-    getDestinations: builder.query<Destination[], { search: string; page: number }>({
-      query: ({ search, page }) => ({
-        url: 'destinations',
-        params: { q: search, page, limit: 20 },
-      }),
-    }),
+    getDestinations: builder.query<Destination[], { search: string; page: number; limit?: number }>(
+      {
+        query: ({ search, page, limit = settingLimit }) => ({
+          url: 'destinations',
+          params: { q: search, page, limit },
+        }),
+      },
+    ),
     searchTickets: builder.mutation<any, SearchCriteria>({
       query: (criteria) => ({
         url: 'search',
