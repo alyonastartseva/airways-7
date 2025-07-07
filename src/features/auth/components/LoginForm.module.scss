@@ -1,4 +1,8 @@
+@use '../../../shared/styles/color-variables' as *;
+@use '../../../shared/styles/text-variables.scss' as *;
+
 .formWrapper {
+  font-family: $font-primary;
   min-width: 600px;
   max-width: 600px;
   padding: 44px 50px 16px 50px;
@@ -18,7 +22,7 @@
   text-align: center;
   
   a {
-    color: #4a4a4a;
+    color: $color-auth-note;
     text-decoration: none;
 
     &:hover {
