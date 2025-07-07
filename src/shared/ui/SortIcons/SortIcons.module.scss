@@ -1,0 +1,10 @@
+@use '../../../shared/styles/color-variables.scss' as *;
+
+.sortIcon {
+  color: $color-inactive;
+  transition: color 0.2s ease;
+
+  &.active {
+    color: $color-active;
+  }
+}
