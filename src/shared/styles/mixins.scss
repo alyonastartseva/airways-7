@@ -1,6 +1,6 @@
-@use 'color-variables' as *;
+@use "color-variables" as *;
 
-@mixin apply-drop-shadow($size: 'md') {
+@mixin apply-drop-shadow($size: "md") {
   @if map-has-key($shadows, $size) {
     box-shadow: map-get($shadows, $size);
   } @else {
