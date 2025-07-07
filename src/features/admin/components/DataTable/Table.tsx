@@ -1,3 +1,4 @@
+import { PAGINATION_CONFIG } from '../../../../shared/config/config';
 import Pagination from '../../../../shared/ui/Pagination';
 import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
 import { SortIconAsc } from '../../../../shared/ui/SortIcons/SortIcons';
@@ -6,27 +7,25 @@ import type { TableProps, Table as TableType } from '../../model/Table.types';
 import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
 import { Alert } from 'antd';
-import React, { useState, useEffect, useMemo } from 'react';
-import { data, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const TableInner = <T,>({
   title,
   columns,
-  fetchData,
+  useQuery,
   rowKey = 'id',
   selectable = false,
   onRowClick,
   onSelectionChange,
   defaultSort,
 }: TableProps<T>) => {
-  const [dataAll, setDataAll] = useState<T[]>([]);
+  const { data: dataAll = [], isLoading: loading, error } = useQuery();
   const [displayData, setDisplayData] = useState<T[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationType>({
-    current: 1,
-    pageSize: 10,
-    total: 0,
+    current: PAGINATION_CONFIG.DEFAULTS.page,
+    pageSize: PAGINATION_CONFIG.DEFAULTS.pageSize,
+    total: PAGINATION_CONFIG.DEFAULTS.total,
   });
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -38,25 +37,11 @@ export const TableInner = <T,>({
 
   const memoizedColumns = useMemo(() => columns, [columns]);
 
-  const loadAllData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetchData();
-      setDataAll(response.data);
-      setPagination({ ...response.pagination, pageSize: pagination.pageSize });
-      setError(null);
-    } catch (error) {
-      setError('Error fetching');
-      console.error('Fetch error', error);
-    } finally {
-      setSortConfig({ key: 'id', direction: 'asc' });
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadAllData();
-  }, []);
+    if (!defaultSort) {
+      setSortConfig({ key: 'id', direction: 'asc' });
+    }
+  }, [defaultSort]);
 
   const sortData = (data: T[]) => {
     if (!sortConfig) return data;
@@ -79,30 +64,40 @@ export const TableInner = <T,>({
     });
   };
 
+  const sortedData = useMemo(() => sortData(dataAll), [dataAll, sortConfig]);
+
   useEffect(() => {
-    const sortedData = sortData(dataAll);
+    if (loading) return;
+
     const startIndex = (pagination.current - 1) * pagination.pageSize;
     const endIndex = startIndex + pagination.pageSize;
     setDisplayData(sortedData.slice(startIndex, endIndex));
-    setPagination((prev) => ({
-      ...prev,
-      total: dataAll.length,
-    }));
-  }, [dataAll, pagination.current, pagination.pageSize, sortConfig]);
+  }, [sortedData, pagination.current, pagination.pageSize, loading]);
 
-  const handlePageChange = (page: number) => {
+  useEffect(() => {
+    if (!loading)
+      setPagination((prev) => ({
+        ...prev,
+        total: dataAll.length,
+      }));
+  }, [dataAll.length, loading]);
+
+  const handlePageChange = useCallback((page: number) => {
     setPagination((prev) => ({
       ...prev,
       current: page,
     }));
-  };
+  }, []);
 
-  const handleSort = (key: string) => {
-    const direction: SortDirection =
-      sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    setSortConfig({ key, direction });
-    setPagination((prev) => ({ ...prev, current: 1 }));
-  };
+  const handleSort = useCallback(
+    (key: string) => {
+      const direction: SortDirection =
+        sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+      setSortConfig({ key, direction });
+      setPagination((prev) => ({ ...prev, current: 1 }));
+    },
+    [sortConfig],
+  );
 
   const handleRowSelect = (row: T, checked: boolean) => {
     const newSelected = checked
@@ -131,7 +126,14 @@ export const TableInner = <T,>({
     );
 
   if (error)
-    return <Alert type="error" message={error} onClose={() => navigate('/')} closable={true} />;
+    return (
+      <Alert
+        type="error"
+        message="Error fetching data"
+        onClose={() => navigate('/')}
+        closable={true}
+      />
+    );
 
   return (
     <div className={styles.adminTable}>
@@ -166,7 +168,7 @@ export const TableInner = <T,>({
                 <th className={styles.selector}>
                   <input
                     type="checkbox"
-                    checked={selectedRows.length === data.length && data.length > 0}
+                    checked={selectedRows.length === displayData.length && displayData.length > 0}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                   />
                 </th>

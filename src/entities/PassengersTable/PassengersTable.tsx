@@ -1,7 +1,7 @@
 import { Table } from '../../features/admin/components/DataTable/Table';
 import type { Column } from '../../shared/model/Column.types';
 import type { Passenger } from './PassengersTable.types';
-import { getPassengers } from './api/passangersApi';
+import { useGetPassengersQuery } from './api/passengersApi';
 
 const columns: Column<Passenger>[] = [
   { key: 'id', title: 'ID', sortable: true, width: 60 },
@@ -28,7 +28,7 @@ export const PassengersTable = () => {
       <Table
         title="Пассажиры"
         columns={columns}
-        fetchData={getPassengers}
+        useQuery={useGetPassengersQuery}
         rowKey="id"
         selectable
         onRowClick={handleRowClick}
