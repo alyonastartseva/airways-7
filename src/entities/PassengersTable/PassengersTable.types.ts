@@ -16,6 +16,14 @@ export interface ApiPassenger {
   email: string;
 }
 
+export interface PassengersResponse {
+  content: ApiPassenger[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
 export interface Passenger {
   id: number;
   FIO: string;
