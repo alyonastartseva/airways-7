@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import logo from '../../assets/icons/logo.svg';
+import logo from '@/assets/icons/logo.svg';
 import styles from './Header.module.scss';
 
 const Header: React.FC = () => {
