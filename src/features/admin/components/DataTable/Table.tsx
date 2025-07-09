@@ -21,6 +21,7 @@ export const TableInner = <T,>({
   defaultSort,
 }: TableProps<T>) => {
   const { data: dataAll = [], isLoading: loading, error } = useQuery();
+
   const [displayData, setDisplayData] = useState<T[]>([]);
   const [pagination, setPagination] = useState<PaginationType>({
     current: PAGINATION_CONFIG.DEFAULTS.page,
@@ -68,6 +69,7 @@ export const TableInner = <T,>({
 
   useEffect(() => {
     if (loading) return;
+    if (error) return;
 
     const startIndex = (pagination.current - 1) * pagination.pageSize;
     const endIndex = startIndex + pagination.pageSize;
@@ -138,7 +140,9 @@ export const TableInner = <T,>({
 
   return (
     <div className={styles.adminTable}>
-      <h1 className={styles.title}>{title}</h1>
+      <h1 className={styles.title} data-testid="table-title">
+        {title}
+      </h1>
       <div className={styles.tableContainer}>
         <table title={title}>
           <colgroup>

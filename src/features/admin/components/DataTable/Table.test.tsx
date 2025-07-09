@@ -1,14 +1,9 @@
-import { PAGINATION_CONFIG } from '../../../../shared/config/config';
 import { Table } from './Table';
-import { mockData, type MockPassengerType } from './mockData';
+import { mockData } from './mockData';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-
-const TIMEOUT = 2000;
-const PAGE_SIZE = PAGINATION_CONFIG.DEFAULTS.pageSize;
-const CURRENT_PAGE = PAGINATION_CONFIG.DEFAULTS.page;
 
 interface MockColumnType {
   key: string;
@@ -28,48 +23,23 @@ const mockColumns: MockColumnType[] = [
   { key: 'passportIssuingDate', title: 'Дата выдачи паспорта', sortable: true, width: 110 },
 ];
 
-interface ServerResponse<T> {
-  data: T[];
-  pagination: {
-    current: number;
-    pageSize: number;
-    total: number;
-  };
-}
+const mockUseGetMockDataQuery = vi.fn();
 
-const mockFetchData = vi.fn().mockImplementation((): Promise<ServerResponse<MockPassengerType>> => {
-  const start = (CURRENT_PAGE - 1) * PAGE_SIZE;
-  const end = start + PAGE_SIZE;
-  const paginatedData = mockData.slice(start, end);
-
-  return Promise.resolve({
-    data: paginatedData,
-    pagination: {
-      current: CURRENT_PAGE,
-      pageSize: PAGE_SIZE,
-      total: mockData.length,
-    },
-  });
-});
-
-type SortDirection = 'asc' | 'desc';
+vi.mock('../../../../shared/api/mockApi', () => ({
+  useGetMockDataQuery: mockUseGetMockDataQuery,
+}));
 
 interface defaultPropsType {
   title: string;
   columns: MockColumnType[];
-  fetchData: (params?: {
-    page: number;
-    pageSize: number;
-    sortField?: string;
-    sortOrder?: SortDirection;
-  }) => Promise<ServerResponse<MockPassengerType>>;
+  useQuery: ReturnType<typeof mockUseGetMockDataQuery>;
   rowKey: string;
 }
 
 const defaultProps: defaultPropsType = {
   title: 'Test Table',
   columns: mockColumns,
-  fetchData: mockFetchData,
+  useQuery: mockUseGetMockDataQuery,
   rowKey: 'id',
 };
 
@@ -90,46 +60,46 @@ beforeAll(() => {
 
 describe('Тесирование состояний', () => {
   it('Проверка успешного отображения данных после загрузки', async () => {
-    renderTable(defaultProps);
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
 
+    renderTable(defaultProps);
     await waitFor(() => {
-      expect(mockFetchData).toHaveBeenCalled();
-      expect(screen.getByRole('cell', { name: mockData[0].FIO })).toBeInTheDocument();
+      expect(mockUseGetMockDataQuery).toHaveBeenCalled();
+      expect(
+        screen.getByRole('cell', { name: mockData.sort((a, b) => a.id - b.id)[0].FIO }),
+      ).toBeInTheDocument();
     });
   });
 
-  it('отображает скелетон во время загрузки данных', async () => {
-    const delayedFetch = vi.fn().mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              data: mockData,
-              pagination: {
-                current: CURRENT_PAGE,
-                pageSize: PAGE_SIZE,
-                total: mockData.length,
-              },
-            });
-          }, 0);
-        }),
-    );
+  it('отображает скелетон во время загрузки данных', () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    });
 
-    renderTable({ ...defaultProps, columns: mockColumns, fetchData: delayedFetch });
+    renderTable();
     expect(screen.getByTestId('skeleton-loader')).toBeInTheDocument();
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId('skeleton-loader')).not.toBeInTheDocument();
-      },
-      { timeout: TIMEOUT },
-    );
   });
 
-  it('Проверка отображения ошибки пре неудачном запросе', async () => {
-    const errorFetch = vi.fn().mockRejectedValue(new Error('Fetch failed'));
+  it('Проверка отображения ошибки при неудачном запросе', async () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: true,
+      error: {
+        status: 500,
+        data: {
+          message: 'Ошибка сервера: не удалось загрузить данные',
+        },
+      },
+    });
 
-    renderTable({ ...defaultProps, fetchData: errorFetch });
-
+    renderTable();
     await waitFor(() => {
       expect(screen.getByTestId('error')).toBeInTheDocument();
     });
@@ -138,6 +108,11 @@ describe('Тесирование состояний', () => {
 
 describe('Тестирование заголовка', () => {
   it('Проверка наличия data-testid="table-title"', () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
     renderTable();
 
     expect(screen.getByTestId('table-title')).toHaveTextContent('Test Table');
@@ -154,8 +129,13 @@ describe('Тестирование заголовка', () => {
 
 describe('Тестирование сортировки', () => {
   it('сортирует данные по клику на заголовок', async () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
     renderTable();
-    await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
+    await waitFor(() => expect(mockUseGetMockDataQuery).toHaveBeenCalled());
 
     fireEvent.click(screen.getByTestId('sort-id'));
 
@@ -166,8 +146,13 @@ describe('Тестирование сортировки', () => {
   });
 
   it('Проверка правильности сортировки (по возрастанию/убыванию)', async () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: mockData.slice(0, 10),
+      isLoading: false,
+      isError: false,
+    });
     renderTable();
-    await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
+    await waitFor(() => expect(mockUseGetMockDataQuery).toHaveBeenCalled());
 
     const th = screen.getByTestId('sort-id');
 
@@ -197,13 +182,18 @@ describe('Тестирование сортировки', () => {
   });
 
   it('Проверка визуального отображения активной сортировки (иконки)', async () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
     const getActiveIcon = (columnName: string) => {
       const header = screen.getByRole('columnheader', { name: columnName });
       return header?.querySelector('[class*=_active_]');
     };
 
     renderTable();
-    await waitFor(() => expect(mockFetchData).toHaveBeenCalled());
+    await waitFor(() => expect(mockUseGetMockDataQuery).toHaveBeenCalled());
 
     const columnName = mockColumns[1].title;
     fireEvent.click(screen.getByRole('columnheader', { name: columnName }));
