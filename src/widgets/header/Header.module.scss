@@ -1,0 +1,33 @@
+@use 'sass:color';
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: $color-layout;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 25px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.authButtons {
+  display: flex;
+  gap: 26px;
+
+  :global(.ant-btn) {
+    font-family: $font-primary;
+    font-weight: 600;
+    color: $color-primary;
+
+    &:hover {
+      color: color.adjust($color-primary, $lightness: -10%);
+    }
+  }
+}
