@@ -1,15 +1,13 @@
-import './App.css';
-import { Route, Routes } from 'react-router-dom';
-import Layout from '@/widgets/layout/Layout';
+import { StrictMode } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
 
-
-const App: React.FC = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-      </Route>
-    </Routes>
-  );
-};
+const App = () => (
+  <StrictMode>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+  </StrictMode>
+);
 
 export default App;

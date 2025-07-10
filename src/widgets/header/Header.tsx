@@ -6,7 +6,7 @@ const Header: React.FC = () => {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <img src={logo} alt ="Logo" className={styles.logoIcon}/>
+        <img src={logo} alt ="Air Alien" className={styles.logoIcon}/>
         <div className={styles.authButtons}>
           <Button type="default">
             Вход

@@ -25,7 +25,16 @@
 
     "baseUrl": "src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["*"],
+      "@app/*": ["app/*"],
+      "@assets/*": ["assets/*"],
+      "@entities/*": ["entities/*"],
+      "@features/*": ["features/*"],
+      "@pages/*": ["pages/*"],
+      "@processes/*": ["processes/*"],
+      "@shared/*": ["shared/*"],
+      "@shared/styles/*": ["shared/styles/*"],
+      "@widgets/*": ["widgets/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
