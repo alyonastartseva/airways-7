@@ -1,11 +1,15 @@
 @use 'sass:color';
 
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   background-color: $color-layout;
+}
+
+.logo {
+  text-decoration: none;
+  color: $color-background;
+  display: flex;
+  align-items: center;
+  column-gap: 12px;
 }
 
 .inner {

@@ -10,12 +10,14 @@ export const SkeletonTable = <T,>({
   columnsCount,
   columns,
   pagination,
+  selectable = false,
 }: {
   title: string;
   rowsCount?: number;
   columnsCount: number;
   columns: Column<T>[];
   pagination: PaginationType;
+  selectable: boolean;
 }) => {
   return (
     <div className={styles.skeletonContainer}>
@@ -25,10 +27,11 @@ export const SkeletonTable = <T,>({
           {Array.from({ length: columnsCount }).map((_, i) => (
             <div
               key={`header-${i}`}
-              className={styles.skeletonTh}
+              className={`${styles.skeletonTh}`}
               style={{ width: columns[i]?.width }}
             />
           ))}
+          {selectable && <div className={`${styles.skeletonTh} ${styles.selector}`} />}
         </div>
 
         <div className={styles.skeletonBody}>
@@ -41,6 +44,7 @@ export const SkeletonTable = <T,>({
                   style={{ width: columns[colIndex]?.width }}
                 />
               ))}
+              {selectable && <div className={`${styles.skeletonTd} ${styles.selector}`} />}
             </div>
           ))}
         </div>
