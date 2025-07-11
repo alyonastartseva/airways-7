@@ -5,10 +5,11 @@ $color-border: #d3efff;
 $color-text-primary: #141414;
 $color-text-secondary: #808080;
 $color-error: #f11c0e;
+$text-link: white;
 
 // Тени
 $color-shadow: rgba(0, 0, 0, 0.25);
 $shadows: (
   "sm": 0 2px 2px rgba(0, 0, 0, 0.25),
-  "md": 0 4px 4px rgba(0, 0, 0, 0.25),
+  "md": 0 4px 4px rgba(0, 0, 0, 0.25)
 );
