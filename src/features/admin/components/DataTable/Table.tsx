@@ -43,10 +43,10 @@ export const TableInner = <T,>({
     }
   }, [defaultSort]);
 
-  const sortData = (data: T[]) => {
-    if (!sortConfig) return data;
+  const sortedData = useMemo(() => {
+    if (!sortConfig) return dataAll;
 
-    return [...data].sort((a, b) => {
+    return [...dataAll].sort((a, b) => {
       const aValue = a[sortConfig.key as keyof T];
       const bValue = b[sortConfig.key as keyof T];
 
@@ -62,12 +62,19 @@ export const TableInner = <T,>({
 
       return sortConfig.direction === 'asc' ? (aValue > bValue ? 1 : -1) : aValue < bValue ? 1 : -1;
     });
-  };
+  }, [dataAll, sortConfig]);
 
-  const sortedData = useMemo(() => sortData(dataAll), [dataAll, sortConfig]);
+  useEffect(() => {
+    if (loading || error) return;
+
+    const startIndex = (pagination.current - 1) * pagination.pageSize;
+    const endIndex = startIndex + pagination.pageSize;
+    setDisplayData(sortedData.slice(startIndex, endIndex));
+  }, [sortedData, pagination.current, pagination.pageSize, loading, error]);
 
   useEffect(() => {
     if (loading) return;
+    if (error) return;
 
     const startIndex = (pagination.current - 1) * pagination.pageSize;
     const endIndex = startIndex + pagination.pageSize;
@@ -128,6 +135,7 @@ export const TableInner = <T,>({
   if (error)
     return (
       <Alert
+        data-testid="error"
         type="error"
         message="Error fetching data"
         onClose={() => navigate('/')}
