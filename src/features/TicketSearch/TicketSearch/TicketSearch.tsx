@@ -7,7 +7,7 @@ import type { Destination, SearchCriteria } from '../model/types';
 import styles from './TicketSearch.module.scss';
 import { Select, Input, Checkbox, DatePicker, Radio, Button, Space, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const { RangePicker } = DatePicker;
 const { Group: RadioGroup } = Radio;
@@ -165,17 +165,6 @@ const TicketSearch: React.FC = () => {
                 updateField('dateTo', vals?.[1]?.format('YYYY-MM-DD')!);
               }}
             />
-            <label style={{ marginTop: 16 }}>Категория сиденья</label>
-            <Select
-              placeholder="Категория"
-              loading={catLoading}
-              value={criteria.seatType}
-              onChange={(v) => updateField('seatType', v as string)}
-              options={categories.map((c) => ({
-                label: c.name,
-                value: c.id,
-              }))}
-            />
           </div>
           <div className={styles.column}>
             <RadioGroup
@@ -196,6 +185,3 @@ const TicketSearch: React.FC = () => {
 };
 
 export default TicketSearch;
-
-// <ThereFlight flights={outboundFlights} onSelect={setSelectedOutbound} />   разобратся с просом и отрисовкой ui (туда)
-//  проблема в map flights
