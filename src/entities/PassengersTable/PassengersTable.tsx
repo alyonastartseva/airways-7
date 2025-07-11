@@ -1,5 +1,5 @@
-import { Table } from '../../features/admin/components/DataTable/Table';
-import type { Column } from '../../shared/model/Column.types';
+import { Table } from '@features/admin/components/DataTable';
+import type { Column } from '@shared/model/Column.types';
 import type { Passenger } from './PassengersTable.types';
 import { useGetPassengersQuery } from './api/passengersApi';
 

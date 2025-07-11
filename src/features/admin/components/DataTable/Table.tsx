@@ -1,11 +1,11 @@
-import { PAGINATION_CONFIG } from '../../../../shared/config/config';
-import Pagination from '../../../../shared/ui/Pagination';
-import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
-import { SortIconAsc } from '../../../../shared/ui/SortIcons/SortIcons';
-import type { SortDirection } from '../../../../shared/ui/SortIcons/SortIcons.types';
-import type { TableProps, Table as TableType } from '../../model/Table.types';
 import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
+import type { TableProps, Table as TableType } from '@features/admin/model/Table.types';
+import { PAGINATION_CONFIG } from '@shared/config/config';
+import Pagination from '@shared/ui/Pagination';
+import type { Pagination as PaginationType } from '@shared/ui/Pagination/Pagination.types';
+import { SortIconAsc } from '@shared/ui/SortIcons/SortIcons';
+import type { SortDirection } from '@shared/ui/SortIcons/SortIcons.types';
 import { Alert } from 'antd';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
