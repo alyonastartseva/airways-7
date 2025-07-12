@@ -3,7 +3,7 @@ import styles from './LoginForm.module.scss';
 import { Form, Input, Button, Alert } from 'antd';
 import type { FormProps } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import { useLoginUserMutation } from '../authApi';
+import { useLoginUserMutation } from '../api/authApi';
 
 type LoginFormFields = {
   email: string;
@@ -20,6 +20,7 @@ const LoginForm = () => {
     try {
       const res = await loginUser({ username: values.email, password: values.password }).unwrap();
       localStorage.setItem('token', res.access_token);
+      localStorage.setItem('refresh_token', res.refresh_token);
       navigate('/');
     } catch (err: any) {
       setErrorMessage('Неверный логин или пароль');

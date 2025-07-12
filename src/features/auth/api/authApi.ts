@@ -1,16 +1,12 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from '@/shared/lib/baseQueryWithReauth';
+import type { LoginRequest, TokenResponse } from '../types';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://92.118.114.29:8180/realms/airline-realm/protocol/openid-connect/',
-    prepareHeaders: (headers) => {
-      headers.set('Content-Type', 'application/x-www-form-urlencoded');
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    loginUser: builder.mutation<{ access_token: string }, { username: string; password: string }>({
+    loginUser: builder.mutation<TokenResponse, LoginRequest>({
       query: ({ username, password }) => {
         const body = new URLSearchParams();
         body.append('grant_type', 'password');

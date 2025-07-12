@@ -3,7 +3,7 @@ import logo from '@/assets/icons/logo.svg';
 import styles from './Header.module.scss';
 import { Link } from 'react-router-dom';
 
-const Header: React.FC = () => {
+const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
