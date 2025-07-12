@@ -1,18 +1,18 @@
 import { Table } from './Table';
-import { mockData } from './mockData';
+import { mockData, type MockPassengerType } from './mockData';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
-interface MockColumnType {
-  key: string;
+interface MockColumnType<T> {
+  key: keyof T;
   title: string;
   sortable?: boolean;
   width?: number;
 }
 
-const mockColumns: MockColumnType[] = [
+const mockColumns: MockColumnType<MockPassengerType>[] = [
   { key: 'id', title: 'ID', sortable: true, width: 60 },
   { key: 'FIO', title: 'Имя, Фамилия, Отчество', sortable: true, width: 200 },
   { key: 'gender', title: 'Пол', sortable: true, width: 80 },
@@ -29,26 +29,26 @@ vi.mock('../../../../shared/api/mockApi', () => ({
   useGetMockDataQuery: mockUseGetMockDataQuery,
 }));
 
-interface defaultPropsType {
+interface defaultPropsType<T> {
   title: string;
-  columns: MockColumnType[];
+  columns: MockColumnType<MockPassengerType>[];
   useQuery: ReturnType<typeof mockUseGetMockDataQuery>;
-  rowKey: string;
+  rowKey: keyof T;
 }
 
-const defaultProps: defaultPropsType = {
+const defaultProps: defaultPropsType<MockPassengerType> = {
   title: 'Test Table',
   columns: mockColumns,
   useQuery: mockUseGetMockDataQuery,
   rowKey: 'id',
 };
 
-const TestComponent = (props: defaultPropsType) => (
+const TestComponent = (props: defaultPropsType<MockPassengerType>) => (
   <MemoryRouter>
     <Table {...props} />
   </MemoryRouter>
 );
-const renderTable = (props: defaultPropsType = defaultProps) =>
+const renderTable = (props: defaultPropsType<MockPassengerType> = defaultProps) =>
   render(<TestComponent {...props} />);
 
 beforeEach(() => {
@@ -137,11 +137,17 @@ describe('Тестирование сортировки', () => {
     renderTable();
     await waitFor(() => expect(mockUseGetMockDataQuery).toHaveBeenCalled());
 
+    const originalIds = screen
+      .getAllByTestId('test-id')
+      .map((el) => parseInt(el.textContent || ''));
+
     fireEvent.click(screen.getByTestId('sort-id'));
 
     await waitFor(() => {
-      const ids = screen.getAllByTestId('test-id').map((el) => parseInt(el.textContent || ''));
-      expect(ids).toEqual([...ids].sort((a, b) => b - a));
+      const sortedIds = screen
+        .getAllByTestId('test-id')
+        .map((el) => parseInt(el.textContent || ''));
+      expect(sortedIds).toEqual([...originalIds].sort((a, b) => a - b));
     });
   });
 
@@ -163,7 +169,7 @@ describe('Тестирование сортировки', () => {
         .map((th) => parseInt(th.textContent || ''));
       const sortedMockData = mockData
         .slice(0, 10)
-        .sort((a, b) => b.id - a.id)
+        .sort((a, b) => a.id - b.id)
         .map((item) => item.id);
       expect(renderedIDs).toEqual(sortedMockData);
     });
@@ -175,7 +181,7 @@ describe('Тестирование сортировки', () => {
         .map((th) => parseInt(th.textContent || ''));
       const sortedMockData = mockData
         .slice(0, 10)
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => b.id - a.id)
         .map((item) => item.id);
       expect(renderedIDs).toEqual(sortedMockData);
     });
@@ -188,7 +194,7 @@ describe('Тестирование сортировки', () => {
       isError: false,
     });
     const getActiveIcon = (columnName: string) => {
-      const header = screen.getByRole('columnheader', { name: columnName });
+      const header = screen.getByText(columnName);
       return header?.querySelector('[class*=_active_]');
     };
 
@@ -196,14 +202,14 @@ describe('Тестирование сортировки', () => {
     await waitFor(() => expect(mockUseGetMockDataQuery).toHaveBeenCalled());
 
     const columnName = mockColumns[1].title;
-    fireEvent.click(screen.getByRole('columnheader', { name: columnName }));
+    fireEvent.click(screen.getByText(columnName));
     await waitFor(() => {
       const activeIcon = getActiveIcon(columnName);
       expect(activeIcon).toBeInTheDocument();
     });
 
     const anotherColumnName = mockColumns[2].title;
-    fireEvent.click(screen.getByRole('columnheader', { name: anotherColumnName }));
+    fireEvent.click(screen.getByText(anotherColumnName));
     await waitFor(() => {
       const activeIcon = getActiveIcon(columnName);
       expect(activeIcon).not.toBeInTheDocument();
