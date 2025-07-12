@@ -1,4 +1,4 @@
-import { PAGINATION_CONFIG } from '../../config/config';
+import { PAGINATION_CONFIG } from '@shared/config/config';
 import classes from './Pagination.module.scss';
 import type { PaginationProps } from './Pagination.types';
 import { useEffect, useState } from 'react';

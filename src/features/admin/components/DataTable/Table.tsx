@@ -1,11 +1,11 @@
-import { PAGINATION_CONFIG } from '../../../../shared/config/config';
-import Pagination from '../../../../shared/ui/Pagination';
-import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
-import { SortIconAsc } from '../../../../shared/ui/SortIcons/SortIcons';
-import type { SortDirection } from '../../../../shared/ui/SortIcons/SortIcons.types';
-import type { TableProps, Table as TableType } from '../../model/Table.types';
 import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
+import type { TableProps, Table as TableType } from '@features/admin/model/Table.types';
+import { PAGINATION_CONFIG } from '@shared/config/config';
+import Pagination from '@shared/ui/Pagination';
+import type { Pagination as PaginationType } from '@shared/ui/Pagination/Pagination.types';
+import { SortIconAsc } from '@shared/ui/SortIcons/SortIcons';
+import type { SortDirection } from '@shared/ui/SortIcons/SortIcons.types';
 import { Alert } from 'antd';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ export const TableInner = <T,>({
   defaultSort,
 }: TableProps<T>) => {
   const { data: dataAll = [], isLoading: loading, error } = useQuery();
+
   const [displayData, setDisplayData] = useState<T[]>([]);
   const [pagination, setPagination] = useState<PaginationType>({
     current: PAGINATION_CONFIG.DEFAULTS.page,
@@ -67,12 +68,12 @@ export const TableInner = <T,>({
   const sortedData = useMemo(() => sortData(dataAll), [dataAll, sortConfig]);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || error) return;
 
     const startIndex = (pagination.current - 1) * pagination.pageSize;
     const endIndex = startIndex + pagination.pageSize;
     setDisplayData(sortedData.slice(startIndex, endIndex));
-  }, [sortedData, pagination.current, pagination.pageSize, loading]);
+  }, [sortedData, pagination.current, pagination.pageSize, loading, error]);
 
   useEffect(() => {
     if (!loading)
@@ -122,6 +123,7 @@ export const TableInner = <T,>({
         columnsCount={memoizedColumns.length}
         columns={memoizedColumns}
         pagination={pagination}
+        selectable
       />
     );
 

@@ -1,6 +1,5 @@
 .footer {
   background-color: $color-layout;
-  margin-top: auto;
   font-family: $font-primary;
 }
 
@@ -16,7 +15,7 @@
   font-weight: $font-weight-medium;
   display: flex;
   gap: 35px;
-  
+
   a {
     color: $text-link;
     text-decoration: none;
@@ -40,7 +39,6 @@
 }
 
 .text {
- color: $text-link;
+  color: $text-link;
   font-size: 16px;
-  
 }
