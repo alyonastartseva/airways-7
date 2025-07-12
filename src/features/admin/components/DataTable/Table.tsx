@@ -44,10 +44,10 @@ export const TableInner = <T,>({
     }
   }, [defaultSort]);
 
-  const sortData = (data: T[]) => {
-    if (!sortConfig) return data;
+  const sortedData = useMemo(() => {
+    if (!sortConfig) return dataAll;
 
-    return [...data].sort((a, b) => {
+    return [...dataAll].sort((a, b) => {
       const aValue = a[sortConfig.key as keyof T];
       const bValue = b[sortConfig.key as keyof T];
 
@@ -63,13 +63,10 @@ export const TableInner = <T,>({
 
       return sortConfig.direction === 'asc' ? (aValue > bValue ? 1 : -1) : aValue < bValue ? 1 : -1;
     });
-  };
-
-  const sortedData = useMemo(() => sortData(dataAll), [dataAll, sortConfig]);
+  }, [dataAll, sortConfig]);
 
   useEffect(() => {
-    if (loading) return;
-    if (error) return;
+    if (loading || error) return;
 
     const startIndex = (pagination.current - 1) * pagination.pageSize;
     const endIndex = startIndex + pagination.pageSize;
@@ -135,6 +132,18 @@ export const TableInner = <T,>({
         message="Error fetching data"
         onClose={() => navigate('/')}
         closable={true}
+        showIcon
+      />
+    );
+  if (!loading && dataAll.length === 0)
+    return (
+      <Alert
+        data-testid="no-data"
+        type="info"
+        message="No data available"
+        onClose={() => navigate('/')}
+        closable={true}
+        showIcon
       />
     );
 

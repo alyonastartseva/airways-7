@@ -59,33 +59,6 @@ beforeAll(() => {
 });
 
 describe('Тесирование состояний', () => {
-  it('Проверка успешного отображения данных после загрузки', async () => {
-    mockUseGetMockDataQuery.mockReturnValue({
-      data: mockData,
-      isLoading: false,
-      isError: false,
-    });
-
-    renderTable(defaultProps);
-    await waitFor(() => {
-      expect(mockUseGetMockDataQuery).toHaveBeenCalled();
-      expect(
-        screen.getByRole('cell', { name: mockData.sort((a, b) => a.id - b.id)[0].FIO }),
-      ).toBeInTheDocument();
-    });
-  });
-
-  it('отображает скелетон во время загрузки данных', () => {
-    mockUseGetMockDataQuery.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-    });
-
-    renderTable();
-    expect(screen.getByTestId('skeleton-loader')).toBeInTheDocument();
-  });
-
   it('Проверка отображения ошибки при неудачном запросе', async () => {
     mockUseGetMockDataQuery.mockReturnValue({
       data: [],
@@ -102,6 +75,33 @@ describe('Тесирование состояний', () => {
     renderTable();
     await waitFor(() => {
       expect(screen.getByTestId('error')).toBeInTheDocument();
+    });
+  });
+
+  it('отображает скелетон во время загрузки данных', () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    });
+
+    renderTable();
+    expect(screen.getByTestId('skeleton-loader')).toBeInTheDocument();
+  });
+
+  it('Проверка успешного отображения данных после загрузки', async () => {
+    mockUseGetMockDataQuery.mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
+
+    renderTable(defaultProps);
+    await waitFor(() => {
+      expect(mockUseGetMockDataQuery).toHaveBeenCalled();
+      expect(
+        screen.getByRole('cell', { name: mockData.sort((a, b) => a.id - b.id)[0].FIO }),
+      ).toBeInTheDocument();
     });
   });
 });

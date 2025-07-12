@@ -8,7 +8,9 @@ export const passengersApi = baseApi.injectEndpoints({
       query: () => {
         return '/passengers';
       },
-      transformResponse: (response: PassengersResponse) => passengersMapper(response.content),
+      providesTags: ['Passengers'],
+      transformResponse: (response: PassengersResponse) =>
+        response.content?.length ? passengersMapper(response.content) : [],
     }),
   }),
 });
