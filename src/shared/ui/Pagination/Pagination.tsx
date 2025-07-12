@@ -50,7 +50,7 @@ const Pagination = ({
   if (totalPages <= 1) return null;
 
   return (
-    <nav className={classes.pagination} aria-label="pagination">
+    <nav className={classes.pagination} aria-label="Pagination Navigation" role="navigation">
       <button
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
@@ -73,9 +73,8 @@ const Pagination = ({
         <>
           <button
             onClick={() => onPageChange(1)}
-            className={`${classes.paginationButton} ${
-              classes[`${1 === currentPage ? 'active' : ''}`]
-            }`}
+            aria-current={1 === currentPage ? 'page' : undefined}
+            className={`${classes.paginationButton} ${1 === currentPage ? classes.active : ''}`}
           >
             1
           </button>
@@ -87,11 +86,10 @@ const Pagination = ({
       {visiblePages.map((page) => (
         <button
           aria-label={`Go to page ${String(page)}`}
+          aria-current={page === currentPage ? 'page' : undefined}
           key={page}
           onClick={() => onPageChange(page)}
-          className={`${classes.paginationButton} ${
-            classes[`${page === currentPage ? 'active' : ''}`]
-          }`}
+          className={`${classes.paginationButton} ${page === currentPage ? classes.active : ''}`}
         >
           {page}
         </button>
@@ -103,11 +101,10 @@ const Pagination = ({
             <span className={classes.paginationEllipsis}>..</span>
           )}
           <button
-            aria-label="last-page"
+            aria-label={`Go to page ${totalPages}`}
+            aria-current={totalPages === currentPage ? 'page' : undefined}
             onClick={() => onPageChange(totalPages)}
-            className={`${classes.paginationButton} ${
-              classes[totalPages === currentPage ? 'active' : '']
-            }`}
+            className={`${classes.paginationButton} ${totalPages === currentPage ? classes.active : ''}`}
           >
             {totalPages}
           </button>

@@ -1,4 +1,4 @@
-import PassangersTable from '../entities/PassengersTable';
+import { AdminPassengerPage } from '../pages/admin/passengers';
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
 
 const router = createBrowserRouter([
@@ -7,13 +7,13 @@ const router = createBrowserRouter([
     element: (
       <div>
         <h1>App</h1>
-        <Link to={'/passenger-table'}>Passenger Table</Link>
+        <Link to={'/passengers-table'}>Passenger Table</Link>
       </div>
     ),
   },
   {
-    path: '/passenger-table',
-    element: <PassangersTable />,
+    path: '/passengers-table',
+    element: <AdminPassengerPage />,
   },
 ]);
 

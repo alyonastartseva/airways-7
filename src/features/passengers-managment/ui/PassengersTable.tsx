@@ -1,7 +1,7 @@
-import { Table } from '../../features/admin/components/DataTable/Table';
-import type { Column } from '../../shared/model/Column.types';
-import type { Passenger } from './PassengersTable.types';
-import { useGetPassengersQuery } from './api/passengersApi';
+import { useGetPassengersQuery } from '../../../entities/passenger';
+import type { Passenger } from '../../../entities/passenger';
+import { Table } from '../../../features/admin/components/DataTable/Table';
+import type { Column } from '../../../shared/model/Column.types';
 
 const columns: Column<Passenger>[] = [
   { key: 'id', title: 'ID', sortable: true, width: 60 },
@@ -14,7 +14,7 @@ const columns: Column<Passenger>[] = [
   { key: 'passportIssuingDate', title: 'Дата выдачи паспорта', sortable: true, width: 115 },
 ];
 
-export const PassengersTable = () => {
+const PassengersTable = () => {
   const handleRowClick = (passenger: Passenger) => {
     console.log('Selected user:', passenger);
   };
@@ -37,3 +37,5 @@ export const PassengersTable = () => {
     </>
   );
 };
+
+export default PassengersTable;

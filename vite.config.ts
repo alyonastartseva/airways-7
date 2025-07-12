@@ -10,8 +10,12 @@ export default defineConfig({
     compression({
       algorithm: 'gzip',
       ext: '.gz',
+      threshold: 10240,
     }),
-    visualizer(),
+    visualizer({
+      open: true,
+      gzipSize: true,
+    }),
   ],
   test: {
     globals: true,
@@ -32,15 +36,33 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          vendor: ['lodash'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) {
+              return 'vendor-react';
+            }
+            if (id.includes('lodash')) {
+              return 'vendor-utils';
+            }
+            if (id.includes('antd')) {
+              return 'vendor-antd';
+            }
+            return 'vendor';
+          }
+          if (id.includes('src/pages') || id.includes('src/routes/')) {
+            const matches = id.match(/src\/(pages|routes)\/(.*?)\//);
+            return matches ? `route-${matches[2]}` : null;
+          }
         },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500,
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
+    include: ['react', 'react-dom', 'antd/es/alert', 'react-router-dom'],
+    exclude: ['@vitejs/plugin-react'],
   },
 });

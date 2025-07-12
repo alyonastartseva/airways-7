@@ -1,4 +1,6 @@
 import { PAGINATION_CONFIG } from '../../../../shared/config/config';
+import { sanitazeHtml } from '../../../../shared/lib/utils/sanitize';
+import type { Column } from '../../../../shared/model/Column.types';
 import Pagination from '../../../../shared/ui/Pagination';
 import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
 import { SortIconAsc } from '../../../../shared/ui/SortIcons/SortIcons';
@@ -6,15 +8,15 @@ import type { SortDirection } from '../../../../shared/ui/SortIcons/SortIcons.ty
 import type { TableProps, Table as TableType } from '../../model/Table.types';
 import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
-import { Alert } from 'antd';
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import Alert from 'antd/es/alert';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const TableInner = <T,>({
   title,
   columns,
   useQuery,
-  rowKey = 'id',
+  rowKey = 'id' as keyof T & string,
   selectable = false,
   onRowClick,
   onSelectionChange,
@@ -22,27 +24,18 @@ export const TableInner = <T,>({
 }: TableProps<T>) => {
   const { data: dataAll = [], isLoading: loading, error } = useQuery();
 
-  const [displayData, setDisplayData] = useState<T[]>([]);
   const [pagination, setPagination] = useState<PaginationType>({
     current: PAGINATION_CONFIG.DEFAULTS.page,
     pageSize: PAGINATION_CONFIG.DEFAULTS.pageSize,
     total: PAGINATION_CONFIG.DEFAULTS.total,
   });
   const [sortConfig, setSortConfig] = useState<{
-    key: string;
+    key: keyof T & string;
     direction: SortDirection;
   } | null>(defaultSort || null);
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
   const navigate = useNavigate();
-
-  const memoizedColumns = useMemo(() => columns, [columns]);
-
-  useEffect(() => {
-    if (!defaultSort) {
-      setSortConfig({ key: 'id', direction: 'asc' });
-    }
-  }, [defaultSort]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig) return dataAll;
@@ -65,21 +58,14 @@ export const TableInner = <T,>({
     });
   }, [dataAll, sortConfig]);
 
-  useEffect(() => {
-    if (loading || error) return;
-
+  const displayData = useMemo(() => {
     const startIndex = (pagination.current - 1) * pagination.pageSize;
-    const endIndex = startIndex + pagination.pageSize;
-    setDisplayData(sortedData.slice(startIndex, endIndex));
-  }, [sortedData, pagination.current, pagination.pageSize, loading]);
+    return sortedData.slice(startIndex, startIndex + pagination.pageSize);
+  }, [pagination, sortedData]);
 
   useEffect(() => {
-    if (!loading)
-      setPagination((prev) => ({
-        ...prev,
-        total: dataAll.length,
-      }));
-  }, [dataAll.length, loading]);
+    setPagination((prev) => ({ ...prev, total: dataAll.length }));
+  }, [dataAll.length]);
 
   const handlePageChange = useCallback((page: number) => {
     setPagination((prev) => ({
@@ -89,7 +75,7 @@ export const TableInner = <T,>({
   }, []);
 
   const handleSort = useCallback(
-    (key: string) => {
+    (key: keyof T & string) => {
       const direction: SortDirection =
         sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
       setSortConfig({ key, direction });
@@ -98,6 +84,13 @@ export const TableInner = <T,>({
     [sortConfig],
   );
 
+  const handleHeaderKeyDown = (e: React.KeyboardEvent, column: Column<T>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (column.sortable) handleSort(column.key);
+    }
+  };
+
   const handleRowSelect = (row: T, checked: boolean) => {
     const newSelected = checked
       ? [...selectedRows, row]
@@ -105,6 +98,20 @@ export const TableInner = <T,>({
 
     setSelectedRows(newSelected);
     onSelectionChange?.(newSelected);
+  };
+
+  const handleRowKeyDown = (e: React.KeyboardEvent, row: T) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (selectable) {
+        const isSelected = selectedRows.some(
+          (r) => r[rowKey as keyof T] === row[rowKey as keyof T],
+        );
+        handleRowSelect(row, !isSelected);
+      } else {
+        onRowClick?.(row);
+      }
+    }
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -118,8 +125,8 @@ export const TableInner = <T,>({
       <SkeletonTable
         title={title}
         rowsCount={pagination.pageSize}
-        columnsCount={memoizedColumns.length}
-        columns={memoizedColumns}
+        columnsCount={columns.length}
+        columns={columns}
         pagination={pagination}
       />
     );
@@ -153,7 +160,12 @@ export const TableInner = <T,>({
         {title}
       </h1>
       <div className={styles.tableContainer}>
-        <table title={title}>
+        <table
+          role="table"
+          aria-label={title}
+          aria-rowcount={pagination.total}
+          aria-colcount={columns.length + (selectable ? 1 : 0)}
+        >
           <colgroup>
             {columns.map((col) => (
               <col key={col.key} style={{ width: col.width }} />
@@ -163,6 +175,18 @@ export const TableInner = <T,>({
             <tr>
               {columns.map((column) => (
                 <th
+                  role="columnheader"
+                  tabIndex={column.sortable ? 0 : -1}
+                  onKeyDown={(e) => handleHeaderKeyDown(e, column)}
+                  aria-sort={
+                    sortConfig?.key === column.key
+                      ? sortConfig.direction === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : column.sortable
+                        ? 'none'
+                        : undefined
+                  }
                   data-testid={column.key === 'id' ? 'sort-id' : ''}
                   key={column.key}
                   style={{ width: column.width }}
@@ -180,9 +204,10 @@ export const TableInner = <T,>({
                 </th>
               ))}
               {selectable && (
-                <th className={styles.selector}>
+                <th role="columnheader" aria-label="Select all" className={styles.selector}>
                   <input
                     type="checkbox"
+                    aria-label="Select all"
                     checked={selectedRows.length === displayData.length && displayData.length > 0}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                   />
@@ -194,27 +219,38 @@ export const TableInner = <T,>({
           <tbody>
             {displayData.map((row) => (
               <tr
+                role="row"
+                tabIndex={onRowClick ? 0 : -1}
+                onKeyDown={(e) => handleRowKeyDown(e, row)}
                 key={String(row[rowKey as keyof T])}
                 onClick={() => onRowClick?.(row)}
                 className={onRowClick ? `${styles.clickable}` : ' '}
               >
                 {columns.map((column) => (
                   <td
+                    role="cell"
                     data-testid={`${column.key === 'id' ? 'test-id' : ''}`}
                     key={column.key}
                     className={`${styles.tableCell} ${styles.ellipsisCell}`}
                     style={{ width: column.width }}
                   >
-                    {column.render
-                      ? column.render(row[column.key as keyof T], row)
-                      : String(row[column.key as keyof T])}
+                    {column.render ? (
+                      column.render(row[column.key as keyof T], row)
+                    ) : (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: sanitazeHtml(String(row[column.key as keyof T])),
+                        }}
+                      />
+                    )}
                   </td>
                 ))}
 
                 {selectable && (
-                  <td>
+                  <td role="cell">
                     <input
                       type="checkbox"
+                      aria-label={`Select row ${String(row[rowKey as keyof T])}`}
                       checked={selectedRows.some(
                         (r) => r[rowKey as keyof T] === row[rowKey as keyof T],
                       )}

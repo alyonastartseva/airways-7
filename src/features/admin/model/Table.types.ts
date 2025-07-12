@@ -12,12 +12,12 @@ export interface TableProps<T> {
   title: string;
   columns: Column<T>[];
   useQuery: UseQueryType<T>;
-  rowKey?: string;
+  rowKey?: keyof T & string;
   selectable?: boolean;
   onRowClick?: (row: T) => void;
   onSelectionChange?: (selectedRows: T[]) => void;
   defaultSort?: {
-    key: string;
+    key: keyof T & string;
     direction: SortDirection;
   };
 }
