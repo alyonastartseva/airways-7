@@ -1,14 +1,114 @@
+import TicketCard from '../entities/ticketCard/TicketCard';
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
-import Layout from '../widgets/layout/Layout';
 
+const demoTicket = {
+  ticketNumber: '123456789',
+  airline: 'S7 Airlines',
+  flightNumber: 'S7 5566',
+  aircraft: 'Boeing 737-800',
+  departureTime: '14:50',
+  arrivalTime: '22:30',
+  departureDate: '11 авг, Пт',
+  arrivalDate: '11 авг, Пт',
+  departureCity: 'Ташкент',
+  arrivalCity: 'Москва',
+  departureAirport: 'TAS',
+  arrivalAirport: 'DME',
+  departureAirportName: 'Южный',
+  arrivalAirportName: 'Домодедово',
+  departureCountry: 'Узбекистан',
+  arrivalCountry: 'Россия',
+  duration: '9ч 40м',
+  layoverTime: '1ч 15м',
+  distance: '3100 км',
+  meal: 'Горячее питание',
+  petsAllowed: true,
+  transferAirports: ['OVB'],
+  layoverTimes: ['2ч 25м'],
+  segments: [
+    {
+      flightNumber: 'S7 5566',
+      aircraft: 'Boeing 737-800',
+      departureTime: '14:50',
+      arrivalTime: '18:10',
+      departureDate: '11 авг, Пт',
+      arrivalDate: '11 авг, Пт',
+      departureCity: 'Ташкент',
+      arrivalCity: 'Новосибирск',
+      departureAirportName: 'Южный',
+      arrivalAirportName: 'Толмачёво',
+      departureAirportCode: 'TAS',
+      arrivalAirportCode: 'OVB',
+      departureCountry: 'Узбекистан',
+      arrivalCountry: 'Россия',
+      duration: '3ч 20м',
+      distance: '1600 км',
+      meal: 'Закуски',
+      petsAllowed: true,
+    },
+    {
+      flightNumber: 'S7 2522',
+      aircraft: 'Airbus A320',
+      departureTime: '19:25',
+      arrivalTime: '22:30',
+      departureDate: '11 авг, Пт',
+      arrivalDate: '11 авг, Пт',
+      departureCity: 'Новосибирск',
+      arrivalCity: 'Москва',
+      departureAirportName: 'Толмачёво',
+      arrivalAirportName: 'Домодедово',
+      departureAirportCode: 'OVB',
+      arrivalAirportCode: 'DME',
+      departureCountry: 'Россия',
+      arrivalCountry: 'Россия',
+      duration: '3ч 05м',
+      distance: '1500 км',
+      meal: 'Горячее питание',
+      petsAllowed: false,
+    },
+  ],
+  fares: [
+    {
+      type: 'Эконом Базовый',
+      price: 26368,
+      baggage: null,
+      carryOn: '10 кг',
+      sportsEquipment: false,
+      bonusMiles: 100,
+      exchangePolicy: 'Нельзя изменить',
+      refundPolicy: 'Без возврата',
+      services: ['Выбор места', 'Регистрация онлайн'],
+    },
+    {
+      type: 'Эконом Стандарт',
+      price: 36058,
+      baggage: '23 кг',
+      carryOn: '10 кг',
+      sportsEquipment: true,
+      bonusMiles: 350,
+      exchangePolicy: 'Можно изменить с доплатой',
+      refundPolicy: 'Возврат с удержанием',
+      services: ['Выбор места', 'Приоритетная посадка', 'Питание'],
+    },
+    {
+      type: 'Эконом Плюс',
+      price: 55438,
+      baggage: '32 кг',
+      carryOn: '15 кг',
+      sportsEquipment: true,
+      bonusMiles: 3576,
+      exchangePolicy: 'Без ограничений',
+      refundPolicy: 'Полный возврат',
+      services: ['Зал ожидания', 'Питание', 'Приоритет'],
+    },
+  ],
+};
 
 const App: React.FC = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-      </Route>
-    </Routes>
+    <>
+      <TicketCard data={demoTicket} />
+    </>
   );
 };
 

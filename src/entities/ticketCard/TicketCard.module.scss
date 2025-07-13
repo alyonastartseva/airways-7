@@ -1,0 +1,334 @@
+// === Цвета и базовые переменные ===
+$gray: #666;
+$gray-light: #999;
+$green: #6aee87;
+$orange: #c77a00;
+$orange-bg: #fff3db;
+$bg-card: #fff;
+$border: #ccc;
+
+.ticket {
+  display: flex;
+  gap: 24px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  align-items: flex-start;
+  color: #333;
+}
+
+// === Левая часть ===
+.left {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.airlineInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  color: $gray;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// === Свернутый маршрут ===
+.routeGrid {
+  display: grid;
+  grid-template-columns: 80px 1fr 80px;
+  grid-template-rows: auto auto;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.timeLeft,
+.timeRight {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.dateLeft,
+.dateRight {
+  font-size: 13px;
+  color: $gray;
+}
+
+.duration {
+  text-align: center;
+  font-size: 13px;
+}
+
+.routeLine {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 20px;
+}
+
+.dotted {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px dashed $gray-light;
+  z-index: 1;
+}
+
+.airport {
+  position: relative;
+  z-index: 2;
+  font-size: 13px;
+  background: #fff;
+  padding: 0 2px;
+  color: #000;
+  white-space: nowrap;
+}
+
+// === Развёрнутый маршрут ===
+.segmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.flightHeader {
+  font-size: 14px;
+  font-weight: 600;
+  padding-left: 32px;
+  color: #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid gray;
+  height: 30px;
+}
+
+.flight{
+  display: flex;
+}
+
+.plane{
+  display: flex;
+  color: $green ;
+  padding-right: 32px;
+}
+
+.segmentBox {
+  position: relative;
+  padding-left: 32px;
+  border-left: 1px dashed $border;
+}
+
+.segmentIcon {
+  position: absolute;
+  left: -9px;
+  font-size: 14px;
+  background: $bg-card;
+  color: $gray-light;
+}
+
+.segmentContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.segmentRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.timeBig {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dateSmall {
+  font-size: 13px;
+  color: $gray;
+}
+
+.cityCountry {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.airportFull {
+  font-size: 13px;
+  color: $gray-light;
+}
+
+.metaRow {
+  display: block;
+  gap: 14px;
+  font-size: 13px;
+  color: #444;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.meal{
+  display: flex;
+}
+
+.petsAllowed{
+  display: flex;
+}
+
+.metaIcon {
+  margin-right: 4px;
+  color: $gray;
+}
+
+.iconActive {
+  color: $green;
+  margin-right: 4px;
+}
+
+.iconInactive {
+  color: $gray-light;
+  margin-right: 4px;
+}
+
+.layoverBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  background: $orange-bg;
+  color: $orange;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  border-left: 1px dashed $border;
+}
+
+// Кнопка раскрытия
+.expandBtn {
+  font-size: 14px;
+  color: $gray;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: end;
+}
+
+// === Правая часть (тарифы) ===
+.right {
+  flex: 2;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+}
+
+.fareCard {
+  background: #f5f8ff;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #000;
+}
+
+.fareHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fareTitleBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fareTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.iconGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.farePrice {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.selectBtn {
+  padding: 6px 12px;
+  font-size: 14px;
+  background: $green;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.section {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.serviceList {
+  padding-left: 16px;
+  margin: 0;
+}
+
+.optionLine {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.checkIcon {
+  color: #2eb84d;
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.rubleIcon {
+  color: #c77a00;
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
