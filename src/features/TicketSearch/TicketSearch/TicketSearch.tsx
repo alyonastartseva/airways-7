@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   useGetCategoriesQuery,
   useLazyGetDestinationsQuery,
@@ -8,6 +7,7 @@ import type { Destination, SearchCriteria } from '../model/types';
 import styles from './TicketSearch.module.scss';
 import { Select, Input, Checkbox, DatePicker, Radio, Button, Space, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
+import { useEffect, useState } from 'react';
 
 const { RangePicker } = DatePicker;
 const { Group: RadioGroup } = Radio;
