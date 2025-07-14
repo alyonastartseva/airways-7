@@ -1,7 +1,8 @@
 import { useGetPassengersQuery } from '../../../entities/passenger';
 import type { Passenger } from '../../../entities/passenger';
-import { Table } from '../../../features/admin/components/DataTable/Table';
 import type { Column } from '../../../shared/model/Column.types';
+import { Table } from '../../admin-table';
+import { useNavigate } from 'react-router-dom';
 
 const columns: Column<Passenger>[] = [
   { key: 'id', title: 'ID', sortable: true, width: 60 },
@@ -15,6 +16,9 @@ const columns: Column<Passenger>[] = [
 ];
 
 const PassengersTable = () => {
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useGetPassengersQuery();
+
   const handleRowClick = (passenger: Passenger) => {
     console.log('Selected user:', passenger);
   };
@@ -23,16 +27,23 @@ const PassengersTable = () => {
     console.log('Selected rows:', selected);
   };
 
+  const handleError = () => {
+    navigate('/');
+  };
+
   return (
     <>
       <Table
         title="Пассажиры"
         columns={columns}
-        useQuery={useGetPassengersQuery}
+        data={data}
+        isLoading={isLoading}
+        isError={isError}
         rowKey="id"
         selectable
         onRowClick={handleRowClick}
         onSelectionChange={handleSelectionChange}
+        onError={handleError}
       />
     </>
   );
