@@ -3,7 +3,6 @@ import type { BookedTicketProps } from './BookedTicketTypes';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 // import { Tag } from 'antd';
-import React from 'react';
 import { FaSuitcaseRolling, FaSuitcase, FaExchangeAlt, FaChair, FaPen } from 'react-icons/fa';
 import { SiS7Airlines } from 'react-icons/si';
 

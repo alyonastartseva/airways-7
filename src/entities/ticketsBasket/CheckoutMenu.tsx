@@ -1,7 +1,7 @@
 import styles from './CheckoutMenu.module.scss';
 import type { CheckoutMenuProps } from './CheckoutMenuTypes';
 import { Select, Input } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FaChevronCircleDown, FaChevronDown, FaTimes, FaArrowRight } from 'react-icons/fa';
 
 interface Props {
@@ -9,32 +9,30 @@ interface Props {
 }
 
 const CheckoutMenu: React.FC<Props> = ({ data }) => {
-  const [isFlightDetailsOpen, setIsFlightDetailsOpen] = useState(false);
-  const [isCertificateFormOpen, setIsCertificateFormOpen] = useState(false);
-  const [isPromoCodeFormOpen, setIsPromoCodeFormOpen] = useState(false);
+  const [openSections, setOpenSections] = useState({
+    isFlightDetailsOpen: false,
+    isCertificateOpen: false,
+    isPromoCodeOpen: false,
+  });
 
-  const toggleFlightDetails = () => {
-    setIsFlightDetailsOpen(!isFlightDetailsOpen);
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections({
+      ...openSections,
+      [section]: !openSections[section],
+    });
   };
 
-  const toggleCertificateForm = () => {
-    setIsCertificateFormOpen(!isCertificateFormOpen);
-  };
-
-  const togglePromoCodeForm = () => {
-    setIsPromoCodeFormOpen(!isPromoCodeFormOpen);
-  };
   return (
     <div className={styles.checkoutMenuContainer}>
       <div className={styles.priceEvaluation}>
         <div className={styles.priceEvaluation__header}>
-          <div className={styles.title} onClick={toggleFlightDetails}>
+          <div className={styles.title} onClick={() => toggleSection('isFlightDetailsOpen')}>
             <FaChevronDown style={{ paddingRight: 6, marginLeft: -6 }} />
             Авиа
           </div>
-          <div className={styles.price}>{data.priceTotal}</div>
+          <div className={styles.price}>{data.priceTotal.toLocaleString()} ₽</div>
         </div>
-        {isFlightDetailsOpen && (
+        {openSections.isFlightDetailsOpen && (
           <div className={styles.priceEvaluation__content}>
             <div className={styles.content__container}>
               <div className={styles.content__title}>
@@ -50,18 +48,18 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
             </div>
             <div className={styles.content__container}>
               <div className={styles.content__title}>{data.tickets}</div>
-              <div className={styles.content__price}>{data.ticketPrice}</div>
+              <div className={styles.content__price}>{data.ticketPrice.toLocaleString()} ₽</div>
             </div>
             <div className={styles.content__container}>
               <div className={styles.content__title}>
                 <FaChevronDown style={{ paddingRight: 6, marginLeft: -20 }} />
                 Таксы и сборы
               </div>
-              <div className={styles.content__price}>{data.taxes}</div>
+              <div className={styles.content__price}>{data.taxes.toLocaleString()} ₽</div>
             </div>
             <div className={styles.content__container}>
               <div className={styles.content__title}>Таксы</div>
-              <div className={styles.content__price}>{data.taxes}</div>
+              <div className={styles.content__price}>{data.taxes.toLocaleString()} ₽</div>
             </div>
             <a className={styles.termsLink} href="#">
               Правила применения тарифа
@@ -70,11 +68,14 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
         )}
       </div>
       <div className={styles.certificate}>
-        {isCertificateFormOpen ? (
+        {openSections.isCertificateOpen ? (
           <div className={styles.toggleForm__open}>
             <div className={styles.toggleForm__title}>
               Сертификат
-              <FaTimes className={styles.closeBtn} onClick={toggleCertificateForm} />
+              <FaTimes
+                className={styles.closeBtn}
+                onClick={() => toggleSection('isCertificateOpen')}
+              />
             </div>
             <form autoComplete="off">
               <Input placeholder="Номер сертификата" />
@@ -86,7 +87,10 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
             </button>
           </div>
         ) : (
-          <div className={styles.toggleForm__closed} onClick={toggleCertificateForm}>
+          <div
+            className={styles.toggleForm__closed}
+            onClick={() => toggleSection('isCertificateOpen')}
+          >
             <div>Добавить сертификат</div>
             <div>
               <FaChevronCircleDown style={{ color: 'rgb(190, 230, 255)', width: 25, height: 25 }} />
@@ -95,11 +99,14 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
         )}
       </div>
       <div className={styles.promocode}>
-        {isPromoCodeFormOpen ? (
+        {openSections.isPromoCodeOpen ? (
           <div className={styles.toggleForm__open}>
             <div className={styles.toggleForm__title}>
               Промокод
-              <FaTimes className={styles.closeBtn} onClick={togglePromoCodeForm} />
+              <FaTimes
+                className={styles.closeBtn}
+                onClick={() => toggleSection('isPromoCodeOpen')}
+              />
             </div>
             <form autoComplete="off">
               <Input type="input" placeholder="Добавьте промокод"></Input>
@@ -110,7 +117,10 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
             </button>
           </div>
         ) : (
-          <div className={styles.toggleForm__closed} onClick={togglePromoCodeForm}>
+          <div
+            className={styles.toggleForm__closed}
+            onClick={() => toggleSection('isPromoCodeOpen')}
+          >
             <div>Добавить промокод</div>
             <div>
               <FaChevronCircleDown style={{ color: 'rgb(190, 230, 255)', width: 25, height: 25 }} />
@@ -120,7 +130,7 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
       </div>
       <div className={styles.total}>
         <div className={styles.title}>Итого:</div>
-        <div className={styles.price}>{data.priceTotal}</div>
+        <div className={styles.price}>{data.priceTotal.toLocaleString()}</div>
         <Select
           defaultValue="₽"
           style={{ width: 58, marginLeft: 10 }}
