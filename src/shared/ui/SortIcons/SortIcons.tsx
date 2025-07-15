@@ -2,7 +2,7 @@ import styles from './SortIcons.module.scss';
 import type { SortDirection } from './SortIcons.types';
 import { useEffect, useState } from 'react';
 
-export const SortIconAsc = ({
+export const SortIcon = ({
   sortConfig,
   columnKey,
 }: {

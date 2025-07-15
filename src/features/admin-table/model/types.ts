@@ -22,7 +22,7 @@ export interface TableHeaderProps<T> {
   selectedCount: number;
   totalCount: number;
   onSort: (key: keyof T & string) => void;
-  onSelectAll: (checked: boolean) => void;
+  onSelectAll: (args: { row?: T; checked: boolean }) => void;
 }
 
 export interface TableBodyProps<T> {
@@ -32,7 +32,7 @@ export interface TableBodyProps<T> {
   selectable?: boolean;
   selectedRows: T[];
   onRowClick?: (row: T) => void;
-  onRowSelect?: (row: T, checked: boolean) => void;
+  onRowSelect?: (args: { row?: T; checked: boolean }) => void;
 }
 
 export interface TableProps<T> {

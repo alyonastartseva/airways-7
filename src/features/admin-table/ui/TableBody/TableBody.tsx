@@ -1,4 +1,5 @@
-import { sanitazeHtml } from '../../../../shared/lib/utils/sanitize';
+import { SelectableCell } from '../../../../shared/ui/SelectableCell/SelectableCell';
+import { TableCell } from '../../../../shared/ui/TableCell/TableCell';
 import type { TableBodyProps } from '../../model/types';
 import styles from '../DataTable/Table.module.scss';
 
@@ -18,7 +19,7 @@ export const TableBody = <T,>({
         const isSelected = selectedRows.some(
           (r) => r[rowKey as keyof T] === row[rowKey as keyof T],
         );
-        onRowSelect?.(row, !isSelected);
+        onRowSelect?.({ row, checked: !isSelected });
       } else {
         onRowClick?.(row);
       }
@@ -37,35 +38,22 @@ export const TableBody = <T,>({
           className={onRowClick ? `${styles.clickable}` : ' '}
         >
           {columns.map((column) => (
-            <td
-              role="cell"
-              data-testid={`${column.key === 'id' ? 'test-id' : ''}`}
+            <TableCell
               key={column.key}
-              className={`${styles.tableCell} ${styles.ellipsisCell}`}
-              style={{ width: column.width }}
-            >
-              {column.render ? (
-                column.render(row[column.key as keyof T], row)
-              ) : (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: sanitazeHtml(String(row[column.key as keyof T])),
-                  }}
-                />
-              )}
-            </td>
+              value={row[column.key as keyof T]}
+              row={row}
+              width={column.width}
+              testId={`${column.key === 'id' ? 'test-id' : ''}`}
+            />
           ))}
 
           {selectable && (
-            <td role="cell">
-              <input
-                type="checkbox"
-                aria-label={`Select row ${String(row[rowKey as keyof T])}`}
-                checked={selectedRows.some((r) => r[rowKey as keyof T] === row[rowKey as keyof T])}
-                onChange={(e) => onRowSelect?.(row, e.target.checked)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </td>
+            <SelectableCell
+              row={row}
+              rowKey={rowKey}
+              isSelected={selectedRows.some((r) => r[rowKey as keyof T] === row[rowKey as keyof T])}
+              onSelect={onRowSelect}
+            />
           )}
         </tr>
       ))}

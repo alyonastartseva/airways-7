@@ -7,7 +7,11 @@ export const useTableSelection = <T>(
   const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
   const handleRowSelect = useCallback(
-    (row: T, checked: boolean) => {
+    (args: { row?: T; checked: boolean }) => {
+      const { row, checked } = args;
+
+      if (!row) return;
+
       const newSelected = checked
         ? [...selectedRows, row]
         : selectedRows.filter((r) => r[rowKey as keyof T] !== row[rowKey as keyof T]);

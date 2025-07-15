@@ -103,7 +103,7 @@ export const TableInner = <T,>({
             selectedCount={selectedRows.length}
             totalCount={displayData.length}
             onSort={handleSortWithReset}
-            onSelectAll={(checked) => handleSelectAll(checked, displayData)}
+            onSelectAll={(args) => handleSelectAll(args.checked, displayData)}
           />
           <TableBody
             data={displayData}
