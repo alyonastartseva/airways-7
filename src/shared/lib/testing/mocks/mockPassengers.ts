@@ -10,7 +10,7 @@ export interface MockPassengerType {
   email: string;
 }
 
-export const mockData: MockPassengerType[] = [
+export const mockPassengers: MockPassengerType[] = [
   {
     id: 404,
     FIO: 'Новое Новое Полновичев',
