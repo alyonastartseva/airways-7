@@ -10,10 +10,10 @@ export default defineConfig({
     compression({
       algorithm: 'gzip',
       ext: '.gz',
-      threshold: 10240,
+      threshold: 1024,
     }),
     visualizer({
-      open: true,
+      open: process.env.NODE_ENV === 'development',
       gzipSize: true,
     }),
   ],
@@ -26,9 +26,8 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
+        drop_console: ['log', 'info'],
         drop_debugger: true,
-        pure_funcs: ['console.info'],
       },
       format: {
         comments: false,
@@ -36,33 +35,18 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) {
-              return 'vendor-react';
-            }
-            if (id.includes('lodash')) {
-              return 'vendor-utils';
-            }
-            if (id.includes('antd')) {
-              return 'vendor-antd';
-            }
-            return 'vendor';
-          }
-          if (id.includes('src/pages') || id.includes('src/routes/')) {
-            const matches = id.match(/src\/(pages|routes)\/(.*?)\//);
-            return matches ? `route-${matches[2]}` : null;
-          }
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['antd'],
         },
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'antd/es/alert', 'react-router-dom'],
-    exclude: ['@vitejs/plugin-react'],
+    include: ['react', 'react-dom', 'react-router-dom'],
   },
 });

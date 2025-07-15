@@ -1,12 +1,23 @@
-import type { ApiPassenger } from '../../../entities/passenger';
+import { MAX_CACHE_SIZE } from '../../../shared/config/config';
 import { defaultPassenger } from '../model/defaultPassenger';
-import { createPhoneNumber } from '../model/types';
+import { type ApiPassenger, createPhoneNumber } from '../model/types';
 
-const cashe = new WeakMap<ApiPassenger[], unknown[]>();
+const cache = new Map<string, unknown[]>();
 
 export const passengersMapper = (content?: ApiPassenger[]) => {
   if (!content || !Array.isArray(content)) return [];
-  if (cashe.has(content)) return cashe.get(content) as ApiPassenger[];
+
+  const cacheKey = content
+    .map((p) => p.id)
+    .sort()
+    .join(',');
+
+  if (cache.has(cacheKey)) return cache.get(cacheKey) as ApiPassenger[];
+
+  if (cache.size >= MAX_CACHE_SIZE) {
+    const firstKey = cache.keys().next().value;
+    if (firstKey) cache.delete(firstKey);
+  }
 
   const result = content.map((passenger: ApiPassenger) => ({
     ...defaultPassenger,
@@ -21,6 +32,6 @@ export const passengersMapper = (content?: ApiPassenger[]) => {
     email: passenger.email,
   }));
 
-  cashe.set(content, result);
+  cache.set(cacheKey, result);
   return result;
 };

@@ -8,7 +8,7 @@ import { TableBody } from '../TableBody/TableBody';
 import { TableHeader } from '../TableHeader/TableHeader';
 import styles from './Table.module.scss';
 import Alert from 'antd/es/alert';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 
 export const TableInner = <T,>({
   title,
@@ -16,18 +16,27 @@ export const TableInner = <T,>({
   data = [],
   isLoading = false,
   isError = false,
-  rowKey = 'id' as keyof T & string,
+  rowKey,
   selectable = false,
   onRowClick,
   onSelectionChange,
   onError,
   defaultSort,
 }: TableProps<T>) => {
+  const safeRowKey = useMemo(
+    () =>
+      rowKey ||
+      (Object.keys(data[0] || {}).includes('id')
+        ? ('id' as keyof T & string)
+        : (Object.keys(data[0] || {})[0] as keyof T & string)),
+    [rowKey, data],
+  );
+
   const { sortedData, sortConfig, handleSort } = useTableSort<T>(data, defaultSort);
   const { pagination, displayData, handlePageChange, resetToFirstPage } =
     useTablePagination<T>(sortedData);
   const { selectedRows, handleRowSelect, handleSelectAll } = useTableSelection<T>(
-    rowKey,
+    safeRowKey,
     onSelectionChange,
   );
 
@@ -99,7 +108,7 @@ export const TableInner = <T,>({
           <TableBody
             data={displayData}
             columns={columns}
-            rowKey={rowKey}
+            rowKey={safeRowKey}
             selectable={selectable}
             selectedRows={selectedRows}
             onRowClick={onRowClick}
@@ -120,4 +129,15 @@ export const TableInner = <T,>({
   );
 };
 
-export const Table = memo(TableInner) as TableType;
+export const Table = memo(TableInner, (prevProps, nextProps) => {
+  return (
+    prevProps.data === nextProps.data &&
+    prevProps.isLoading === nextProps.isLoading &&
+    prevProps.isError === nextProps.isError &&
+    prevProps.rowKey === nextProps.rowKey &&
+    prevProps.selectable === nextProps.selectable &&
+    prevProps.onRowClick === nextProps.onRowClick &&
+    prevProps.onSelectionChange === nextProps.onSelectionChange &&
+    prevProps.defaultSort === nextProps.defaultSort
+  );
+}) as TableType;

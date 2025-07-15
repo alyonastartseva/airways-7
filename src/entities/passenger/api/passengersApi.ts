@@ -1,7 +1,7 @@
-import type { Passenger } from '../../../entities/passenger';
 import { baseApi } from '../../../shared/api/baseApi';
 import { passengersMapper } from '../lib/passengersMapper';
 import { validatePassengersResponse } from '../lib/schemas';
+import type { Passenger } from '../model/types';
 
 const passengersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
