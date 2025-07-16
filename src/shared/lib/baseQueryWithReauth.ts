@@ -1,12 +1,17 @@
-import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { BaseQueryFn } from '@reduxjs/toolkit/query';
+import {
+  getToken,
+  setToken,
+  getRefreshToken,
+  setRefreshToken,
+  clearTokens,
+} from '@/shared/lib/token';
 import type { FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { getToken, saveToken } from './token';
+import { fetchBaseQuery, type BaseQueryFn } from '@reduxjs/toolkit/query/react';
 
-const baseUrl = 'http://92.118.114.29:8180/realms/airline-realm/protocol/openid-connect/';
+const BASE_URL = 'http://92.118.114.29:8180/realms/airline-realm/protocol/openid-connect/';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl,
+  baseUrl: BASE_URL,
   prepareHeaders: (headers) => {
     const token = getToken();
     if (token) {
@@ -17,48 +22,52 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
-  args,
-  api,
-  extraOptions
-) => {
-  let result = await baseQuery(args, api, extraOptions);
+function isTokenResponse(data: unknown): data is { access_token: string; refresh_token: string } {
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'access_token' in data &&
+    'refresh_token' in data
+  ) {
+    const d = data as { access_token?: unknown; refresh_token?: unknown };
+    return typeof d.access_token === 'string' && typeof d.refresh_token === 'string';
+  }
+  return false;
+}
 
-  if (result.error && result.error.status === 401) {
-    const refresh_token = localStorage.getItem('refresh_token');
-    if (!refresh_token) return result;
+export const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  const doRequest = () => baseQuery(args, api, extraOptions);
+  let result = await doRequest();
 
-    const body = new URLSearchParams();
-    body.append('grant_type', 'refresh_token');
-    body.append('client_id', 'airline-project-client');
-    body.append('refresh_token', refresh_token);
+  if (result.error?.status === 401) {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) return result;
 
     const refreshResult = await baseQuery(
       {
         url: 'token',
         method: 'POST',
-        body: body.toString(),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          client_id: 'airline-project-client',
+          refresh_token: refreshToken,
+        }).toString(),
       },
       api,
-      extraOptions
+      extraOptions,
     );
 
-    if (refreshResult.data && typeof refreshResult.data === 'object') {
-      const { access_token, refresh_token: newRefreshToken } = refreshResult.data as {
-        access_token: string;
-        refresh_token: string;
-      };
-
-      saveToken(access_token);
-      localStorage.setItem('refresh_token', newRefreshToken);
-
-      result = await baseQuery(args, api, extraOptions);
+    if (isTokenResponse(refreshResult.data)) {
+      setToken(refreshResult.data.access_token);
+      setRefreshToken(refreshResult.data.refresh_token);
+      result = await doRequest();
     } else {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refresh_token');
+      console.warn('Failed to refresh token. Logging out.');
+      clearTokens();
     }
   }
 

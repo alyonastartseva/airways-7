@@ -3,9 +3,11 @@ export type JwtPayload = {
   realm_access?: {
     roles: string[];
   };
+  exp?: number;
 };
 
 export type DecodedUser = {
   username: string;
   roles: string[];
+  exp?: number;
 };

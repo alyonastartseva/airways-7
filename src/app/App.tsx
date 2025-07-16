@@ -1,8 +1,8 @@
-import { StrictMode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
-import { Provider } from 'react-redux';
 import { store } from './store';
+import { StrictMode } from 'react';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
 const App = () => (
   <StrictMode>

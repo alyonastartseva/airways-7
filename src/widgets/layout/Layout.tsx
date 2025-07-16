@@ -1,7 +1,7 @@
-import Header from '@/widgets/header/Header';
-import Footer from '@/widgets/footer/Footer';
-import { Outlet } from 'react-router-dom';
 import styles from './Layout.module.scss';
+import Footer from '@/widgets/footer/Footer';
+import Header from '@/widgets/header/Header';
+import { Outlet } from 'react-router-dom';
 
 const Layout: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const Layout: React.FC = () => {
       <Header />
       <main className={styles.content}>
         <Outlet />
-      </main> 
+      </main>
       <Footer />
     </div>
   );
