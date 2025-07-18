@@ -1,4 +1,4 @@
-import type { PassengersResponse } from '../model/types';
+import type { PassengersResponse, PassengerDto } from '../model/types';
 
 export const validatePassengersResponse = (data: unknown): PassengersResponse => {
   if (!data || typeof data !== 'object') throw new Error('Invalid Response Format');
@@ -13,14 +13,15 @@ export const validatePassengersResponse = (data: unknown): PassengersResponse =>
 
   return response as unknown as PassengersResponse;
 };
-export const validatePassenger = (data: unknown) => {
+export const validatePassenger = (data: unknown): PassengerDto => {
   if (!data || typeof data !== 'object') throw new Error('Invalid passenger data');
+
   const passenger = data as Record<string, unknown>;
-  const required = ['id', 'firstName', 'lastName', 'email'];
+  const required = ['id', 'firstName', 'lastName', 'email', 'passport'];
 
   for (const field of required) {
     if (!(field in passenger)) throw new Error(`Missing required field: ${field}`);
   }
 
-  return passenger;
+  return passenger as unknown as PassengerDto;
 };

@@ -1,6 +1,6 @@
 import { baseApi } from '../../../shared/api/baseApi';
-import { passengersMapper } from '../lib/passengersMapper';
-import { validatePassengersResponse } from '../lib/schemas';
+import { mapDtoToPassengers } from '../lib/mappers';
+import { validatePassengersResponse } from '../lib/validation';
 import type { Passenger } from '../model/types';
 
 const passengersApi = baseApi.injectEndpoints({
@@ -12,7 +12,7 @@ const passengersApi = baseApi.injectEndpoints({
         try {
           const validateResponse = validatePassengersResponse(response);
           return validateResponse.content?.length
-            ? (passengersMapper(validateResponse.content) as Passenger[])
+            ? (validateResponse.content.map(mapDtoToPassengers) as Passenger[])
             : [];
         } catch (error) {
           console.error('Validation error', error);

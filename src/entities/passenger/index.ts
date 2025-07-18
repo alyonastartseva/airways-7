@@ -1,6 +1,3 @@
-import { useGetPassengersQuery } from './api/passengersApi';
-import { passengersMapper } from './lib/passengersMapper';
-import type { Passenger, ApiPassenger, PassengersResponse } from './model/types';
-
-export type { Passenger, ApiPassenger, PassengersResponse };
-export { passengersMapper, useGetPassengersQuery };
+export type { Passenger, PassengerDto, PassengersResponse } from './model/types';
+export { useGetPassengersQuery } from './api/index.ts';
+export { mapDtoToPassengers, getFullName } from './lib/mappers.ts';

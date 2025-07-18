@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const columns: Column<Passenger>[] = [
   { key: 'id', title: 'ID', sortable: true, width: 60 },
-  { key: 'FIO', title: 'Имя, Фамилия, Отчество', sortable: true, width: 200 },
+  { key: 'fullname', title: 'Имя, Фамилия, Отчество', sortable: true, width: 200 },
   { key: 'gender', title: 'Пол', sortable: true, width: 80 },
   { key: 'phone', title: 'Телефон', sortable: true, width: 130 },
   { key: 'birthDate', title: 'Дата рождения', sortable: true, width: 115 },
