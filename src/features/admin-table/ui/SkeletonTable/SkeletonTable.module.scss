@@ -17,6 +17,8 @@
 
 .skeletonWrapper {
   height: 600px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .title {
@@ -24,12 +26,15 @@
 }
 
 .skeletonHeader {
-  display: flex;
-  width: 100%;
+  display: table;
+  table-layout: fixed;
+  border-collapse: collapse;
 }
 
-.skeletonTh {
-  height: 100px;
+.skeletonTh,
+.skeletonTd {
+  display: table-cell;
+  height: 100px; /* для th */
   padding: 12px 15px;
   @include apply-skeleton-linear-gradient;
   background-size: 200% 100%;
@@ -37,23 +42,23 @@
   border: 1px solid $color-border-table;
 }
 
+.selector {
+  width: 50px;
+}
+
+.skeletonHeader,
 .skeletonBody {
-  display: flex;
-  flex-direction: column;
+  display: table;
+  table-layout: fixed;
+  border-collapse: collapse;
 }
 
 .skeletonRow {
-  display: flex;
-  width: 100%;
+  display: table-row;
 }
 
 .skeletonTd {
-  height: 49px;
-  padding: 12px 15px;
-  @include apply-skeleton-linear-gradient;
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border: 1px solid $color-border-table;
+  height: 49px; /* для td */
 }
 
 .pagination {

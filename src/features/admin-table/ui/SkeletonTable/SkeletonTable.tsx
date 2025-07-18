@@ -10,12 +10,14 @@ export const SkeletonTable = <T,>({
   columnsCount,
   columns,
   pagination,
+  selectable = false,
 }: {
   title: string;
   rowsCount?: number;
   columnsCount: number;
   columns: Column<T>[];
   pagination: PaginationType;
+  selectable: boolean;
 }) => {
   return (
     <div data-testid="skeleton-loader" className={styles.skeletonContainer}>
@@ -31,6 +33,7 @@ export const SkeletonTable = <T,>({
               style={{ width: columns[i]?.width }}
             />
           ))}
+          {selectable && <div className={`${styles.skeletonTd} ${styles.selector}`} />}
         </div>
 
         <div className={styles.skeletonBody}>
@@ -43,6 +46,7 @@ export const SkeletonTable = <T,>({
                   style={{ width: columns[colIndex]?.width }}
                 />
               ))}
+              {selectable && <div className={`${styles.skeletonTd} ${styles.selector}`} />}
             </div>
           ))}
         </div>

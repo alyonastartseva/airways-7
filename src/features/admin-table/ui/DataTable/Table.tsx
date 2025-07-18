@@ -53,6 +53,7 @@ export const TableInner = <T,>({
         columnsCount={columns.length}
         columns={columns}
         pagination={pagination}
+        selectable
       />
     );
 
