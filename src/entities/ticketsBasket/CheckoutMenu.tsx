@@ -5,10 +5,10 @@ import { useState } from 'react';
 import { FaChevronCircleDown, FaChevronDown, FaTimes, FaArrowRight } from 'react-icons/fa';
 
 interface Props {
-  data: CheckoutMenuProps;
+  checkoutMenu: CheckoutMenuProps;
 }
 
-const CheckoutMenu: React.FC<Props> = ({ data }) => {
+const CheckoutMenu: React.FC<Props> = ({ checkoutMenu }) => {
   const [openSections, setOpenSections] = useState({
     isFlightDetailsOpen: false,
     isCertificateOpen: false,
@@ -30,36 +30,38 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
             <FaChevronDown style={{ paddingRight: 6, marginLeft: -6 }} />
             Авиа
           </div>
-          <div className={styles.price}>{data.priceTotal.toLocaleString()} ₽</div>
+          <div className={styles.price}>{checkoutMenu.priceTotal.toLocaleString()} ₽</div>
         </div>
         {openSections.isFlightDetailsOpen && (
           <div className={styles.priceEvaluation__content}>
             <div className={styles.content__container}>
               <div className={styles.content__title}>
                 <div className={styles.title__route}>
-                  <span>{data.departureInfo}</span>
+                  <span>{checkoutMenu.departureInfo}</span>
                   <FaArrowRight style={{ color: 'grey' }} />
-                  <span>{data.arrivalInfo}</span>
+                  <span>{checkoutMenu.arrivalInfo}</span>
                 </div>
               </div>
               <div className={styles.content__routeDescription}>
-                {data.destinationDirection} · {data.date}
+                {checkoutMenu.destinationDirection} · {checkoutMenu.date}
               </div>
             </div>
             <div className={styles.content__container}>
-              <div className={styles.content__title}>{data.tickets}</div>
-              <div className={styles.content__price}>{data.ticketPrice.toLocaleString()} ₽</div>
+              <div className={styles.content__title}>{checkoutMenu.tickets}</div>
+              <div className={styles.content__price}>
+                {checkoutMenu.ticketPrice.toLocaleString()} ₽
+              </div>
             </div>
             <div className={styles.content__container}>
               <div className={styles.content__title}>
                 <FaChevronDown style={{ paddingRight: 6, marginLeft: -20 }} />
                 Таксы и сборы
               </div>
-              <div className={styles.content__price}>{data.taxes.toLocaleString()} ₽</div>
+              <div className={styles.content__price}>{checkoutMenu.taxes.toLocaleString()} ₽</div>
             </div>
             <div className={styles.content__container}>
               <div className={styles.content__title}>Таксы</div>
-              <div className={styles.content__price}>{data.taxes.toLocaleString()} ₽</div>
+              <div className={styles.content__price}>{checkoutMenu.taxes.toLocaleString()} ₽</div>
             </div>
             <a className={styles.termsLink} href="#">
               Правила применения тарифа
@@ -130,7 +132,7 @@ const CheckoutMenu: React.FC<Props> = ({ data }) => {
       </div>
       <div className={styles.total}>
         <div className={styles.title}>Итого:</div>
-        <div className={styles.price}>{data.priceTotal.toLocaleString()}</div>
+        <div className={styles.price}>{checkoutMenu.priceTotal.toLocaleString()}</div>
         <Select
           defaultValue="₽"
           style={{ width: 58, marginLeft: 10 }}
