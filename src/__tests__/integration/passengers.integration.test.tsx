@@ -1,4 +1,4 @@
-import { AdminPassengerPage } from '../../pages/admin/passengers';
+import AdminPassengerPage from '../../pages/admin/passengers';
 import { store } from '../../shared/store/store';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';

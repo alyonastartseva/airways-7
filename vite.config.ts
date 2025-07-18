@@ -1,13 +1,11 @@
 import react from '@vitejs/plugin-react';
-import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
-import compression from 'vite-plugin-compression';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
+import compression from 'vite-plugin-compression';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
 
-const styleIndexPath = path
-  .resolve(__dirname, 'src/shared/styles/index.scss')
-  .replace(/\\/g, '/');
+const styleIndexPath = path.resolve(__dirname, 'src/shared/styles/index.scss').replace(/\\/g, '/');
 
 export default defineConfig({
   plugins: [
@@ -16,8 +14,12 @@ export default defineConfig({
     compression({
       algorithm: 'gzip',
       ext: '.gz',
+      threshold: 1024,
     }),
-    visualizer(),
+    visualizer({
+      open: process.env.NODE_ENV === 'development',
+      gzipSize: true,
+    }),
   ],
   resolve: {
     alias: {
@@ -40,13 +42,17 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
+  },
   build: {
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
+        drop_console: ['log', 'info'],
         drop_debugger: true,
-        pure_funcs: ['console.info'],
       },
       format: {
         comments: false,
@@ -55,14 +61,17 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ['react', 'react-dom'],
-          vendor: ['lodash'],
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['antd'],
         },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
     chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
+    include: ['react', 'react-dom', 'react-router-dom'],
   },
 });
