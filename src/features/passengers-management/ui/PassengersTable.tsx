@@ -1,5 +1,4 @@
-import { useGetPassengersQuery } from '../../../entities/passenger';
-import type { Passenger } from '../../../entities/passenger';
+import { useGetPassengersQuery, type Passenger } from '../../../entities/passenger';
 import type { Column } from '../../../shared/model/Column.types';
 import { Table } from '../../admin-table';
 import { useNavigate } from 'react-router-dom';
