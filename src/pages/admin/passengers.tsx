@@ -1,3 +1,5 @@
 import PassengersTable from '../../features/passengers-management';
 
-export const AdminPassengerPage = () => <PassengersTable />;
+const AdminPassengerPage = () => <PassengersTable />;
+
+export default AdminPassengerPage;
