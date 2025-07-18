@@ -42,7 +42,6 @@ export const TableBody = <T,>({
               key={column.key}
               value={row[column.key as keyof T]}
               row={row}
-              width={column.width}
               testId={`${column.key === 'id' ? 'test-id' : ''}`}
             />
           ))}

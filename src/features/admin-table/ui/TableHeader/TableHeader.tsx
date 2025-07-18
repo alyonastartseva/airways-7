@@ -20,7 +20,6 @@ export const TableHeader = <T,>({
           columnKey={column.key}
           sortable={column.sortable}
           sortConfig={sortConfig}
-          width={column.width}
           onSort={onSort}
         />
       ))}

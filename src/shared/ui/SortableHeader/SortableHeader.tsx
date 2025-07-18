@@ -8,7 +8,6 @@ interface SortableHeaderProps<T> {
   columnKey: keyof T & string;
   sortable?: boolean;
   sortConfig: { key: string; direction: SortDirection } | null;
-  width?: number;
   onSort: (key: keyof T & string) => void;
 }
 
@@ -17,7 +16,6 @@ export const SortableHeader = <T,>({
   columnKey,
   sortable,
   sortConfig,
-  width,
   onSort,
 }: SortableHeaderProps<T>) => {
   const handleHeaderKeyDown = (e: React.KeyboardEvent, column: Column<T>) => {
@@ -40,7 +38,6 @@ export const SortableHeader = <T,>({
             : undefined
       }
       data-testid={columnKey === 'id' ? 'sort-id' : ''}
-      style={{ width }}
       onClick={() => sortable && onSort(columnKey)}
       onKeyDown={(e) => handleHeaderKeyDown(e, { key: columnKey, sortable } as Column<T>)}
       className={sortable ? styles.sortable : ''}

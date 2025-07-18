@@ -5,17 +5,11 @@ interface TableCellProps<T> {
   value: T[keyof T];
   row: T;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
-  width?: number;
   testId?: string;
 }
 
-export const TableCell = <T,>({ value, row, render, width, testId }: TableCellProps<T>) => (
-  <td
-    role="cell"
-    data-testid={testId}
-    className={`${styles.tableCell} ${styles.ellipsisCell}`}
-    style={{ width }}
-  >
+export const TableCell = <T,>({ value, row, render, testId }: TableCellProps<T>) => (
+  <td role="cell" data-testid={testId} className={`${styles.tableCell} ${styles.ellipsisCell}`}>
     {render ? (
       render(value, row)
     ) : (
