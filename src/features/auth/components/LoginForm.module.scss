@@ -1,12 +1,9 @@
-@use '../../../shared/styles/color-variables' as *;
-@use '../../../shared/styles/text-variables.scss' as *;
-
 .formWrapper {
   font-family: $font-primary;
   min-width: 600px;
   max-width: 600px;
   padding: 44px 50px 16px 50px;
-  background-color: #ffffff;
+  background-color: $text-link;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border-radius: 12px;
 }
