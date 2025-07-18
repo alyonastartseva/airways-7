@@ -1,0 +1,117 @@
+* {
+  box-sizing: border-box;
+}
+
+.adminTable {
+  font-family: $font-table;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  align-items: start;
+  justify-content: center;
+  overflow: hidden;
+  min-width: 1080px;
+
+  font-style: italic;
+
+  .tableContainer {
+    td,
+    th {
+      width: auto;
+    }
+    .selector {
+      width: 50px;
+    }
+  }
+}
+
+.title {
+  font-size: $text-xl;
+}
+
+.tableContainer {
+  contain: strict;
+  overflow-x: auto;
+  overflow-y: auto;
+  border-radius: 2px;
+  height: 600px;
+  width: 100%;
+  table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+
+    colgroup {
+      display: table-column-group;
+    }
+
+    col {
+      display: table-column;
+    }
+  }
+}
+
+th,
+td {
+  padding: 12px 15px;
+  text-align: center;
+  border: 1px solid $color-border-table;
+  overflow: hidden;
+}
+
+.tableCell {
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  height: 49px;
+}
+
+.ellipsisCell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+th {
+  background-color: $th-color;
+  font-weight: 600;
+  height: 100px;
+  position: sticky;
+  top: 0;
+}
+
+.headerCell {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background-color: $color-background;
+  }
+}
+
+.sortIcons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-color: $color-background;
+}
+
+.pagination {
+  min-height: 50px;
+}
