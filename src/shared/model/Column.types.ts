@@ -1,10 +1,12 @@
+import type { ReactNode } from 'react';
+
 export type ColumnType = 'string' | 'number' | 'date';
 
 export interface Column<T> {
-  key: string;
+  key: keyof T & string;
   title: string;
   type?: ColumnType;
   sortable?: boolean;
   width?: number;
-  render?: (value: any, row: T) => React.ReactNode;
+  render?: (value: T[keyof T], row: T) => ReactNode;
 }

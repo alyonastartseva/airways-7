@@ -2,7 +2,7 @@ import styles from './SortIcons.module.scss';
 import type { SortDirection } from './SortIcons.types';
 import { useEffect, useState } from 'react';
 
-export const SortIconAsc = ({
+export const SortIcon = ({
   sortConfig,
   columnKey,
 }: {
@@ -26,6 +26,8 @@ export const SortIconAsc = ({
   return (
     <>
       <svg
+        aria-labelledby="title asc"
+        data-testid={'sort-icon-asc'}
         width="10"
         height="6"
         viewBox="0 0 10 6"
@@ -34,10 +36,14 @@ export const SortIconAsc = ({
           sortConfig?.key === columnKey && isActiveAsc ? styles.active : ''
         }`}
       >
+        <title id="title">Sort ascension</title>
+        <desc id="asc">Sort ascension column</desc>
         <path d="M5 0L9.33013 5.25H0.669873L5 0Z" fill="currentColor" />
       </svg>
 
       <svg
+        aria-labelledby="title desc"
+        data-testid={'sort-icon-desc'}
         width="10"
         height="6"
         viewBox="0 0 10 6"
@@ -46,6 +52,8 @@ export const SortIconAsc = ({
           sortConfig?.key === columnKey && isActiveDesc ? styles.active : ''
         }`}
       >
+        <title id="title">Sort descension</title>
+        <desc id="desc">Sort descension column</desc>
         <path d="M5 6L0.669873 0.75H9.33013L5 6Z" fill="currentColor" />
       </svg>
     </>

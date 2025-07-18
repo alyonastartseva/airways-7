@@ -5,3 +5,4 @@ export const PAGINATION_CONFIG = {
     total: 500,
   },
 };
+export const MAX_CACHE_SIZE = 100;

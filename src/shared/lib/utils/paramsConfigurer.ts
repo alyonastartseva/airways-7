@@ -1,3 +1,5 @@
+import { sanitazeStringParam, validateNumericParam } from './sanitize';
+
 export type paramsType = {
   page?: number;
   pageSize?: number;
@@ -9,16 +11,22 @@ export const paramsConfigurer = (url: string, params?: paramsType) => {
   if (params) {
     const query = new URLSearchParams();
 
-    if (params.page !== undefined) {
-      query.append('page', params.page.toString());
+    const page = validateNumericParam(params.page);
+    if (page !== null) {
+      query.append('page', page.toString());
     }
 
-    if (params.pageSize !== undefined) {
-      query.append('size', params.pageSize.toString());
+    const pageSize = validateNumericParam(params.pageSize);
+    if (pageSize !== null && pageSize <= 100) {
+      query.append('size', pageSize.toString());
     }
 
     if (params.sortField) {
-      query.append('sort', `${params.sortField},${params.sortOrder ?? 'asc'}`);
+      const sanitizedField = sanitazeStringParam(params.sortField);
+      const order = params.sortOrder === 'desc' ? 'desc' : 'asc';
+      if (sanitizedField) {
+        query.append('sort', `${sanitizedField}, ${order}`);
+      }
     }
 
     if (Array.from(query).length > 0) {
