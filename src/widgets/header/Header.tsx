@@ -12,7 +12,9 @@ const Header: React.FC = () => {
           <span className={styles.logoText}>Air Alien</span>
         </Link>
         <div className={styles.authButtons}>
-          <Button type="default">Вход</Button>
+          <Link to="/login">
+            <Button type="default">Вход</Button>
+          </Link>
           <Button type="default">Регистрация</Button>
         </div>
       </div>
