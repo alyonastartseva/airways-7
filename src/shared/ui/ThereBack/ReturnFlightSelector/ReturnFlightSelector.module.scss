@@ -1,5 +1,6 @@
-@import './variables';
-
+@use "@shared/styles/_color-variables" as *;
+@use "@shared/styles/_text-variables" as *;
+@use "@shared/styles/mixins"         as *;
 .container {
   width: 100%;
   padding: 16px;

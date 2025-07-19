@@ -1,4 +1,4 @@
-use "color-variables" as *;
+@use "color-variables" as *;
 
 @mixin apply-drop-shadow($size: "md") {
   @if map-has-key($shadows, $size) {
@@ -6,4 +6,13 @@ use "color-variables" as *;
   } @else {
     @error "Unknown shadow size: #{$size}. Available: #{map-keys($shadows)}";
   }
+}
+
+@mixin apply-skeleton-linear-gradient() {
+  background: linear-gradient(
+    90deg,
+    $linear-gradient-light 25%,
+    $linear-gradient-dark 50%,
+    $linear-gradient-light 75%
+  );
 }

@@ -1,5 +1,5 @@
-@import '../../../shared/styles/color-variables.scss';
-@import '../../../shared/styles/text-variables.scss';
+@use "@styles/index.scss" as *;
+@use "@styles/_variables.scss" as variables;
 
 .searchTicketsBlock {
   border: 0.9rem solid var(--hover-light-color);

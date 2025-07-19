@@ -20,7 +20,21 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@app/*": ["app/*"],
+      "@assets/*": ["assets/*"],
+      "@entities/*": ["entities/*"],
+      "@features/*": ["features/*"],
+      "@pages/*": ["pages/*"],
+      "@processes/*": ["processes/*"],
+      "@shared/*": ["shared/*"],
+      "@shared/styles/*": ["shared/styles/*"],
+      "@widgets/*": ["widgets/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/features/TicketSearch/types"],
   "exclude": ["node_modules", "**/*.spec.ts"]
