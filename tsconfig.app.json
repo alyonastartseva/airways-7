@@ -37,6 +37,6 @@
       "@widgets/*": ["widgets/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/features/admin-table/ui/DataTable/Table.test.00"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
