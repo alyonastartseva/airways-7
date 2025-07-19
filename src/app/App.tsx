@@ -1,9 +1,9 @@
-import TicketSearch from '../features/TicketSearch/TicketSearch/TicketSearch';
-import { store } from '../shared/store/store';
-import { ReturnFlightSelector } from '../shared/ui/ThereBack/ReturnFlightSelector/ReturnFlightSelector';
-import { TestDateOption } from '../shared/ui/ThereBack/ReturnFlightSelector/TestDateOption';
-import { ThereFlightSelector } from '../shared/ui/ThereBack/ThereFlightSelector/ThereFlightSelector';
 import AppRoutes from './AppRoutes';
+import TicketSearch from '@/features/TicketSearch/TicketSearch/TicketSearch';
+import { store } from '@/shared/store/store';
+import { ReturnFlightSelector } from '@/shared/ui/ThereBack/ReturnFlightSelector/ReturnFlightSelector';
+import { TestDateOption } from '@/shared/ui/ThereBack/ReturnFlightSelector/TestDateOption';
+import { ThereFlightSelector } from '@/shared/ui/ThereBack/ThereFlightSelector/ThereFlightSelector';
 import { StrictMode } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';

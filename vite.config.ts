@@ -1,9 +1,11 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from 'vite';
 import compression from 'vite-plugin-compression';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import path from 'path';
+
+const styleIndexPath = path.resolve(__dirname, 'src/shared/styles/index.scss').replace(/\\/g, '/');
 
 export default defineConfig({
   plugins: [
@@ -42,8 +44,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@shared/styles/lib" as *;`,
-        includePaths: [path.resolve(__dirname, 'src/shared/styles')],
+        additionalData: `@use "${styleIndexPath}" as *;`,
       },
     },
   },

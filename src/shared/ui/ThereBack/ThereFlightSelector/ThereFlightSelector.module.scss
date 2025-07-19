@@ -35,7 +35,6 @@
   cursor: pointer;
 }
 
-
 .carouselWrapper {
   position: relative;
   display: flex;
@@ -55,14 +54,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 .navButton:disabled {
   opacity: 0.3;
   cursor: default;
 }
-.prev { margin-right: 8px; }
-.next { margin-left: 8px; }
+.prev {
+  margin-right: 8px;
+}
+.next {
+  margin-left: 8px;
+}
 
 .carousel {
   flex: 1;
@@ -80,15 +83,18 @@
   border-radius: 8px;
   cursor: pointer;
   color: $color-text-muted;
-  transition: border-color .2s, background .2s, color .2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
 }
 .card:hover {
   border-color: $color-border-hover;
 }
 .active {
   border-color: $color-selected-border;
-  background:   $color-selected-bg;
-  color:        $color-text-dark;
+  background: $color-selected-bg;
+  color: $color-text-dark;
 }
 
 .weekday {
@@ -122,14 +128,16 @@
   font-size: 14px;
   color: $color-text-muted;
   cursor: pointer;
-  transition: background .2s, color .2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 .classBtn:hover {
   background: $color-class-btn-hover;
 }
 .classActive {
   background: $color-class-active-bg;
-  color:      $color-text-dark;
+  color: $color-text-dark;
 }
 
 /* Кнопки фильтров */
