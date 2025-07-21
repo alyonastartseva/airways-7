@@ -2,6 +2,7 @@ import demoTicket from '@/entities/ticketWrapper/DemoTicket';
 import TicketWrapper from '@/entities/ticketWrapper/TicketWrapper';
 import LoginPage from '@/pages/Auth/LoginPage';
 import AdminPassengerPage from '@/pages/admin/passengers';
+// import PassengersTable from '@entities/PassengersTable';
 import HomePage from '@pages/home/HomePage';
 import Layout from '@widgets/layout/Layout';
 import { Routes, Route } from 'react-router-dom';
