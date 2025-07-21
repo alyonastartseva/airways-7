@@ -19,7 +19,6 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
@@ -37,6 +36,6 @@
       "@widgets/*": ["widgets/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/features/admin-table/ui/DataTable/Table.test.00"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/features/TicketSearch/types"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

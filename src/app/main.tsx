@@ -1,9 +1,14 @@
-import App from './App.tsx';
+import { store } from '../features/TicketSearch/model/store';
+import App from './App';
 import './index.css';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
 
-const rootElement = document.getElementById('root') as HTMLElement;
-
-if (!rootElement) throw new Error('Root element not found');
-
-createRoot(rootElement).render(<App />);
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </StrictMode>,
+);

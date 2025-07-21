@@ -1,8 +1,8 @@
-import { PAGINATION_CONFIG } from '../../../../shared/config/config';
-import type { Column } from '../../../../shared/model/Column.types';
-import Pagination from '../../../../shared/ui/Pagination';
-import type { Pagination as PaginationType } from '../../../../shared/ui/Pagination/Pagination.types';
 import styles from './SkeletonTable.module.scss';
+import { PAGINATION_CONFIG } from '@shared/config/config';
+import type { Column } from '@shared/model/Column.types';
+import Pagination from '@shared/ui/Pagination';
+import type { Pagination as PaginationType } from '@shared/ui/Pagination/Pagination.types';
 
 export const SkeletonTable = <T,>({
   title,

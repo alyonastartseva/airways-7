@@ -1,9 +1,10 @@
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import compression from 'vite-plugin-compression';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import { defineConfig } from 'vitest/config';
+import path from 'path';
+
 
 const styleIndexPath = path.resolve(__dirname, 'src/shared/styles/index.scss').replace(/\\/g, '/');
 
@@ -14,13 +15,19 @@ export default defineConfig({
     compression({
       algorithm: 'gzip',
       ext: '.gz',
-      threshold: 1024,
     }),
-    visualizer({
-      open: process.env.NODE_ENV === 'development',
-      gzipSize: true,
-    }),
+    visualizer(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5173',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -38,21 +45,17 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "${styleIndexPath}" as *;`,
+        additionalData: `@use "@shared/styles/index.scss" as *;`,
       },
     },
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
   },
   build: {
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: ['log', 'info'],
+        drop_console: true,
         drop_debugger: true,
+        pure_funcs: ['console.info'],
       },
       format: {
         comments: false,
@@ -61,17 +64,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['antd'],
+          react: ['react', 'react-dom'],
+          vendor: ['lodash'],
         },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
     chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: ['react', 'react-dom'],
   },
 });
