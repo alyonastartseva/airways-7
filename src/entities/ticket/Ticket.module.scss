@@ -1,19 +1,28 @@
+$gray: #666;
+$gray-light: #999;
+$green: #6aee87;
+$orange: #c77a00;
+$orange-bg: #fff3db;
+$bg-card: #fff;
+$border: #ccc;
+$color-primary: #006fff;
+
 .card {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  gap: 16px;
+  gap: 24px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  align-items: flex-start;
+  color: #333;
 }
 
 .leftBlock {
+  flex: 1.5;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-width: 280px;
+  gap: 20px;
 }
 
 .header {
@@ -124,25 +133,24 @@
 }
 
 .fares {
+  flex: 2;
   display: flex;
-  gap: 12px;
-  flex: 1;
-  justify-content: flex-end;
   flex-wrap: nowrap;
+  gap: 16px;
 }
 
 .fareCard {
-  background: #f6f8fe;
-  border-radius: 8px;
-  padding: 10px;
+  background: #f5f8ff;
+  border-radius: 10px;
+  padding: 12px;
   min-width: 140px;
-  text-align: left;
+  max-width: 180px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  color: black;
+  gap: 6px;
 }
-
 
 .selected {
   background: #dceaff;
@@ -183,4 +191,57 @@
   display: flex;
   gap: 4px;
   align-items: center;
+}
+
+.routeGrid {
+  display: grid;
+  grid-template-columns: 80px 1fr 80px;
+  grid-template-rows: auto auto;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.timeLeft,
+.timeRight {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.dateLeft,
+.dateRight {
+  font-size: 13px;
+  color: $gray;
+}
+
+.duration {
+  text-align: center;
+  font-size: 13px;
+}
+
+.routeLine {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 20px;
+}
+
+.dotted {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px dashed $gray-light;
+  z-index: 1;
+}
+
+.airport {
+  position: relative;
+  z-index: 2;
+  font-size: 13px;
+  background: #fff;
+  padding: 0 2px;
+  color: #000;
+  white-space: nowrap;
 }

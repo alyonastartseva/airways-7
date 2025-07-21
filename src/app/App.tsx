@@ -1,59 +1,42 @@
-import "./App.css";
-import Ticket from "../entities/Ticket";
+import AppRoutes from './AppRoutes';
+import TicketSearch from '@/features/TicketSearch/TicketSearch/TicketSearch';
+import { store } from '@/features/TicketSearch/model/store';
+import { ReturnFlightSelector } from '@/shared/ui/ThereBack/ReturnFlightSelector/ReturnFlightSelector';
+import { TestDateOption } from '@/shared/ui/ThereBack/ReturnFlightSelector/TestDateOption';
+import { ThereFlightSelector } from '@/shared/ui/ThereBack/ThereFlightSelector/ThereFlightSelector';
+import { StrictMode } from 'react';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 
-const ticket ={
-    airline: 'S7',
-    departureTime: '12:00',
-    departureReduction: 'LED',
-    arrivalTime: '13:30',
-    arrivalReduction:'MMK',
-    duration: '1ч 30мин',
-    from: 'Санкт-Петербург',
-    to: 'Мурманск',
-    date: '20 авг, Вс',
-    fares: [
-        {
-            name: 'Эконом Базовый',
-            price: 3500,
-            features: {
-                handLuggage: true,
-                luggage: false,
-                exchange: true,
-                refund: false,
-            },
-            remainingSeats: 2,
-        },
-                {
-            name: 'Эконом Стандарт',
-            price: 5734,
-            features: {
-                handLuggage: true,
-                luggage: true,
-                exchange: true,
-                refund: false,
-            },
-        },
-                {
-            name: 'Эконом Плюс',
-            price: 13400,
-            features: {
-                handLuggage: true,
-                luggage: true,
-                exchange: true,
-                refund: true,
-            },
-            selected: true,
-        },
-    ]
-}
-
-function App() {
+export default function App() {
   return (
-    <>
-      <div>App</div>
-      <Ticket data={ticket}/>
-    </>
+    <StrictMode>
+      <Provider store={store}>
+        <BrowserRouter>
+          <AppRoutes />
+          <div className="app">
+            <header className="app-header" />
+            <main className="app-main">
+              <TicketSearch />
+
+              <ReturnFlightSelector
+                route="Москва → Томск"
+                titleDate="чт, 19 июня"
+                dates={TestDateOption}
+                onDateChange={(opt) => console.log('Возврат:', opt)}
+                onClassChange={(cls) => console.log('Класс:', cls)}
+              />
+
+              <ThereFlightSelector
+                route="Москва → Томск"
+                titleDate="чт, 19 июня"
+                dates={TestDateOption}
+                onDateChange={(opt) => console.log('Туда:', opt)}
+              />
+            </main>
+          </div>
+        </BrowserRouter>
+      </Provider>
+    </StrictMode>
   );
 }
-
-export default App;

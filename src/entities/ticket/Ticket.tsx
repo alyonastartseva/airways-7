@@ -1,19 +1,20 @@
-import React from "react";
+import type { ExtendedTicketData } from '../ticketCard/TicketCardType';
 import styles from './Ticket.module.scss';
-import type { TicketData } from "./TicketTypes";
-import { Tag } from 'antd';
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons';
-import { FaSuitcaseRolling, FaSuitcase, FaExchangeAlt, FaChair, FaPlaneDeparture, FaPlaneArrival } from 'react-icons/fa';
+import { FaSuitcaseRolling, FaSuitcase, FaExchangeAlt, FaChair } from 'react-icons/fa';
 
 interface Props {
-    data: TicketData;
+  data: ExtendedTicketData;
+  onToggle: () => void;
 }
 
 const getIcon = (value: boolean, IconComponent: React.ElementType) => (
   <IconComponent className={`${styles.icon} ${value ? styles.active : ''}`} />
 );
 
-const Ticket: React.FC<Props> = ({ data }) => {
+const Ticket: React.FC<Props> = ({ data, onToggle }) => {
+  const { segments, transferAirports = [] } = data;
+  const routePoints = [data.departureAirport, ...transferAirports, data.arrivalAirport];
   return (
     <div className={styles.card}>
       <div className={styles.leftBlock}>
@@ -22,49 +23,44 @@ const Ticket: React.FC<Props> = ({ data }) => {
             <div className={styles.logo} />
             <span>{data.airline}</span>
           </div>
-          <button className={styles.moreInfo}>Прямой рейс <DownOutlined /></button>
+          <button className={styles.moreInfo} onClick={onToggle}>
+            {data.transferAirports?.length
+              ? `${data.transferAirports.length} пересадка`
+              : 'Прямой рейс'}{' '}
+            <DownOutlined />
+          </button>
         </div>
-        <div className={styles.timeDuration}>
-          <div className={styles.planeDeparture}><FaPlaneDeparture /></div>
-          <div className={styles.durationText}>В пути: {data.duration}</div>
-          <div className={styles.planeArrival}> <FaPlaneArrival /></div>
-        </div>
-            <div className={styles.duration}>
-            <div className={styles.time}>{data.departureTime}</div>
-           <div className={styles.departureReduction}>{data.departureReduction}</div>
-            <div className={styles.dottedLine} />
-            <div className={styles.arrivalReduction}>{data.arrivalReduction}</div>
-            <div className={styles.time}>{data.arrivalTime}</div>
+
+        <div className={styles.routeGrid}>
+          <div className={styles.timeLeft}>{segments[0].departureTime}</div>
+          <div className={styles.routeLine}>
+            <div className={styles.dotted} />
+            {routePoints.map((code, idx) => (
+              <span key={idx} className={styles.airport}>
+                {code}
+              </span>
+            ))}
           </div>
-        <div className={styles.flightInfo}>
-          <div>
-            <div className={styles.city}>{data.from}</div>
-            <div className={styles.date}>{data.date}</div>
-          </div>
-          <div>
-            <div className={styles.city}>{data.to}</div>
-            <div className={styles.date}>{data.date}</div>
-          </div>
+          <div className={styles.timeRight}>{segments[segments.length - 1]?.arrivalTime}</div>
+          <div className={styles.dateLeft}>{segments[0].departureDate}</div>
+          <div className={styles.duration}>В пути {data.duration}</div>
+          <div className={styles.dateRight}>{segments[segments.length - 1]?.arrivalDate}</div>
         </div>
       </div>
-
       <div className={styles.fares}>
         {data.fares.map((fare, idx) => (
-          <div
-            key={idx}
-            className={`${styles.fareCard} ${fare.selected ? styles.selected : ''}`}
-          >
+          <div key={idx} className={styles.fareCard}>
             <div className={styles.fareHeader}>
-              <span className={styles.fareName}>{fare.name}</span>
+              <span className={styles.fareName}>{fare.type}</span>
               <div className={styles.featureIcons}>
-                {getIcon(fare.features.handLuggage, FaSuitcaseRolling)}
-                {getIcon(fare.features.luggage, FaSuitcase)}
-                {getIcon(fare.features.exchange, FaExchangeAlt)}
-                {getIcon(fare.features.refund ?? false, FaChair)}
+                {getIcon(!!fare.carryOn, FaSuitcaseRolling)}
+                {getIcon(!!fare.baggage, FaSuitcase)}
+                {getIcon(fare.exchangePolicy?.includes('без'), FaExchangeAlt)}
+                {getIcon(!fare.refundPolicy?.includes('недоступен'), FaChair)}
               </div>
             </div>
             <div className={styles.price}>{fare.price.toLocaleString()} ₽</div>
-            {fare.remainingSeats && (
+            {fare.remainingSeats && fare.remainingSeats > 0 && (
               <div className={styles.remainingSeats}>
                 <ExclamationCircleOutlined /> Осталось {fare.remainingSeats}
               </div>
