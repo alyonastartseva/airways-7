@@ -1,7 +1,6 @@
 import type { ExtendedTicketData } from '../ticketCard/TicketCardType';
 import styles from './Ticket.module.scss';
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons';
-import React from 'react';
 import { FaSuitcaseRolling, FaSuitcase, FaExchangeAlt, FaChair } from 'react-icons/fa';
 
 interface Props {
