@@ -1,6 +1,6 @@
 import styles from './TicketCard.module.scss';
 import type { ExtendedTicketData } from './TicketCardType';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import {
   FaPlaneDeparture,
@@ -33,8 +33,11 @@ const withStatusIcon = (enabled: boolean, label: React.ReactNode) => (
   </div>
 );
 
-const TicketCard: React.FC<{ data: ExtendedTicketData }> = ({ data }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const TicketCard: React.FC<{ data: ExtendedTicketData; onToggle: () => void }> = ({
+  data,
+  onToggle,
+}) => {
+  const [isSegmentExpanded, setIsSegmentExpanded] = useState(false);
   const { segments, layoverTimes = [], transferAirports = [], fares } = data;
   const routePoints = [data.departureAirport, ...transferAirports, data.arrivalAirport];
 
@@ -43,11 +46,12 @@ const TicketCard: React.FC<{ data: ExtendedTicketData }> = ({ data }) => {
       <section className={styles.left}>
         <div className={styles.airlineInfo}>
           <h2>{data.airline}</h2>
-          <button className={styles.toggleBtn} onClick={() => setIsExpanded(!isExpanded)}>
+          <button className={styles.toggleBtn} onClick={onToggle}>
             {transferAirports.length ? `${transferAirports.length} пересадка` : 'Прямой рейс'}{' '}
-            {isExpanded ? <UpOutlined /> : <DownOutlined />}
+            <DownOutlined />
           </button>
         </div>
+
         <div className={styles.routeGrid}>
           <div className={styles.timeLeft}>{segments[0].departureTime}</div>
           <div className={styles.routeLine}>
@@ -59,7 +63,6 @@ const TicketCard: React.FC<{ data: ExtendedTicketData }> = ({ data }) => {
             ))}
           </div>
           <div className={styles.timeRight}>{segments[segments.length - 1]?.arrivalTime}</div>
-
           <div className={styles.dateLeft}>{segments[0].departureDate}</div>
           <div className={styles.duration}>В пути {data.duration}</div>
           <div className={styles.dateRight}>{segments[segments.length - 1]?.arrivalDate}</div>
@@ -67,15 +70,14 @@ const TicketCard: React.FC<{ data: ExtendedTicketData }> = ({ data }) => {
 
         <div className={styles.segmentList}>
           {segments.map((seg, idx) => {
-            if (!isExpanded && idx > 0) return null;
+            if (!isSegmentExpanded && idx > 0) return null;
 
             return (
               <React.Fragment key={idx}>
                 <div className={styles.flightHeader}>
-                  <div className={styles.flight}> {seg.flightNumber}</div>
+                  <div className={styles.flight}>{seg.flightNumber}</div>
                   <div className={styles.plane}>
-                    {' '}
-                    {seg.aircraft} <FaInfoCircle />{' '}
+                    {seg.aircraft} <FaInfoCircle />
                   </div>
                 </div>
 
@@ -141,8 +143,11 @@ const TicketCard: React.FC<{ data: ExtendedTicketData }> = ({ data }) => {
           })}
 
           {segments.length > 1 && (
-            <button className={styles.expandBtn} onClick={() => setIsExpanded(!isExpanded)}>
-              {isExpanded ? <UpOutlined /> : <DownOutlined />}
+            <button
+              className={styles.expandBtn}
+              onClick={() => setIsSegmentExpanded((prev) => !prev)}
+            >
+              {isSegmentExpanded ? <UpOutlined /> : <DownOutlined />}
             </button>
           )}
         </div>
@@ -188,7 +193,14 @@ const TicketCard: React.FC<{ data: ExtendedTicketData }> = ({ data }) => {
             {fare.services.length > 0 && (
               <div className={styles.section}>
                 <div className={styles.sectionTitle}>Услуги:</div>
-                {fare.services.map((s) => withStatusIcon(true, s))}
+                {fare.services.map((s, i) => (
+                  <React.Fragment key={s + i}>{withStatusIcon(true, s)}</React.Fragment>
+                ))}
+              </div>
+            )}
+            {fare.remainingSeats && fare.remainingSeats > 0 && (
+              <div className={styles.remainingSeats}>
+                <ExclamationCircleOutlined /> Осталось {fare.remainingSeats}
               </div>
             )}
           </article>

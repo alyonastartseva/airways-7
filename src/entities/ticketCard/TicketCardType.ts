@@ -8,6 +8,7 @@ export interface FareOption {
   exchangePolicy: string;
   refundPolicy: string;
   services: string[];
+  remainingSeats?: number;
 }
 
 export interface FlightSegment {

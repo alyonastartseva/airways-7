@@ -1,4 +1,4 @@
-import TicketCard from '../entities/ticketCard/TicketCard';
+import TicketWrapper from '../entities/ticketWrapper/TicketWrapper';
 import './App.css';
 
 const demoTicket = {
@@ -78,6 +78,7 @@ const demoTicket = {
       exchangePolicy: 'Нельзя изменить',
       refundPolicy: 'Без возврата',
       services: ['Выбор места', 'Регистрация онлайн'],
+      remainingSeats: 2,
     },
     {
       type: 'Эконом Стандарт',
@@ -107,7 +108,7 @@ const demoTicket = {
 const App: React.FC = () => {
   return (
     <>
-      <TicketCard data={demoTicket} />
+      <TicketWrapper data={demoTicket} />
     </>
   );
 };
