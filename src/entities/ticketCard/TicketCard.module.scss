@@ -1,12 +1,3 @@
-$gray: #666;
-$gray-light: #999;
-$green: #6aee87;
-$orange: #c77a00;
-$orange-bg: #fff3db;
-$bg-card: #fff;
-$border: #ccc;
-$color-primary: #006fff;
-
 .ticket {
   display: flex;
   gap: 24px;
@@ -120,13 +111,13 @@ $color-primary: #006fff;
   height: 30px;
 }
 
-.flight{
+.flight {
   display: flex;
 }
 
-.plane{
+.plane {
   display: flex;
-  color: $green ;
+  color: $green;
   padding-right: 32px;
 }
 
@@ -186,11 +177,11 @@ $color-primary: #006fff;
   flex-wrap: wrap;
 }
 
-.meal{
+.meal {
   display: flex;
 }
 
-.petsAllowed{
+.petsAllowed {
   display: flex;
 }
 

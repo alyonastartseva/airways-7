@@ -1,5 +1,3 @@
-import demoTicket from '@/entities/ticketWrapper/DemoTicket';
-import TicketWrapper from '@/entities/ticketWrapper/TicketWrapper';
 import LoginPage from '@/pages/Auth/LoginPage';
 import AdminPassengerPage from '@/pages/admin/passengers';
 // import PassengersTable from '@entities/PassengersTable';
@@ -14,7 +12,6 @@ const AppRoutes = () => (
       <Route path="login" element={<LoginPage />} />
       <Route path="/passengers-table" element={<AdminPassengerPage />} />
     </Route>
-    <Route path="ticket" element={<TicketWrapper data={demoTicket} />} />
   </Routes>
 );
 
