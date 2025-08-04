@@ -1,0 +1,51 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-window {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  min-width: 400px;
+  max-width: 600px;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+
+  input,
+  select {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+.field-error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.modal-error {
+  color: crimson;
+  margin-bottom: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
