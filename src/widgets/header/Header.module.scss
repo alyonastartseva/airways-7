@@ -10,6 +10,9 @@
   display: flex;
   align-items: center;
   column-gap: 12px;
+  font-size: 24px;
+  font-weight: 500;
+  font-style: Medium;
 }
 
 .inner {
@@ -35,4 +38,28 @@
       color: color.adjust($color-primary, $lightness: -10%);
     }
   }
+}
+
+.nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0 40px;
+}
+.nav :global(a) {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 0 8px;
+}
+
+.nav :global(a):hover {
+  color: #b3cfff;
+}
+
+.nav :global(.active),
+.nav :global(a[aria-current='page']) {
+  color: #b3cfff;
 }
