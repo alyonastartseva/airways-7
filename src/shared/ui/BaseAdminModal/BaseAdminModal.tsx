@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import styles from './BaseAdminModal.module.scss';
 
 type FieldType = 'input' | 'select' | 'date';
 
@@ -36,17 +37,18 @@ export const BaseAdminModal = <T,>({
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // 🛠 корректный useEffect, который срабатывает один раз при открытии
   useEffect(() => {
-    if (isOpen) {
-      const init: Record<string, string> = {};
-      fields.forEach((f) => {
-        init[f.name] = defaultValues[f.name] ?? '';
-      });
-      setFormData(init);
-      setErrors({});
-      setGeneralError(null);
+    if (!isOpen) return;
+
+    const init: Record<string, string> = {};
+    for (const f of fields) {
+      init[f.name] = defaultValues[f.name] ?? '';
     }
-  }, [isOpen, fields, defaultValues]);
+    setFormData(init);
+    setErrors({});
+    setGeneralError(null);
+  }, [isOpen]);
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -55,7 +57,7 @@ export const BaseAdminModal = <T,>({
   const validate = () => {
     const errs: Record<string, string> = {};
     for (const field of fields) {
-      if (field.required && !formData[field.name]) {
+      if (field.required && !formData[field.name]?.trim()) {
         errs[field.name] = 'Обязательное поле';
       }
     }
@@ -83,26 +85,34 @@ export const BaseAdminModal = <T,>({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-window" onClick={(e) => e.stopPropagation()}>
-        <h2>{title}</h2>
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.closeButton} onClick={onClose}>
+          &times;
+        </button>
+        <h2 className={styles.title}>Создание {title.toLowerCase()}</h2>
         <form onSubmit={handleSubmit}>
           {fields.map((field) => (
-            <div key={field.name} className="modal-field">
-              <label>
+            <div key={field.name} className={styles.formField}>
+              <label className={styles.label}>
                 {field.title}
                 {field.required && ' *'}
               </label>
+
               {field.type === 'input' && (
                 <input
-                  value={formData[field.name]}
+                  type="text"
+                  value={formData[field.name] ?? ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
+                  className={styles.input}
                 />
               )}
+
               {field.type === 'select' && field.options && (
                 <select
-                  value={formData[field.name]}
+                  value={formData[field.name] ?? ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
+                  className={styles.input}
                 >
                   <option value="">Выберите...</option>
                   {field.options.map((opt) => (
@@ -112,22 +122,34 @@ export const BaseAdminModal = <T,>({
                   ))}
                 </select>
               )}
+
               {field.type === 'date' && (
                 <input
                   type="date"
-                  value={formData[field.name]}
+                  value={formData[field.name] ?? ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
+                  className={styles.input}
                 />
               )}
-              {errors[field.name] && <div className="field-error">{errors[field.name]}</div>}
+
+              {errors[field.name] && (
+                <div className={styles.error}>{errors[field.name]}</div>
+              )}
             </div>
           ))}
-          {generalError && <div className="modal-error">{generalError}</div>}
-          <div className="modal-actions">
-            <button type="submit" disabled={submitting}>
+
+          {generalError && <div className={styles.error}>{generalError}</div>}
+
+          <div className={styles.actions}>
+            <button type="submit" disabled={submitting} className={styles.submitButton}>
               Сохранить
             </button>
-            <button type="button" onClick={onClose} disabled={submitting}>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={submitting}
+              className={styles.cancelButton}
+            >
               Отмена
             </button>
           </div>
