@@ -10,7 +10,7 @@ import { Table } from '../../admin-table';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const columns: Column<Passenger>[] = [
+const COLUMNS: Column<Passenger>[] = [
   { key: 'id', title: 'ID', sortable: true, width: 60 },
   { key: 'fullname', title: 'Имя, Фамилия, Отчество', sortable: true, width: 254 },
   { key: 'gender', title: 'Пол', sortable: true, width: 80 },
@@ -21,7 +21,7 @@ const columns: Column<Passenger>[] = [
   { key: 'passportIssuingDate', title: 'Дата выдачи паспорта', sortable: true, width: 115 },
 ];
 
-const passengerFields: AdminModalField[] = [
+const PASSENGER_FIELDS: AdminModalField[] = [
   { title: 'Имя', name: 'firstName', type: 'input', required: true },
   { title: 'Фамилия', name: 'lastName', type: 'input', required: true },
   { title: 'Гражданство', name: 'citizenship', type: 'input', required: true },
@@ -58,7 +58,11 @@ const PassengersTable = () => {
   };
 
   const handleCreatePassenger = async (formData: Record<string, string>) => {
-    await createPassenger(formData).unwrap();
+    try {
+      await createPassenger(formData).unwrap();
+    } catch {
+      throw new Error('Не удалось создать пассажира');
+    }
   };
 
   return (
@@ -71,7 +75,7 @@ const PassengersTable = () => {
         title="Добавление пассажира"
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        fields={passengerFields}
+        fields={PASSENGER_FIELDS}
         onSubmit={handleCreatePassenger}
         afterSuccess={() => {
           refetch();
@@ -81,7 +85,7 @@ const PassengersTable = () => {
 
       <Table
         title="Пассажиры"
-        columns={columns}
+        columns={COLUMNS}
         data={data}
         isLoading={isLoading}
         isError={isError}

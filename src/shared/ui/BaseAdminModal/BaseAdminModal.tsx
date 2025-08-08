@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import styles from './BaseAdminModal.module.scss';
-
-type FieldType = 'input' | 'select' | 'date';
-
-export type AdminModalField = {
-  title: string;
-  name: string;
-  type: FieldType;
-  required?: boolean;
-  options?: { value: string; label: string }[];
-};
+import type { AdminModalField } from './types';
+import { Input, Select } from 'antd';
+import React, { useState, useEffect } from 'react';
 
 interface BaseAdminModalProps<T = unknown> {
   title: string;
@@ -37,10 +29,8 @@ export const BaseAdminModal = <T,>({
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // 🛠 корректный useEffect, который срабатывает один раз при открытии
   useEffect(() => {
     if (!isOpen) return;
-
     const init: Record<string, string> = {};
     for (const f of fields) {
       init[f.name] = defaultValues[f.name] ?? '';
@@ -100,41 +90,29 @@ export const BaseAdminModal = <T,>({
               </label>
 
               {field.type === 'input' && (
-                <input
-                  type="text"
-                  value={formData[field.name] ?? ''}
+                <Input
+                  value={formData[field.name] || ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className={styles.input}
                 />
               )}
 
               {field.type === 'select' && field.options && (
-                <select
-                  value={formData[field.name] ?? ''}
-                  onChange={(e) => handleChange(field.name, e.target.value)}
-                  className={styles.input}
-                >
-                  <option value="">Выберите...</option>
-                  {field.options.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  value={formData[field.name] || ''}
+                  onChange={(val) => handleChange(field.name, val)}
+                  options={field.options}
+                />
               )}
 
               {field.type === 'date' && (
                 <input
                   type="date"
-                  value={formData[field.name] ?? ''}
+                  value={formData[field.name] || ''}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className={styles.input}
                 />
               )}
 
-              {errors[field.name] && (
-                <div className={styles.error}>{errors[field.name]}</div>
-              )}
+              {errors[field.name] && <div className={styles.error}>{errors[field.name]}</div>}
             </div>
           ))}
 

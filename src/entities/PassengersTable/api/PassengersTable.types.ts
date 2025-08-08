@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from '@/shared/api/types';
+
 interface PassportData {
   middleName: string;
   gender: string;
@@ -16,13 +18,7 @@ export interface ApiPassenger {
   email: string;
 }
 
-export interface PassengersResponse {
-  content: ApiPassenger[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
-}
+export type PassengersResponse = PaginatedResponse<ApiPassenger>;
 
 export interface Passenger {
   id: number;

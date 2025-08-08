@@ -1,7 +1,7 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { ticketSearchApi } from '@/features/TicketSearch/model/ticketSearchApi';
 import adminTableReducer from '@/features/admin-table/model/adminTableSlice';
 import { baseApi } from '@/shared/api/baseApi';
-import { ticketSearchApi } from '@/features/TicketSearch/model/ticketSearchApi';
+import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
@@ -10,10 +10,7 @@ export const store = configureStore({
     adminTable: adminTableReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
-      baseApi.middleware,
-      ticketSearchApi.middleware
-    ),
+    getDefaultMiddleware().concat(baseApi.middleware, ticketSearchApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

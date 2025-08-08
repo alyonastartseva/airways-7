@@ -24,6 +24,7 @@
 .authButtons {
   display: flex;
   gap: 26px;
+  align-items: center;
 
   :global(.ant-btn) {
     font-family: $font-primary;

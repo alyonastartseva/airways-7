@@ -1,4 +1,5 @@
 import type { ApiPassenger, Passenger } from '../api/PassengersTable.types';
+import { formatDate } from '@/shared/utils/date';
 
 export const passengersMapper = (apiPassengers: ApiPassenger[]): Passenger[] => {
   return apiPassengers.map((p) => ({
@@ -12,9 +13,4 @@ export const passengersMapper = (apiPassengers: ApiPassenger[]): Passenger[] => 
     passportIssuingDate: formatDate(p.passport.passportIssuingDate),
     email: p.email,
   }));
-};
-
-const formatDate = (value: Date | string): string => {
-  const date = new Date(value);
-  return date.toISOString().slice(0, 10);
 };
