@@ -1,5 +1,4 @@
 import AppRoutes from './AppRoutes';
-// import { store } from '@/features/TicketSearch/model/store';
 import { store } from './store';
 import TicketSearch from '@/features/TicketSearch/TicketSearch/TicketSearch';
 import { ThemeProvider } from '@/shared/hooks/ThemeProvider/ThemeProvider';
