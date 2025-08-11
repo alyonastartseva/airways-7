@@ -4,6 +4,13 @@ import { baseApi } from '@shared/api/baseApi';
 
 export const passengersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    createPassenger: builder.mutation<void, Record<string, string>>({
+      query: (body) => ({
+        url: '/passengers',
+        method: 'POST',
+        body,
+      }),
+    }),
     getPassengers: builder.query<Passenger[], void>({
       query: () => {
         return '/passengers';
@@ -13,4 +20,4 @@ export const passengersApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetPassengersQuery } = passengersApi;
+export const { useGetPassengersQuery, useCreatePassengerMutation } = passengersApi;
