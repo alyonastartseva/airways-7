@@ -1,5 +1,5 @@
-import type { PassengersResponse, Passenger } from '../PassengersTable.types';
-import { passengersMapper } from '../utils/passengersMapper';
+import type { PassengersResponse, Passenger } from '../types.ts';
+import { passengersMapper } from '../utils/passengersMapper.ts';
 import { baseApi } from '@shared/api/baseApi';
 
 export const passengersApi = baseApi.injectEndpoints({

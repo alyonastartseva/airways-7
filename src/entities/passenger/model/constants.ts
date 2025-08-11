@@ -9,6 +9,7 @@ export const DEFAULT_PASSENGERS: Passenger = {
   gender: '',
   phone: createPhoneNumber(''),
   birthDate: '',
+  citizenship: '',
   email: '',
   passport: {
     serialNumber: '',
