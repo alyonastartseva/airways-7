@@ -1,5 +1,5 @@
 import {
-  useGetCategoriesQuery,
+  // useGetCategoriesQuery,
   useLazyGetDestinationsQuery,
   useSearchTicketsMutation,
 } from '../model/ticketSearchApi';
@@ -14,7 +14,7 @@ const { Group: RadioGroup } = Radio;
 const DEFAULT_DEST_LIMIT = 20;
 
 const TicketSearch: React.FC = () => {
-  const { data: categories = [], isLoading: catLoading } = useGetCategoriesQuery();
+  // const { data: categories = [], isLoading: catLoading } = useGetCategoriesQuery();
   const [fetchOrig, { isFetching: origLoading }] = useLazyGetDestinationsQuery();
   const [fetchDest, { isFetching: destLoading }] = useLazyGetDestinationsQuery();
   const [origList, setOrigList] = useState<Destination[]>([]);
@@ -162,8 +162,14 @@ const TicketSearch: React.FC = () => {
                 }
                 onChange={(vals) => {
                   if (vals) {
-                    updateField('dateFrom', vals[0].format('YYYY-MM-DD'));
-                    updateField('dateTo', vals[1].format('YYYY-MM-DD'));
+                    updateField(
+                      'dateFrom',
+                      vals[0] !== null ? vals[0].format('YYYY-MM-DD') : undefined,
+                    );
+                    updateField(
+                      'dateTo',
+                      vals[1] !== null ? vals[1].format('YYYY-MM-DD') : undefined,
+                    );
                   }
                 }}
                 placeholder={['Туда', 'Обратно']}
