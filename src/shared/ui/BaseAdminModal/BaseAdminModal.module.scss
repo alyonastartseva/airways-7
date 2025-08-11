@@ -1,0 +1,90 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: $shadow-button;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: $linear-gradient-light;
+  border-radius: 8px;
+  padding: 24px;
+  width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px $shadow-button;
+  position: relative;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.label {
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: $color-text-default;
+}
+
+.input {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.error {
+  color: $color-error;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.submitButton,
+.cancelButton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.submitButton {
+  background-color: $color-bg;
+  border: 1px solid $color-inactive;
+}
+
+.cancelButton {
+  background-color: transparent;
+  border: 1px solid $color-inactive;
+}

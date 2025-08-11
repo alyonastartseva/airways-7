@@ -1,6 +1,6 @@
 import AppRoutes from './AppRoutes';
 import TicketSearch from '@/features/TicketSearch/TicketSearch/TicketSearch';
-import { store } from '@/features/TicketSearch/model/store';
+import { store } from '@/shared/store/store';
 import { ThemeProvider } from '@/shared/hooks/ThemeProvider/ThemeProvider';
 import '@/shared/styles/theme.scss';
 import { ReturnFlightSelector } from '@/shared/ui/ThereBack/ReturnFlightSelector/ReturnFlightSelector';
