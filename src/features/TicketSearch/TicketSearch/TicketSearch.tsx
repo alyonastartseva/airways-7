@@ -1,8 +1,4 @@
-import {
-  useGetCategoriesQuery,
-  useLazyGetDestinationsQuery,
-  useSearchTicketsMutation,
-} from '../model/ticketSearchApi';
+import { useLazyGetDestinationsQuery, useSearchTicketsMutation } from '../model/ticketSearchApi';
 import type { Destination, SearchCriteria } from '../model/types';
 import styles from './TicketSearch.module.scss';
 import { Select, Input, Checkbox, DatePicker, Radio, Button, Space, Spin } from 'antd';
@@ -14,7 +10,6 @@ const { Group: RadioGroup } = Radio;
 const DEFAULT_DEST_LIMIT = 20;
 
 const TicketSearch: React.FC = () => {
-  const { data: categories = [], isLoading: catLoading } = useGetCategoriesQuery();
   const [fetchOrig, { isFetching: origLoading }] = useLazyGetDestinationsQuery();
   const [fetchDest, { isFetching: destLoading }] = useLazyGetDestinationsQuery();
   const [origList, setOrigList] = useState<Destination[]>([]);
@@ -35,27 +30,33 @@ const TicketSearch: React.FC = () => {
   });
 
   const [searchTickets, { isLoading: searching }] = useSearchTicketsMutation();
+  const loadOrig = useCallback(
+    (search: string, page: number) => {
+      fetchOrig({ search, page, limit: DEFAULT_DEST_LIMIT })
+        .unwrap()
+        .then((data) => {
+          setOrigList((prev) => (page === 1 ? data : [...prev, ...data]));
+          setOrigPage(page);
+        });
+    },
+    [fetchOrig],
+  );
+
+  const loadDest = useCallback(
+    (search: string, page: number) => {
+      fetchDest({ search, page, limit: DEFAULT_DEST_LIMIT })
+        .unwrap()
+        .then((data) => {
+          setDestList((prev) => (page === 1 ? data : [...prev, ...data]));
+          setDestPage(page);
+        });
+    },
+    [fetchDest],
+  );
   useEffect(() => {
     loadOrig('', 1);
     loadDest('', 1);
-  }, []);
-  const loadOrig = (search: string, page: number) => {
-    fetchOrig({ search, page, limit: DEFAULT_DEST_LIMIT })
-      .unwrap()
-      .then((data) => {
-        setOrigList(page === 1 ? data : [...origList, ...data]);
-        setOrigPage(page);
-      });
-  };
-
-  const loadDest = (search: string, page: number) => {
-    fetchDest({ search, page, limit: DEFAULT_DEST_LIMIT })
-      .unwrap()
-      .then((data) => {
-        setDestList(page === 1 ? data : [...destList, ...data]);
-        setDestPage(page);
-      });
-  };
+  }, [loadOrig, loadDest]);
   const onOrigSearch = (val: string) => {
     setOrigSearch(val);
     loadOrig(val, 1);
@@ -111,6 +112,7 @@ const TicketSearch: React.FC = () => {
                 onChange={(v) => updateField('currentLocation', v as string)}
                 options={origList.map((d) => ({ label: d.name, value: d.id }))}
                 autoFocus
+                variant="borderless"
               />
             </div>
             <div className={styles.formGroup}>
@@ -126,6 +128,7 @@ const TicketSearch: React.FC = () => {
                 onPopupScroll={onDestScroll}
                 onChange={(v) => updateField('destination', v as string)}
                 options={destList.map((d) => ({ label: d.name, value: d.id }))}
+                variant="borderless"
               />
             </div>
           </Space>
