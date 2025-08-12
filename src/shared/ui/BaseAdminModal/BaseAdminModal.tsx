@@ -38,7 +38,7 @@ export const BaseAdminModal = <T,>({
     setFormData(init);
     setErrors({});
     setGeneralError(null);
-  }, [isOpen]);
+  }, [isOpen, defaultValues, fields]);
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));

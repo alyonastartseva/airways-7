@@ -1,11 +1,9 @@
+import { baseApi } from '../../../shared/api/baseApi.ts';
 import type { Category, Destination, SearchCriteria } from '../model/types.ts';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const settingLimit = 20;
 
-export const ticketSearchApi = createApi({
-  reducerPath: 'ticketSearchApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+export const ticketSearchApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCategories: builder.query<Category[], void>({
       query: () => 'categories',
@@ -18,7 +16,7 @@ export const ticketSearchApi = createApi({
         }),
       },
     ),
-    searchTickets: builder.mutation<any, SearchCriteria>({
+    searchTickets: builder.mutation<object, SearchCriteria>({
       query: (criteria) => ({
         url: 'search',
         method: 'POST',
