@@ -67,10 +67,6 @@ const PassengersTable = () => {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-        <button onClick={() => setModalOpen(true)}>Добавить пассажира</button>
-      </div>
-
       <BaseAdminModal
         title="Добавление пассажира"
         isOpen={isModalOpen}
@@ -95,6 +91,49 @@ const PassengersTable = () => {
         onSelectionChange={handleSelectionChange}
         onError={handleError}
       />
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          marginBottom: '16px',
+          position: 'absolute',
+          right: '50px',
+          top: '137px',
+          boxShadow: '0 5px 5px 0 rgba(0,0,0,0.06)',
+          border: ' solid 1px #DEDEDE',
+          borderRadius: '2px',
+        }}
+      >
+        <button
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#F9F9F9',
+            cursor: 'pointer',
+            border: 'none',
+            height: '40px',
+            width: '236px',
+            outline: 'none',
+            gap: '4px',
+            fontSize: '14px',
+            fontWeight: '600',
+            fontStyle: 'italic',
+            fontFamily: 'Open Sans',
+          }}
+          onClick={() => setModalOpen(true)}
+        >
+          Добавить пассажира{' '}
+          <div
+            style={{
+              backgroundImage: 'url("src/features/passengers-management/ui/Add.svg")',
+              height: '20px',
+              width: '20px',
+            }}
+          ></div>
+        </button>
+      </div>
     </>
   );
 };

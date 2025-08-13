@@ -1,11 +1,12 @@
 @use '../../styles/color-variables.scss' as *;
 
 .headerCell {
-  height: 100%;
   display: flex;
   align-items: center;
-  gap: 4px;
-  justify-content: space-between;
+  gap: 8px;
+  justify-content: center;
+  height: 58px;
+  line-height: 18px;
 }
 
 .sortable {
@@ -21,4 +22,5 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  margin-right: 8px;
 }

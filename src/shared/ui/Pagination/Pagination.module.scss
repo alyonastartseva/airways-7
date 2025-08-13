@@ -6,11 +6,15 @@
 }
 
 .paginationButton {
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  font-size: 14px;
+  border-radius: 2px;
   min-width: 36px;
-  background-color: transparent;
+  background-color: rgba(217, 217, 217, 0.15);
   border: 1px solid $color-border-table;
   color: rgba(0, 0, 0, 0.75);
 
@@ -19,11 +23,17 @@
 
 .paginationButton:hover:not(:disabled) {
   background-color: #f0f0f0;
+  cursor: pointer;
 }
 
 .paginationButton.active {
   background-color: $color-primary;
   color: white;
+}
+
+.paginationButton.active:hover {
+  background-color: $color-primary;
+  cursor: default;
 }
 
 .paginationButton:disabled {
@@ -32,5 +42,36 @@
 }
 
 .paginationEllipsis {
+  user-select: none;
+  display: block;
   padding: 6px 12px;
+  height: 40px;
+  width: 40px;
+  background-color: rgba(217, 217, 217, 0.15);
+  border: 1px solid $color-border-table;
+  border-radius: 2px;
+}
+
+.paginationNumbers {
+  display: flex;
+  gap: 4px;
+  margin: 0 12px;
+}
+
+.paginationArrow {
+  height: 24px;
+  width: 24px;
+  background-image: url('./arrow.png');
+  background-repeat: no-repeat;
+}
+
+.paginationDoubleArrow {
+  height: 24px;
+  width: 24px;
+  background-image: url('./doubleArrow.png');
+  background-repeat: no-repeat;
+}
+
+.paginationInvertArrow {
+  transform: rotate(180deg);
 }
