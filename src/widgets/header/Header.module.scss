@@ -56,10 +56,10 @@
 }
 
 .nav :global(a):hover {
-  color: #b3cfff;
+  color: $layout-menu-text-active-theme;
 }
 
 .nav :global(.active),
 .nav :global(a[aria-current='page']) {
-  color: #b3cfff;
+  color: $layout-menu-text-active-theme;
 }
