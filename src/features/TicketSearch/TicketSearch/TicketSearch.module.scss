@@ -9,6 +9,10 @@
   border: 15px solid $color-border;
   border-inline: 30px solid $color-border;
   box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  * {
+    font-family: inherit;
+  }
 }
 
 .header {
