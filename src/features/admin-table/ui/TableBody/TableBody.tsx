@@ -42,6 +42,7 @@ export const TableBody = <T,>({
               key={column.key}
               value={row[column.key as keyof T]}
               row={row}
+              render={column.render}
               testId={`${column.key === 'id' ? 'test-id' : ''}`}
             />
           ))}

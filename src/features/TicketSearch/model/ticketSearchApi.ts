@@ -10,6 +10,7 @@ export const ticketSearchApi = createApi({
     getCategories: builder.query<Category[], void>({
       query: () => 'categories',
     }),
+
     getDestinations: builder.query<Destination[], { search: string; page: number; limit?: number }>(
       {
         query: ({ search, page, limit = settingLimit }) => ({
@@ -18,7 +19,8 @@ export const ticketSearchApi = createApi({
         }),
       },
     ),
-    searchTickets: builder.mutation<any, SearchCriteria>({
+
+    searchTickets: builder.mutation<unknown, SearchCriteria>({
       query: (criteria) => ({
         url: 'search',
         method: 'POST',

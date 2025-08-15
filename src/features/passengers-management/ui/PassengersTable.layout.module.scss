@@ -1,0 +1,59 @@
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 56px;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  font-size: 23px;
+  line-height: 1.2;
+  font-weight: 600;
+  margin: 0;
+}
+
+.addBtn {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #1677ff;
+  color: #1677ff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    border-color: #4096ff;
+    color: #4096ff;
+  }
+}
+
+.tableArea :global([class^='_tableContainer_']),
+.tableArea :global([class*=' tableContainer_']) {
+  scrollbar-width: none;
+}
+.tableArea :global([class^='_tableContainer_'])::-webkit-scrollbar,
+.tableArea :global([class*=' tableContainer_'])::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.moreBtn :global(.anticon-more) {
+  transform: rotate(90deg) !important;
+  display: inline-block;
+}
+
+.moreBtn :global(.anticon-more svg) {
+  transform: rotate(90deg) !important;
+}
