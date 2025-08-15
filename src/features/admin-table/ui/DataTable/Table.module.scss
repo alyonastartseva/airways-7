@@ -80,3 +80,10 @@ tr:nth-child(2n) {
 .clickable:hover {
   background-color: $color-background;
 }
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

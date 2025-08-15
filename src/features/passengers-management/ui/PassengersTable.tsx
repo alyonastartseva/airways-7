@@ -7,6 +7,7 @@ import type { Column } from '../../../shared/model/Column.types';
 import { BaseAdminModal } from '../../../shared/ui/BaseAdminModal/BaseAdminModal';
 import type { AdminModalField } from '../../../shared/ui/BaseAdminModal/types';
 import { Table } from '../../admin-table';
+import styles from './PassengersTable.module.scss';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -90,41 +91,9 @@ const PassengersTable = () => {
         onRowClick={handleRowClick}
         onSelectionChange={handleSelectionChange}
         onError={handleError}
-      />
-
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          marginBottom: '16px',
-          position: 'absolute',
-          right: '50px',
-          top: '137px',
-          boxShadow: '0 5px 5px 0 rgba(0,0,0,0.06)',
-          border: ' solid 1px #DEDEDE',
-          borderRadius: '2px',
-        }}
       >
-        <button
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#F9F9F9',
-            cursor: 'pointer',
-            border: 'none',
-            height: '40px',
-            width: '236px',
-            outline: 'none',
-            gap: '4px',
-            fontSize: '14px',
-            fontWeight: '600',
-            fontStyle: 'italic',
-            fontFamily: 'Open Sans',
-          }}
-          onClick={() => setModalOpen(true)}
-        >
-          Добавить пассажира{' '}
+        <button className={styles.addButton} onClick={() => setModalOpen(true)}>
+          Добавить пассажира
           <div
             style={{
               backgroundImage: 'url("src/features/passengers-management/ui/Add.svg")',
@@ -133,7 +102,7 @@ const PassengersTable = () => {
             }}
           ></div>
         </button>
-      </div>
+      </Table>
     </>
   );
 };
