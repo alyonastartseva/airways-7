@@ -1,4 +1,4 @@
-import { AdminPassengerPage } from '../pages/admin/passengers';
+import AdminPassengerPage from '../pages/admin/passengers';
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
 
 const router = createBrowserRouter([

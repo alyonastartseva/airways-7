@@ -1,3 +1,9 @@
+export interface DateOption {
+  weekday: string;
+  date: string;
+  price: number;
+}
+
 export const TestDateOption: DateOption[] = [
   { weekday: 'вт', date: '17 июн', price: 12101 },
   { weekday: 'ср', date: '18 июн', price: 12101 },

@@ -260,6 +260,7 @@ const PassengersTable = () => {
 
       <div className={styles.tableArea}>
         <Table
+          title="Пассажиры"
           columns={columnsWithActions}
           data={data}
           isLoading={isLoading}

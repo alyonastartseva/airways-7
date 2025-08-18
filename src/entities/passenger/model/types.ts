@@ -1,3 +1,5 @@
+export type phoneNumber = string & { __brand: 'phoneNumber' };
+
 export interface Passenger {
   id: number;
 
@@ -21,22 +23,21 @@ export interface Passenger {
   email: string;
 }
 
-export type phoneNumber = string & { __brand: 'phoneNumber' };
-
-export const mapDtoToPassengers = (dto: PassengerDto): Passenger => ({
-  id: dto.id,
-  fullname: getFullName(dto),
-  firstName: dto.firstName,
-  lastName: dto.lastName,
-  middleName: dto.passport.middleName,
-  gender: dto.passport.gender,
-  phone: createPhoneNumber(dto.phoneNumber),
-  birthDate: dto.birthDate,
-  serialNumber: dto.passport.serialNumberPassport,
-  citizenship: dto.passport.passportIssuingCountry,
-  passportIssuingDate: dto.passport.passportIssuingDate,
-  email: dto.email,
-});
+export interface PassengerDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  phoneNumber: string;
+  email: string;
+  passport: {
+    middleName: string;
+    gender: string;
+    serialNumberPassport: string;
+    passportIssuingDate: string;
+    passportIssuingCountry: string;
+  };
+}
 
 export interface PassengersResponse {
   content: PassengerDto[];

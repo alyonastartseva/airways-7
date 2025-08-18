@@ -1,26 +1,34 @@
-import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
-import type { TableProps, Table as TableType } from '@features/admin/model/Table.types';
+import type { TableProps } from '@features/admin-table/model/types';
+import SkeletonTable from '@features/admin-table/ui/SkeletonTable/SkeletonTable';
 import { PAGINATION_CONFIG } from '@shared/config/config';
+import type { Column } from '@shared/model/Column.types';
 import Pagination from '@shared/ui/Pagination';
 import type { Pagination as PaginationType } from '@shared/ui/Pagination/Pagination.types';
-import { SortIconAsc } from '@shared/ui/SortIcons/SortIcons';
+import { SortIcon } from '@shared/ui/SortIcons/SortIcons';
 import type { SortDirection } from '@shared/ui/SortIcons/SortIcons.types';
 import { Alert } from 'antd';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import type { JSX } from 'react';
 
-export const TableInner = <T,>({
+const getVal = <T,>(row: T, key: string): unknown => (row as Record<string, unknown>)[key];
+
+const TableInner = <T,>({
   title,
   columns,
-  useQuery,
-  rowKey = 'id',
+  data,
+  isLoading,
+  isError,
+  rowKey = 'id' as unknown as keyof T & string,
   selectable = false,
   onRowClick,
   onSelectionChange,
   defaultSort,
+  onError,
 }: TableProps<T>) => {
-  const { data: dataAll = [], isLoading: loading, error } = useQuery();
+  const dataAll: T[] = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+  const loading = !!isLoading;
+  const error = !!isError;
 
   const [displayData, setDisplayData] = useState<T[]>([]);
   const [pagination, setPagination] = useState<PaginationType>({
@@ -28,65 +36,69 @@ export const TableInner = <T,>({
     pageSize: PAGINATION_CONFIG.DEFAULTS.pageSize,
     total: PAGINATION_CONFIG.DEFAULTS.total,
   });
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: SortDirection;
-  } | null>(defaultSort || null);
-  const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
-  const navigate = useNavigate();
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: SortDirection } | null>(
+    defaultSort || null,
+  );
+  const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
   const memoizedColumns = useMemo(() => columns, [columns]);
 
   useEffect(() => {
-    if (!defaultSort) {
-      setSortConfig({ key: 'id', direction: 'asc' });
-    }
+    if (!defaultSort) setSortConfig({ key: 'id', direction: 'asc' });
   }, [defaultSort]);
 
-  const sortData = (data: T[]) => {
-    if (!sortConfig) return data;
+  const sortData = useCallback(
+    (dataToSort: T[]) => {
+      if (!sortConfig) return dataToSort;
+      const { key, direction } = sortConfig;
+      const dir = direction === 'asc' ? 1 : -1;
 
-    return [...data].sort((a, b) => {
-      const aValue = a[sortConfig.key as keyof T];
-      const bValue = b[sortConfig.key as keyof T];
+      return [...dataToSort].sort((a, b) => {
+        const aValue = getVal(a, key);
+        const bValue = getVal(b, key);
 
-      if (aValue === bValue) return 0;
-      if (aValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
-      if (bValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortConfig.direction === 'asc'
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
+        if (aValue === bValue) return 0;
+        if (aValue == null) return -1 * dir;
+        if (bValue == null) return 1 * dir;
 
-      return sortConfig.direction === 'asc' ? (aValue > bValue ? 1 : -1) : aValue < bValue ? 1 : -1;
-    });
-  };
+        const aType = typeof aValue;
+        const bType = typeof bValue;
 
-  const sortedData = useMemo(() => sortData(dataAll), [dataAll, sortConfig]);
+        if (aType === 'string' && bType === 'string') {
+          return dir === 1
+            ? (aValue as string).localeCompare(bValue as string)
+            : (bValue as string).localeCompare(aValue as string);
+        }
 
+        if (aType === 'number' && bType === 'number') {
+          return (aValue as number) > (bValue as number) ? 1 * dir : -1 * dir;
+        }
+
+        return String(aValue).localeCompare(String(bValue)) * dir;
+      });
+    },
+    [sortConfig],
+  );
+
+  const sortedData = useMemo(() => sortData(dataAll), [dataAll, sortData]);
+
+  const { current, pageSize } = pagination;
   useEffect(() => {
     if (loading || error) return;
-
-    const startIndex = (pagination.current - 1) * pagination.pageSize;
-    const endIndex = startIndex + pagination.pageSize;
+    const startIndex = (current - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
     setDisplayData(sortedData.slice(startIndex, endIndex));
-  }, [sortedData, pagination.current, pagination.pageSize, loading, error]);
+  }, [sortedData, current, pageSize, loading, error]);
 
   useEffect(() => {
-    if (!loading)
-      setPagination((prev) => ({
-        ...prev,
-        total: dataAll.length,
-      }));
+    if (!loading) {
+      setPagination((prev) => ({ ...prev, total: dataAll.length }));
+    }
   }, [dataAll.length, loading]);
 
   const handlePageChange = useCallback((page: number) => {
-    setPagination((prev) => ({
-      ...prev,
-      current: page,
-    }));
+    setPagination((prev) => ({ ...prev, current: page }));
   }, []);
 
   const handleSort = useCallback(
@@ -99,56 +111,58 @@ export const TableInner = <T,>({
     [sortConfig],
   );
 
-  const handleRowSelect = (row: T, checked: boolean) => {
-    const newSelected = checked
-      ? [...selectedRows, row]
-      : selectedRows.filter((r) => r[rowKey as keyof T] !== row[rowKey as keyof T]);
+  const handleRowSelect = useCallback(
+    (row: T, checked: boolean) => {
+      const newSelected = checked
+        ? [...selectedRows, row]
+        : selectedRows.filter((r) => r[rowKey as keyof T] !== row[rowKey as keyof T]);
+      setSelectedRows(newSelected);
+      onSelectionChange?.(newSelected);
+    },
+    [onSelectionChange, rowKey, selectedRows],
+  );
 
-    setSelectedRows(newSelected);
-    onSelectionChange?.(newSelected);
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    const newSelected = checked ? displayData : [];
-    setSelectedRows(newSelected);
-    onSelectionChange?.(newSelected);
-  };
+  const handleSelectAll = useCallback(
+    (checked: boolean) => {
+      const newSelected = checked ? displayData : [];
+      setSelectedRows(newSelected);
+      onSelectionChange?.(newSelected);
+    },
+    [displayData, onSelectionChange],
+  );
 
   if (loading)
     return (
       <SkeletonTable
         title={title}
-        rowsCount={pagination.pageSize}
+        rowsCount={pageSize}
         columnsCount={memoizedColumns.length}
         columns={memoizedColumns}
         pagination={pagination}
-        selectable
+        selectable={selectable}
       />
     );
 
   if (error)
     return (
-      <Alert
-        type="error"
-        message="Error fetching data"
-        onClose={() => navigate('/')}
-        closable={true}
-      />
+      <Alert type="error" message="Error fetching data" onClose={() => onError?.()} closable />
     );
 
   return (
     <div className={styles.adminTable}>
       <h1 className={styles.title}>{title}</h1>
+
       <div className={styles.tableContainer}>
         <table title={title}>
           <colgroup>
-            {columns.map((col) => (
+            {columns.map((col: Column<T>) => (
               <col key={col.key} style={{ width: col.width }} />
             ))}
           </colgroup>
+
           <thead>
             <tr>
-              {columns.map((column) => (
+              {columns.map((column: Column<T>) => (
                 <th
                   key={column.key}
                   style={{ width: column.width }}
@@ -159,12 +173,13 @@ export const TableInner = <T,>({
                     {column.title}
                     {column.sortable && (
                       <span className={styles.sortIcons}>
-                        <SortIconAsc sortConfig={sortConfig} columnKey={column.key} />
+                        <SortIcon sortConfig={sortConfig} columnKey={column.key} />
                       </span>
                     )}
                   </div>
                 </th>
               ))}
+
               {selectable && (
                 <th className={styles.selector}>
                   <input
@@ -182,9 +197,9 @@ export const TableInner = <T,>({
               <tr
                 key={String(row[rowKey as keyof T])}
                 onClick={() => onRowClick?.(row)}
-                className={onRowClick ? `${styles.clickable}` : ' '}
+                className={onRowClick ? styles.clickable : undefined}
               >
-                {columns.map((column) => (
+                {columns.map((column: Column<T>) => (
                   <td
                     key={column.key}
                     className={`${styles.tableCell} ${styles.ellipsisCell}`}
@@ -226,4 +241,5 @@ export const TableInner = <T,>({
   );
 };
 
-export const Table = React.memo(TableInner) as TableType;
+export const Table = React.memo(TableInner) as <T>(p: TableProps<T>) => JSX.Element;
+export default Table;

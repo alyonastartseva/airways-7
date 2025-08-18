@@ -38,7 +38,7 @@ export const BaseAdminModal = <T,>({
     setFormData(init);
     setErrors({});
     setGeneralError(null);
-  }, [isOpen]);
+  }, [isOpen, fields, defaultValues]);
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -77,10 +77,12 @@ export const BaseAdminModal = <T,>({
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>
+        <button className={styles.closeButton} onClick={onClose} aria-label="Закрыть">
           &times;
         </button>
+
         <h2 className={styles.title}>Создание {title.toLowerCase()}</h2>
+
         <form onSubmit={handleSubmit}>
           {fields.map((field) => (
             <div key={field.name} className={styles.formField}>
@@ -99,7 +101,7 @@ export const BaseAdminModal = <T,>({
               {field.type === 'select' && field.options && (
                 <Select
                   value={formData[field.name] || ''}
-                  onChange={(val) => handleChange(field.name, val)}
+                  onChange={(val) => handleChange(field.name, String(val))}
                   options={field.options}
                 />
               )}

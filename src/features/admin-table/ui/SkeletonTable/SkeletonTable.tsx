@@ -24,6 +24,7 @@ export const SkeletonTable = <T,>({
       <h1 data-testid="table-title" className={styles.title}>
         {title}
       </h1>
+
       <div className={styles.skeletonWrapper}>
         <div className={styles.skeletonHeader}>
           {Array.from({ length: columnsCount }).map((_, i) => (
@@ -51,6 +52,7 @@ export const SkeletonTable = <T,>({
           ))}
         </div>
       </div>
+
       <div className={styles.pagination}>
         <Pagination
           totalItems={pagination.total || PAGINATION_CONFIG.DEFAULTS.total}
@@ -62,3 +64,5 @@ export const SkeletonTable = <T,>({
     </div>
   );
 };
+
+export default SkeletonTable;
