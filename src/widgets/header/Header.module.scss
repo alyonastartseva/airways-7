@@ -56,10 +56,10 @@
 }
 
 .nav :global(a):hover {
-  color: #b3cfff;
+  color: $color-border-search-ticket;
 }
 
 .nav :global(.active),
 .nav :global(a[aria-current='page']) {
-  color: #b3cfff;
+  color: $color-border-search-ticket;
 }
