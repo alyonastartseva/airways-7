@@ -1,4 +1,8 @@
-import { useLazyGetDestinationsQuery, useSearchTicketsMutation } from '../model/ticketSearchApi';
+import {
+  // useGetCategoriesQuery,
+  useLazyGetDestinationsQuery,
+  useSearchTicketsMutation,
+} from '../model/ticketSearchApi';
 import type { Destination, SearchCriteria } from '../model/types';
 import styles from './TicketSearch.module.scss';
 import { Select, Input, Checkbox, DatePicker, Radio, Button, Space, Spin } from 'antd';
@@ -10,6 +14,7 @@ const { Group: RadioGroup } = Radio;
 const DEFAULT_DEST_LIMIT = 20;
 
 const TicketSearch: React.FC = () => {
+  // const { data: categories = [], isLoading: catLoading } = useGetCategoriesQuery();
   const [fetchOrig, { isFetching: origLoading }] = useLazyGetDestinationsQuery();
   const [fetchDest, { isFetching: destLoading }] = useLazyGetDestinationsQuery();
   const [origList, setOrigList] = useState<Destination[]>([]);
