@@ -9,6 +9,8 @@
 }
 
 body {
+  font-family: $font-primary;
+
   background-color: var(--background-color);
   color: var(--text-color);
   transition:

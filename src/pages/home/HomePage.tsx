@@ -1,11 +1,8 @@
-import { Link } from 'react-router-dom';
+import TicketSearch from '@/features/TicketSearch/TicketSearch/TicketSearch';
 
 const HomePage = () => (
   <div>
-    <h1>Главная страница</h1>
-    <Link to="/passengers-table">
-      <button>Открыть таблицу пассажиров</button>
-    </Link>
+    <TicketSearch />
   </div>
 );
 
