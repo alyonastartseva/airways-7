@@ -1,5 +1,5 @@
+import { store } from '../../app/store';
 import AdminPassengerPage from '../../pages/admin/passengers';
-import { store } from '../../shared/store/store';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';

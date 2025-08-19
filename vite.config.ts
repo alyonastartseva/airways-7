@@ -6,7 +6,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 
 
-const styleIndexPath = path.resolve(__dirname, 'src/shared/styles/index.scss').replace(/\\/g, '/');
+// const styleIndexPath = path.resolve(__dirname, 'src/shared/styles/index.scss').replace(/\\/g, '/');
 
 export default defineConfig({
   plugins: [

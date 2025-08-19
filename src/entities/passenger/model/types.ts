@@ -1,13 +1,21 @@
 export interface Passenger {
   id: number;
-  fullname: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
   gender: string;
   phone: phoneNumber;
   birthDate: string;
-  serialNumber: string;
   citizenship: string;
-  passportIssuingDate: string;
   email: string;
+  passport?: {
+    serialNumber: string;
+    issuingDate: string;
+    issuingCountry: string;
+  };
+  fullname?: string;
+  serialNumber?: string;
+  passportIssuingDate?: string;
 }
 
 export type phoneNumber = string & { __brand: 'phoneNumber' };

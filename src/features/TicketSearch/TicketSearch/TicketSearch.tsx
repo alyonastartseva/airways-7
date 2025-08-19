@@ -170,8 +170,14 @@ const TicketSearch: React.FC = () => {
                 }
                 onChange={(vals) => {
                   if (vals) {
-                    updateField('dateFrom', vals[0].format('YYYY-MM-DD'));
-                    updateField('dateTo', vals[1].format('YYYY-MM-DD'));
+                    updateField(
+                      'dateFrom',
+                      vals[0] !== null ? vals[0].format('YYYY-MM-DD') : undefined,
+                    );
+                    updateField(
+                      'dateTo',
+                      vals[1] !== null ? vals[1].format('YYYY-MM-DD') : undefined,
+                    );
                   }
                 }}
                 placeholder={['Туда', 'Обратно']}

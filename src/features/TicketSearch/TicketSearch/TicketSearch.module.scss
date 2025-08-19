@@ -9,6 +9,10 @@
   border: 15px solid $color-border-search-ticket;
   border-radius: 20px;
   box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  * {
+    font-family: inherit;
+  }
 }
 
 .header {

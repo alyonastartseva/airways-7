@@ -1,10 +1,10 @@
 import { SkeletonTable } from '../SkeletonTable/SkeletonTable';
 import styles from './Table.module.scss';
-import type { TableProps, Table as TableType } from '@features/admin/model/Table.types';
+import type { TableProps, Table as TableType } from '@features/admin/model/types';
 import { PAGINATION_CONFIG } from '@shared/config/config';
 import Pagination from '@shared/ui/Pagination';
 import type { Pagination as PaginationType } from '@shared/ui/Pagination/Pagination.types';
-import { SortIconAsc } from '@shared/ui/SortIcons/SortIcons';
+import { SortIcon } from '@shared/ui/SortIcons/SortIcons';
 import type { SortDirection } from '@shared/ui/SortIcons/SortIcons.types';
 import { Alert } from 'antd';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -159,7 +159,7 @@ export const TableInner = <T,>({
                     {column.title}
                     {column.sortable && (
                       <span className={styles.sortIcons}>
-                        <SortIconAsc sortConfig={sortConfig} columnKey={column.key} />
+                        <SortIcon sortConfig={sortConfig} columnKey={column.key} />
                       </span>
                     )}
                   </div>
@@ -182,7 +182,7 @@ export const TableInner = <T,>({
               <tr
                 key={String(row[rowKey as keyof T])}
                 onClick={() => onRowClick?.(row)}
-                className={onRowClick ? `${styles.clickable}` : ' '}
+                className={onRowClick(row) ? `${styles.clickable}` : ' '}
               >
                 {columns.map((column) => (
                   <td

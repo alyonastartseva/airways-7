@@ -1,11 +1,15 @@
-import { authApi } from '@/features/auth/api/authApi';
+import searchReducer from '../features/TicketSearch/model/searchSlice';
+import adminTableReducer from '../features/admin-table/model/adminTableSlice';
+import { baseApi } from '../shared/api/baseApi';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
-    [authApi.reducerPath]: authApi.reducer,
+    [baseApi.reducerPath]: baseApi.reducer,
+    adminTable: adminTableReducer,
+    search: searchReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(authApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

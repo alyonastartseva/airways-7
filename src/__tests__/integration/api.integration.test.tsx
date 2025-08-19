@@ -1,5 +1,5 @@
+import { store } from '../../app/store';
 import { useGetPassengersQuery } from '../../entities/passenger';
-import { store } from '../../shared/store/store';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { describe, expect, test } from 'vitest';

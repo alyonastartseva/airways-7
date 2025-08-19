@@ -4,7 +4,10 @@
   width: 100%;
   padding: 16px;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', sans-serif;
+  * {
+    font-family: inherit;
+  }
 }
 
 .header {
