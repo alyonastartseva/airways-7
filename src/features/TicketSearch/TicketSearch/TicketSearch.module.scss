@@ -6,8 +6,8 @@
   min-height: fit-content;
   width: 1400px;
   margin-bottom: 50px;
-  border: 15px solid $color-border;
-  border-inline: 30px solid $color-border;
+  border: 15px solid $color-border-search-ticket;
+  border-radius: 20px;
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
   * {
@@ -52,8 +52,8 @@
   .input,
   .datePicker {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #d9d9d9;
+    height: 48px;
+    border: 1px solid $color-border;
     border-radius: 4px;
     font-size: $text-base;
     margin-top: 8px;

@@ -17,6 +17,19 @@ const Header: React.FC = () => {
     navigate('/');
   };
 
+
+  const navItems = [
+    { path: '/admin/passengers', label: 'Пассажиры' },
+    { path: '/admin/flights', label: 'Самолеты' },
+    { path: '/admin/tickets', label: 'Места' },
+    { path: '/', label: 'Пояса' },
+    { path: '/', label: 'Рейсы' },
+    { path: '/', label: 'Билеты' },
+    { path: '/', label: 'Бронирование' },
+    { path: '/', label: 'Посадочные места' },
+    { path: '/admin/passengers-table', label: 'Пользователи' },
+  ];
+
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -25,15 +38,12 @@ const Header: React.FC = () => {
           <span className={styles.logoText}>Air Alien</span>
         </Link>
         <nav className={styles.nav}>
-          <Link to="/admin/passengers">Пассажиры</Link>
-          <Link to="/admin/flights">Самолеты</Link>
-          <Link to="/admin/tickets">Места</Link>
-          <Link to="/">Пояса</Link>
-          <Link to="/">Рейсы</Link>
-          <Link to="/">Билеты</Link>
-          <Link to="/">Бронирование</Link>
-          <Link to="/">Посадочные места</Link>
-          <Link to="/admin/passengers-table">Пользователи</Link>
+
+          {navItems.map((item, index) => (
+            <Link key={index} to={item.path}>
+              {item.label}
+            </Link>
+          ))}
         </nav>
         <div className={styles.authButtons}>
           {isAuthenticated ? (
