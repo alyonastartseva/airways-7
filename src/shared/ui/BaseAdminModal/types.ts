@@ -1,4 +1,4 @@
-export type FieldType = 'input' | 'select' | 'date';
+export type FieldType = 'input' | 'select' | 'date' | 'checkbox';
 
 export interface AdminModalField {
   title: string;

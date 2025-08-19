@@ -7,7 +7,7 @@ import type { Column } from '../../../shared/model/Column.types';
 import { BaseAdminModal } from '../../../shared/ui/BaseAdminModal/BaseAdminModal';
 import type { AdminModalField } from '../../../shared/ui/BaseAdminModal/types';
 import { Table } from '../../admin-table';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const COLUMNS: Column<Passenger>[] = [
@@ -21,29 +21,32 @@ const COLUMNS: Column<Passenger>[] = [
   { key: 'passportIssuingDate', title: 'Дата выдачи паспорта', sortable: true, width: 115 },
 ];
 
-const PASSENGER_FIELDS: AdminModalField[] = [
-  { title: 'Имя', name: 'firstName', type: 'input', required: true },
-  { title: 'Фамилия', name: 'lastName', type: 'input', required: true },
-  { title: 'Гражданство', name: 'citizenship', type: 'input', required: true },
-  {
-    title: 'Пол',
-    name: 'gender',
-    type: 'select',
-    required: true,
-    options: [
-      { label: 'Мужской', value: 'male' },
-      { label: 'Женский', value: 'female' },
-    ],
-  },
-  { title: 'Телефон', name: 'phoneNumber', type: 'input' },
-  { title: 'Дата рождения', name: 'birthDate', type: 'date' },
-];
-
 const PassengersTable = () => {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useGetPassengersQuery();
   const [createPassenger] = useCreatePassengerMutation();
   const [isModalOpen, setModalOpen] = useState(false);
+
+  const PASSENGER_FIELDS: AdminModalField[] = useMemo(
+    () => [
+      { title: 'Имя', name: 'firstName', type: 'input', required: true },
+      { title: 'Фамилия', name: 'lastName', type: 'input', required: true },
+      { title: 'Гражданство', name: 'citizenship', type: 'input', required: true },
+      {
+        title: 'Пол',
+        name: 'gender',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Мужской', value: 'male' },
+          { label: 'Женский', value: 'female' },
+        ],
+      },
+      { title: 'Телефон', name: 'phoneNumber', type: 'input' },
+      { title: 'Дата рождения', name: 'birthDate', type: 'date' },
+    ],
+    [],
+  );
 
   const handleRowClick = (passenger: Passenger) => {
     console.log('Selected user:', passenger);
@@ -57,13 +60,16 @@ const PassengersTable = () => {
     navigate('/');
   };
 
-  const handleCreatePassenger = async (formData: Record<string, string>) => {
-    try {
-      await createPassenger(formData).unwrap();
-    } catch {
-      throw new Error('Не удалось создать пассажира');
-    }
-  };
+  const handleCreatePassenger = useCallback(
+    async (formData: Record<string, string>) => {
+      try {
+        await createPassenger(formData).unwrap();
+      } catch {
+        throw new Error('Не удалось создать пассажира');
+      }
+    },
+    [createPassenger],
+  );
 
   return (
     <>
