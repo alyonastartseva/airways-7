@@ -2,7 +2,7 @@
   border: 0.9rem solid var(--hover-light-color);
   border-radius: 1rem;
   padding: 0.9rem 3.1rem 4rem;
-  background-color: #fff;
+  background-color: var(--bg-search-theme);
   min-height: fit-content;
   width: 1400px;
   margin-bottom: 50px;
@@ -10,13 +10,15 @@
   border-radius: 20px;
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
+  color: var(--input-label-theme);
   * {
     font-family: inherit;
+    color: inherit;
   }
 }
 
 .header {
-  color: $color-layout;
+  color: var(--title-color-theme);
   font-size: 40px;
   font-weight: 700;
   text-align: left;
@@ -43,10 +45,9 @@
   margin: 0;
   margin-bottom: 16px;
   text-align: left;
-
   label {
     font-size: $text-sm;
-    color: $color-text-primary;
+    color: var(--input-label-theme);
   }
 
   .input,
@@ -57,6 +58,7 @@
     border-radius: 4px;
     font-size: $text-base;
     margin-top: 8px;
+    background-color: var(--input-bg);
   }
 
   .datePicker {
@@ -72,6 +74,16 @@
   .radio {
     margin-top: 25px;
     justify-self: center;
+    :global {
+      .ant-radio .ant-radio-inner {
+        background-color: var(--radio-checked);
+      }
+
+      .ant-radio-checked .ant-radio-inner {
+        border-color: var(--radio-bg);
+        background-color: var(--radio-bg);
+      }
+    }
   }
 
   .submitBtn {
@@ -80,8 +92,8 @@
 }
 
 .button {
-  background-color: $color-primary;
-  color: white;
+  background-color: var(--searcher-button-bg-theme);
+  color: var(--searcher-button-text-theme);
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
@@ -101,4 +113,10 @@
 .transferCheckbox {
   margin-top: 30px;
   font-size: $text-base !important;
+  :global {
+    .ant-checkbox-checked .ant-checkbox-inner {
+      border-color: var(--radio-bg);
+      background-color: var(--radio-bg);
+    }
+  }
 }
