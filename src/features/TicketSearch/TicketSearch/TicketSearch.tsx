@@ -3,11 +3,24 @@ import type { Destination, SearchCriteria } from '../model/types';
 import styles from './TicketSearch.module.scss';
 import { Select, Input, Checkbox, DatePicker, Radio, Button, Space, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const { RangePicker } = DatePicker;
 const { Group: RadioGroup } = Radio;
 const DEFAULT_DEST_LIMIT = 20;
+
+const toDestArray = (raw: unknown): Destination[] => {
+  if (Array.isArray(raw)) return raw as Destination[];
+  if (raw && typeof raw === 'object') {
+    const r = raw as Record<string, unknown>;
+    const keys = ['items', 'data', 'content', 'results', 'list'] as const;
+    for (const k of keys) {
+      const v = r[k];
+      if (Array.isArray(v)) return v as Destination[];
+    }
+  }
+  return [];
+};
 
 const TicketSearch: React.FC = () => {
   const [fetchOrig, { isFetching: origLoading }] = useLazyGetDestinationsQuery();
@@ -34,13 +47,20 @@ const TicketSearch: React.FC = () => {
 
   const [searchTickets, { isLoading: searching }] = useSearchTicketsMutation();
 
+  const initialListRef = useRef<Destination[] | null>(null);
+  const didInit = useRef(false);
+
   const loadOrig = useCallback(
     (search: string, page: number) => {
       fetchOrig({ search, page, limit: DEFAULT_DEST_LIMIT })
         .unwrap()
         .then((data) => {
-          setOrigList((prev) => (page === 1 ? data : [...prev, ...data]));
+          const list = toDestArray(data);
+          setOrigList((prev) => (page === 1 ? list : [...prev, ...list]));
           setOrigPage(page);
+        })
+        .catch((e) => {
+          console.error('loadOrig failed', e);
         });
     },
     [fetchOrig],
@@ -51,39 +71,108 @@ const TicketSearch: React.FC = () => {
       fetchDest({ search, page, limit: DEFAULT_DEST_LIMIT })
         .unwrap()
         .then((data) => {
-          setDestList((prev) => (page === 1 ? data : [...prev, ...data]));
+          const list = toDestArray(data);
+          setDestList((prev) => (page === 1 ? list : [...prev, ...list]));
           setDestPage(page);
+        })
+        .catch((e) => {
+          console.error('loadDest failed', e);
         });
     },
     [fetchDest],
   );
 
   useEffect(() => {
-    loadOrig('', 1);
-    loadDest('', 1);
-  }, [loadOrig, loadDest]);
+    if (didInit.current) return;
+    didInit.current = true;
 
-  const onOrigSearch = (val: string) => {
-    setOrigSearch(val);
-    loadOrig(val, 1);
-  };
+    fetchOrig({ search: '', page: 1, limit: DEFAULT_DEST_LIMIT })
+      .unwrap()
+      .then((data) => {
+        const list = toDestArray(data);
+        initialListRef.current = list;
+        setOrigList(list);
+        setDestList(list);
+        setOrigPage(1);
+        setDestPage(1);
+      })
+      .catch((e: unknown) => {
+        type ApiError = { status?: number; data?: unknown };
+
+        const toMessage = (data: unknown): string | undefined => {
+          if (typeof data === 'string') return data;
+          if (data && typeof data === 'object') {
+            const d = data as { message?: unknown; error?: unknown };
+            if (typeof d.message === 'string') return d.message;
+            if (typeof d.error === 'string') return d.error;
+          }
+          return undefined;
+        };
+
+        const err = e as ApiError;
+        console.error('initial destinations load failed', {
+          status: err?.status,
+          message: toMessage(err?.data),
+        });
+      });
+  }, [fetchOrig]);
+
+  const origTimer = useRef<number | null>(null);
+  useEffect(() => {
+    if (origTimer.current) window.clearTimeout(origTimer.current);
+    origTimer.current = window.setTimeout(() => {
+      const q = origSearch.trim();
+      if (!q) {
+        if (initialListRef.current) {
+          setOrigList(initialListRef.current);
+          setOrigPage(1);
+        } else {
+          loadOrig('', 1);
+        }
+      } else {
+        loadOrig(q, 1);
+      }
+    }, 250);
+    return () => {
+      if (origTimer.current) window.clearTimeout(origTimer.current);
+    };
+  }, [origSearch, loadOrig]);
+
+  const destTimer = useRef<number | null>(null);
+  useEffect(() => {
+    if (destTimer.current) window.clearTimeout(destTimer.current);
+    destTimer.current = window.setTimeout(() => {
+      const q = destSearch.trim();
+      if (!q) {
+        if (initialListRef.current) {
+          setDestList(initialListRef.current);
+          setDestPage(1);
+        } else {
+          loadDest('', 1);
+        }
+      } else {
+        loadDest(q, 1);
+      }
+    }, 250);
+    return () => {
+      if (destTimer.current) window.clearTimeout(destTimer.current);
+    };
+  }, [destSearch, loadDest]);
+
+  const onOrigSearch = (val: string) => setOrigSearch(val);
+  const onDestSearch = (val: string) => setDestSearch(val);
 
   const onOrigScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const t = e.currentTarget;
     if (t.scrollHeight - t.scrollTop === t.clientHeight && !origLoading) {
-      loadOrig(origSearch, origPage + 1);
+      loadOrig(origSearch.trim(), origPage + 1);
     }
-  };
-
-  const onDestSearch = (val: string) => {
-    setDestSearch(val);
-    loadDest(val, 1);
   };
 
   const onDestScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const t = e.currentTarget;
     if (t.scrollHeight - t.scrollTop === t.clientHeight && !destLoading) {
-      loadDest(destSearch, destPage + 1);
+      loadDest(destSearch.trim(), destPage + 1);
     }
   };
 

@@ -39,21 +39,12 @@
   }
 }
 
-.tableArea :global([class^='_tableContainer_']),
-.tableArea :global([class*=' tableContainer_']) {
+.tableArea .BaseTable {
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.tableArea :global([class^='_tableContainer_'])::-webkit-scrollbar,
-.tableArea :global([class*=' tableContainer_'])::-webkit-scrollbar {
+
+.tableArea .BaseTable::-webkit-scrollbar {
   width: 0;
   height: 0;
-}
-
-.moreBtn :global(.anticon-more) {
-  transform: rotate(90deg) !important;
-  display: inline-block;
-}
-
-.moreBtn :global(.anticon-more svg) {
-  transform: rotate(90deg) !important;
 }

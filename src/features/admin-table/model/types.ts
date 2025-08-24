@@ -1,6 +1,6 @@
 import type { Column } from '../../../shared/model/Column.types';
 import type { SortDirection } from '../../../shared/ui/SortIcons/SortIcons.types';
-import { type JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 
 export interface TableApiConfig<T> {
   useQuery: () => {
@@ -35,6 +35,24 @@ export interface TableBodyProps<T> {
   onRowSelect?: (args: { row?: T; checked: boolean }) => void;
 }
 
+/** Описание одной кнопки/действия в колонке "Действия" */
+export type RowAction<T> = {
+  id: string;
+  label?: string;
+  icon?: ReactNode;
+  onClick: (row: T) => void | Promise<void>;
+  visible?: (row: T) => boolean;
+  disabled?: (row: T) => boolean;
+  danger?: boolean;
+  confirm?: string;
+};
+
+/** Опции колонки "Действия" */
+export type ActionColumnOptions = {
+  width?: number;
+  title?: string; // оставляем string, т.к. Column.title — string
+};
+
 export interface TableProps<T> {
   title: string;
   columns: Column<T>[];
@@ -50,6 +68,8 @@ export interface TableProps<T> {
     key: keyof T & string;
     direction: SortDirection;
   };
+  rowActions?: RowAction<T>[] | ((row: T) => RowAction<T>[]);
+  actionColumn?: ActionColumnOptions;
 }
 
 export interface Table {

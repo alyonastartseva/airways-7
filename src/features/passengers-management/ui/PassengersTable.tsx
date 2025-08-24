@@ -6,17 +6,17 @@ import {
   type Passenger,
 } from '../../../entities/passenger';
 import type { Column } from '../../../shared/model/Column.types';
+import type { Gender } from '../../../shared/model/types/gender';
 import { BaseAdminModal } from '../../../shared/ui/BaseAdminModal/BaseAdminModal';
 import type { AdminModalField } from '../../../shared/ui/BaseAdminModal/types';
 import { Table } from '../../admin-table';
 import styles from './PassengersTable.layout.module.scss';
-import { PlusOutlined, MoreOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, message, Dropdown, Modal } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { message } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-type Gender = 'MALE' | 'FEMALE';
 type ISODate = string;
 type CountryCode = string;
 
@@ -94,7 +94,6 @@ const PassengersTable = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [current, setCurrent] = useState<Passenger | null>(null);
 
-  const [modal, modalCtx] = Modal.useModal();
   const [msgApi, msgCtx] = message.useMessage();
 
   const baseColumns = useMemo<Column<Passenger>[]>(
@@ -176,80 +175,34 @@ const PassengersTable = () => {
     [current, updatePassenger, refetch, msgApi],
   );
 
-  const columnsWithActions: Column<Passenger>[] = useMemo(() => {
+  const rowActions = useMemo(() => {
     return [
-      ...baseColumns,
       {
-        key: 'actions' as unknown as keyof Passenger & string,
-        title: '',
-        width: 44,
-        render: (_value, row) => (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Dropdown
-              trigger={['click']}
-              getPopupContainer={() => document.body}
-              placement="bottomRight"
-              menu={{
-                items: [
-                  {
-                    key: 'edit',
-                    label: (
-                      <div className="action-menu__item">
-                        <EditOutlined /> <span>Редактировать</span>
-                      </div>
-                    ),
-                    onClick: () => openEdit(row),
-                  },
-                  { type: 'divider' as const },
-                  {
-                    key: 'delete',
-                    label: (
-                      <div className="action-menu__item action-menu__item--danger">
-                        <DeleteOutlined /> <span>Удалить</span>
-                      </div>
-                    ),
-                    onClick: () => {
-                      modal.confirm({
-                        title: 'Удалить пассажира?',
-                        content: 'Действие необратимо. Продолжить?',
-                        okText: 'Удалить',
-                        cancelText: 'Отмена',
-                        okButtonProps: { danger: true },
-                        onOk: () =>
-                          deletePassenger(row.id)
-                            .unwrap()
-                            .then(() => {
-                              msgApi.success('Удалено — всё окей');
-                              refetch();
-                            }),
-                      });
-                    },
-                  },
-                ],
-              }}
-            >
-              <Button
-                type="text"
-                shape="circle"
-                className={styles.moreBtn}
-                icon={<MoreOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
-            </Dropdown>
-          </div>
-        ),
+        id: 'edit',
+        label: 'Редактировать',
+        icon: <EditOutlined />,
+        onClick: (row: Passenger) => openEdit(row),
+      },
+      {
+        id: 'delete',
+        label: 'Удалить',
+        icon: <DeleteOutlined />,
+        danger: true,
+        confirm: 'Удалить пассажира?',
+        onClick: async (row: Passenger) => {
+          await deletePassenger(row.id).unwrap();
+          msgApi.success('Удалено — всё окей');
+          refetch();
+        },
       },
     ];
-  }, [baseColumns, openEdit, deletePassenger, refetch, modal, msgApi]);
+  }, [openEdit, deletePassenger, msgApi, refetch]);
 
   const handleRowClick = useCallback(() => {}, []);
   const handleError = useCallback(() => navigate('/'), [navigate]);
 
   return (
     <div className={styles.page}>
-      {modalCtx}
       {msgCtx}
       <div className={styles.header}>
         <h2 className={styles.title}>Пассажиры</h2>
@@ -261,13 +214,15 @@ const PassengersTable = () => {
       <div className={styles.tableArea}>
         <Table
           title="Пассажиры"
-          columns={columnsWithActions}
+          columns={baseColumns}
           data={data}
           isLoading={isLoading}
           isError={isError}
           rowKey="id"
           onRowClick={handleRowClick}
           onError={handleError}
+          rowActions={rowActions}
+          actionColumn={{ width: 44, title: '' }}
         />
       </div>
 

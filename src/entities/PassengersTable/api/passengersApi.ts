@@ -1,6 +1,5 @@
 import { baseApi } from '@shared/api/baseApi';
-
-type Gender = 'MALE' | 'FEMALE';
+import type { Gender } from '@shared/model/types/gender';
 
 interface PassportPayload {
   middleName: string;
