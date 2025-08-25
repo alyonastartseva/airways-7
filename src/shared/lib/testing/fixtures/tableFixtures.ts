@@ -10,6 +10,7 @@ export interface defaultPropsType<T> {
   isError?: boolean;
   rowKey: keyof T;
   onError?: () => void;
+  children?: React.ReactNode;
 }
 
 export const defaultProps: defaultPropsType<MockPassengerType> = {
