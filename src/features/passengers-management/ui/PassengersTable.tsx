@@ -94,13 +94,13 @@ const PassengersTable = () => {
       >
         <button className={styles.addButton} onClick={() => setModalOpen(true)}>
           Добавить пассажира
-          <div
+          <svg
             style={{
               backgroundImage: 'url("src/features/passengers-management/ui/Add.svg")',
               height: '20px',
               width: '20px',
             }}
-          ></div>
+          />
         </button>
       </Table>
     </>
