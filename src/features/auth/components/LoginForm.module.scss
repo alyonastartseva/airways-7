@@ -1,36 +1,95 @@
-@use "../../../shared/styles/index.scss" as *;
+@use '../../../shared/styles/index.scss' as *;
 
 .formWrapper {
   font-family: $font-primary;
   min-width: 600px;
   max-width: 600px;
   padding: 44px 50px 16px 50px;
-  background-color: $text-link;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background-color: var(--auth-bg);
+  box-shadow: 0 8px 32px var(--auth-shadow);
   border-radius: 12px;
+  color: var(--auth-text);
+  transition: all 0.3s ease;
+  border: 1px solid var(--auth-border);
+
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 40px var(--auth-shadow);
+  }
+
+  animation: slideIn 0.6s ease-out;
 }
 
 .title {
-  text-align: start;
+  text-align: center;
   font-size: 36px;
   margin-bottom: 24px;
   font-weight: bold;
+  color: var(--auth-title-color);
 }
 
 .registerLink {
   text-align: center;
+  transition: color 0.3s ease;
   a {
-    color: $color-auth-note;
+    color: var(--auth-link-color);
     text-decoration: none;
 
     &:hover {
       text-decoration: underline;
+      opacity: 0.8;
+    }
+    &:active {
+      transform: scale(0.98);
     }
   }
 }
 
-.centeredButton {
+.submitBtn {
   display: flex;
   justify-content: center;
-  margin: 0;
+
+  button {
+    background-color: var(--auth-button-bg);
+    color: var(--auth-button-text);
+    border: none;
+    border-radius: 4px;
+
+    min-width: 120px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: $font-weight-medium;
+    font-size: $text-base;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 111, 255, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+:global {
+  .ant-form-item-label > label {
+    color: var(--auth-text) !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .ant-form-item-control-input-content {
+    color: var(--auth-text) !important;
+  }
+  .ant-input,
+  .ant-input-password {
+    background-color: var(--auth-input-bg) !important;
+    border-color: var(--auth-input-border) !important;
+    color: var(--auth-input-text) !important;
+    &:hover {
+      border-color: var(--auth-link-color) !important;
+    }
+  }
 }
