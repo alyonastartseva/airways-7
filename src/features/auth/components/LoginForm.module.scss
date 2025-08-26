@@ -11,13 +11,14 @@
   color: var(--auth-text);
   transition: all 0.3s ease;
   border: 1px solid var(--auth-border);
-
+  font-family: 'Roboto', sans-serif;
+  * {
+    font-family: inherit;
+  }
   &:hover {
     transform: scale(1.01);
     box-shadow: 0 12px 40px var(--auth-shadow);
   }
-
-  animation: slideIn 0.6s ease-out;
 }
 
 .title {
