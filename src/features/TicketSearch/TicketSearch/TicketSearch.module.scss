@@ -8,6 +8,7 @@
   margin-bottom: 50px;
   border: 15px solid $color-border-search-ticket;
   border-radius: 20px;
+  box-shadow: 0 8px 32px var(--searcher-shadow);
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
   color: var(--input-label-theme);
@@ -59,6 +60,10 @@
     font-size: $text-base;
     margin-top: 8px;
     background-color: var(--input-bg);
+    color: var(--input-text);
+    &:hover {
+      border-color: var(--searcher-hover-color) !important;
+    }
   }
 
   .datePicker {
@@ -104,9 +109,10 @@
   width: 8rem;
   height: 3rem;
   font-weight: 700;
-
+  transition: all 0.3s ease;
   &:hover {
-    background-color: #40a9ff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 111, 255, 0.3);
   }
 }
 
