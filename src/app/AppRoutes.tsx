@@ -1,3 +1,4 @@
+import PrivateRoute from './providers/ui/PrivateRoute';
 import LoginPage from '@/pages/Auth/LoginPage';
 import AdminPassengerPage from '@/pages/admin/passengers';
 import HomePage from '@pages/home/HomePage';
@@ -9,7 +10,14 @@ const AppRoutes = () => (
     <Route path="/" element={<Layout />}>
       <Route index element={<HomePage />} />
       <Route path="login" element={<LoginPage />} />
-      <Route path="/passengers-table" element={<AdminPassengerPage />} />
+      <Route
+        path="/admin/passengers-table"
+        element={
+          <PrivateRoute>
+            <AdminPassengerPage />
+          </PrivateRoute>
+        }
+      />
     </Route>
   </Routes>
 );
