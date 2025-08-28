@@ -27,6 +27,7 @@
 
 .title {
   font-size: $text-xl;
+  color: var(--title-color);
 }
 
 .tableContainer {
@@ -41,7 +42,7 @@
     width: 100%;
     border-collapse: collapse;
     border: none;
-    border-bottom: 1px solid $color-border-table;
+    border-bottom: 1px solid var(--table-border);
 
     colgroup {
       display: table-column-group;
@@ -57,12 +58,12 @@ th,
 td {
   text-align: center;
   overflow: hidden;
-  border-left: 1px solid $color-border-table;
-  border-right: 1px solid $color-border-table;
+  border-left: 1px solid var(--table-border);
+  border-right: 1px solid var(--table-border);
 }
 
 th {
-  border: 1px solid $color-border-table;
+  border: 1px solid var(--table-border);
   background-color: $th-color;
   font-weight: 600;
   position: sticky;
@@ -70,7 +71,7 @@ th {
 }
 
 tr:nth-child(2n) {
-  background-color: rgba(217, 217, 217, 0.15);
+  background-color: var(--table-even-cell-color);
 }
 
 .clickable {
@@ -78,7 +79,7 @@ tr:nth-child(2n) {
 }
 
 .clickable:hover {
-  background-color: $color-background;
+  background-color: var(--hover-background-color);
 }
 
 .tableHeader {
