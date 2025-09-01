@@ -5,21 +5,18 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({
-    loginUser: builder.mutation<TokenResponse, LoginRequest>({
-      query: ({ username, password }) => {
-        const body = new URLSearchParams();
-        body.append('grant_type', 'password');
-        body.append('client_id', 'airline-project-client');
-        body.append('username', username);
-        body.append('password', password);
-
-        return {
-          url: 'token',
-          method: 'POST',
-          body: body.toString(),
-        };
-      },
+  endpoints: (b) => ({
+    loginUser: b.mutation<TokenResponse, LoginRequest>({
+      query: ({ username, password }) => ({
+        url: 'token',
+        method: 'POST',
+        body: new URLSearchParams({
+          grant_type: 'password',
+          client_id: 'airline-project-client',
+          username,
+          password,
+        }),
+      }),
     }),
   }),
 });

@@ -8,14 +8,18 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const API_URL = env.VITE_API_URL || 'http://localhost:3000/api';
+  const AUTH_URL = env.VITE_AUTH_URL || 'http://92.118.114.29:8180';
 
-  let target = 'http://localhost:3000';
-  try {
-    const u = new URL(API_URL);
-    target = u.origin;
-  } catch {
-    target = 'http://localhost:3000';
-  }
+  const safeOrigin = (u: string, fallback: string) => {
+    try {
+      return new URL(u).origin;
+    } catch {
+      return fallback;
+    }
+  };
+
+  const apiTarget = safeOrigin(API_URL, 'http://localhost:3000');
+  const authTarget = safeOrigin(AUTH_URL, 'http://92.118.114.29:8180');
 
   return {
     plugins: [
@@ -27,9 +31,15 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target,
+          target: apiTarget,
           changeOrigin: true,
           secure: false,
+        },
+        '/auth': {
+          target: authTarget,
+          changeOrigin: true,
+          secure: false,
+          rewrite: (p) => p.replace(/^\/auth/, ''),
         },
       },
     },
@@ -48,9 +58,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     css: {
-      preprocessorOptions: {
-        scss: { additionalData: `@use "@shared/styles/index.scss" as *;` },
-      },
+      preprocessorOptions: { scss: { additionalData: `@use "@shared/styles/index.scss" as *;` } },
     },
     build: {
       minify: 'terser',
@@ -59,12 +67,7 @@ export default defineConfig(({ mode }) => {
         format: { comments: false },
       },
       rollupOptions: {
-        output: {
-          manualChunks: {
-            react: ['react', 'react-dom'],
-            vendor: ['lodash'],
-          },
-        },
+        output: { manualChunks: { react: ['react', 'react-dom'], vendor: ['lodash'] } },
       },
       chunkSizeWarningLimit: 1000,
     },
