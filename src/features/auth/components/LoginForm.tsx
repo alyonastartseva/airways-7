@@ -32,7 +32,7 @@ const LoginForm = () => {
 
   return (
     <div className={styles.formWrapper}>
-      <div className={styles.title}>Вход</div>
+      <div className={styles.title}>Авторизация</div>
       {errorMessage && (
         <Alert message={errorMessage} type="error" showIcon style={{ marginBottom: 16 }} />
       )}
@@ -42,7 +42,7 @@ const LoginForm = () => {
           name="email"
           rules={[{ required: true, message: 'Введите email' }]}
         >
-          <Input placeholder="Введите почту" />
+          <Input placeholder="Введите email" />
         </Form.Item>
         <Form.Item
           label="Пароль"
@@ -57,7 +57,7 @@ const LoginForm = () => {
         <Form.Item className={styles.registerLink}>
           Еще нет аккаунта? <Link to="#">Зарегистрируйтесь</Link>
         </Form.Item>
-        <Form.Item className={styles.centeredButton}>
+        <Form.Item className={styles.submitBtn}>
           <Button type="primary" htmlType="submit" loading={isLoading}>
             Войти
           </Button>
