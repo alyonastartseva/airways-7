@@ -7,6 +7,7 @@ import type { Column } from '../../../shared/model/Column.types';
 import { BaseAdminModal } from '../../../shared/ui/BaseAdminModal/BaseAdminModal';
 import type { AdminModalField } from '../../../shared/ui/BaseAdminModal/types';
 import { Table } from '../../admin-table';
+import styles from './PassengersTable.module.scss';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -67,10 +68,6 @@ const PassengersTable = () => {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-        <button onClick={() => setModalOpen(true)}>Добавить пассажира</button>
-      </div>
-
       <BaseAdminModal
         title="Добавление пассажира"
         isOpen={isModalOpen}
@@ -94,7 +91,18 @@ const PassengersTable = () => {
         onRowClick={handleRowClick}
         onSelectionChange={handleSelectionChange}
         onError={handleError}
-      />
+      >
+        <button className={styles.addButton} onClick={() => setModalOpen(true)}>
+          Добавить пассажира
+          <svg
+            style={{
+              backgroundImage: 'url("src/features/passengers-management/ui/Add.svg")',
+              height: '20px',
+              width: '20px',
+            }}
+          />
+        </button>
+      </Table>
     </>
   );
 };

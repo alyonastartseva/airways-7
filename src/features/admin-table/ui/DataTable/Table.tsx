@@ -22,6 +22,7 @@ export const TableInner = <T,>({
   onSelectionChange,
   onError,
   defaultSort,
+  children,
 }: TableProps<T>) => {
   const safeRowKey = useMemo(
     () =>
@@ -82,9 +83,12 @@ export const TableInner = <T,>({
 
   return (
     <div className={styles.adminTable}>
-      <h1 className={styles.title} data-testid="table-title">
-        {title}
-      </h1>
+      <div className={styles.tableHeader}>
+        <h1 className={styles.title} data-testid="table-title">
+          {title}
+        </h1>
+        {children}
+      </div>
       <div className={styles.tableContainer}>
         <table
           role="table"

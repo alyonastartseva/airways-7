@@ -46,6 +46,7 @@ export interface TableProps<T> {
   onRowClick?: (row: T) => void;
   onSelectionChange?: (selectedRows: T[]) => void;
   onError?: () => void;
+  children?: React.ReactNode;
   defaultSort?: {
     key: keyof T & string;
     direction: SortDirection;
