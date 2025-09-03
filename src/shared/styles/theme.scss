@@ -1,6 +1,8 @@
 :root {
   --background-color: $color-bg;
   --text-color: rgba(0, 0, 0, 0.85);
+
+  /* Переменные для авторизации (светлая тема)*/
   --auth-button-bg: #006fff;
   --auth-button-text: #fff;
   --auth-border: #e0e0e0;
@@ -10,13 +12,23 @@
   --auth-input-bg: #ffffff;
   --auth-input-border: #d9d9d9;
   --auth-input-text: #141414;
+
+  /* Переменные для поиска билетов (светлая тема)*/
+  --color-border-search-ticket: #d3efff;
+  --title-color-theme: #445ebd;
+  --searcher-button-bg-theme: #445ebd;
+  --searcher-button-text-theme: #fff;
+  --input-label-theme: #1a1a1a;
+  --radio-bg: #445ebd;
+  --searcher-shadow: rgba(0, 0, 0, 0.15);
+  --searcher-hover-color: #006fff;
 }
 
 .theme-dark {
-  --background-color: #4a4a4a;
-  --text-color: rgba(8, 7, 7, 0.85);
+  --background-color: #001529;
+  --text-color: rgba(255, 255, 255, 0.85);
 
-  //Авторизация
+  /* Переменные для авторизации (темная тема)*/
   --auth-bg: #3b3a3a;
   --auth-title-color: #d3efff;
   --auth-button-bg: #d3efff;
@@ -29,6 +41,19 @@
   --auth-input-text: #141414;
   --auth-input-bg: #999;
   --auth-input-label: #b1a2a2;
+
+  /* Переменные для поиска билетов (темная тема)*/
+  --bg-search-theme: #3b3a3a;
+  --searcher-shadow: rgba(0, 0, 0, 0.45);
+  --title-color-theme: #d3efff;
+  --searcher-button-bg-theme: #d3efff;
+  --searcher-button-text-theme: #213547;
+  --input-label-theme: #b1a2a2;
+  --radio-bg: #000000;
+  --radio-checked: #3b3a3a;
+  --input-bg: #999;
+  --input-text: #141414;
+  --searcher-hover-color: #d3efff;
 }
 
 body {
