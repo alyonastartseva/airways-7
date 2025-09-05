@@ -9,24 +9,25 @@
   font-family: $font-table;
   display: flex;
   flex-direction: column;
-  row-gap: 10px;
+  row-gap: 20px;
   align-items: start;
   justify-content: center;
   overflow: hidden;
-  min-width: 1080px;
+  width: 100vw;
 
   font-style: italic;
 
-  // .tableContainer {
-  //   td,
-  //   th {
-  //     width: auto;
-  //   }
-  // }
+  .tableContainer {
+    td,
+    th {
+      width: auto;
+    }
+  }
 }
 
 .title {
   font-size: $text-xl;
+  color: var(--title-color);
 }
 
 .tableContainer {
@@ -34,13 +35,14 @@
   overflow-x: auto;
   overflow-y: auto;
   border-radius: 2px;
-  height: 600px;
+  height: 565px;
   width: 100%;
   table {
     table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
     border: none;
+    border-bottom: 1px solid var(--table-border);
 
     colgroup {
       display: table-column-group;
@@ -54,18 +56,22 @@
 
 th,
 td {
-  padding: 12px 15px;
   text-align: center;
-  border: 1px solid $color-border-table;
   overflow: hidden;
+  border-left: 1px solid var(--table-border);
+  border-right: 1px solid var(--table-border);
 }
 
 th {
+  border: 1px solid var(--table-border);
   background-color: $th-color;
   font-weight: 600;
-  height: 100px;
   position: sticky;
   top: 0;
+}
+
+tr:nth-child(2n) {
+  background-color: var(--table-even-cell-color);
 }
 
 .clickable {
@@ -73,9 +79,12 @@ th {
 }
 
 .clickable:hover {
-  background-color: $color-background;
+  background-color: var(--hover-background-color);
 }
 
-.pagination {
-  min-height: 50px;
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }

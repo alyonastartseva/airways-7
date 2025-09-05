@@ -1,0 +1,23 @@
+.addButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--button-background);
+  cursor: pointer;
+  height: 40px;
+  width: 236px;
+  outline: none;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: italic;
+  font-family: 'Open Sans';
+  box-shadow: 0 5px 5px 0 $shadow-button;
+  border: solid 1px $color-border;
+  border-radius: 2px;
+  color: var(--button-text);
+}
+
+.addIcon {
+  filter: invert(var(--button-filter-invert));
+}

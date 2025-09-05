@@ -17,7 +17,6 @@ const Header: React.FC = () => {
     navigate('/');
   };
 
-
   const navItems = [
     { path: '/admin/passengers', label: 'Пассажиры' },
     { path: '/admin/flights', label: 'Самолеты' },
@@ -38,7 +37,6 @@ const Header: React.FC = () => {
           <span className={styles.logoText}>Air Alien</span>
         </Link>
         <nav className={styles.nav}>
-
           {navItems.map((item, index) => (
             <Link key={index} to={item.path}>
               {item.label}

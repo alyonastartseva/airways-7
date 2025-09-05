@@ -1,8 +1,8 @@
 .sortIcon {
-  color: $color-inactive;
+  color: var(--sort-icons-inactive-color);
   transition: color 0.2s ease;
 
   &.active {
-    color: $color-active;
+    color: var(--sort-icons-active-color);
   }
 }

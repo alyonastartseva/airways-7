@@ -6,24 +6,34 @@
 }
 
 .paginationButton {
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  font-size: 14px;
+  border-radius: 2px;
   min-width: 36px;
-  background-color: transparent;
-  border: 1px solid $color-border-table;
-  color: rgba(0, 0, 0, 0.75);
+  background-color: var(--background-color);
+  border: 1px solid var(--table-border);
+  color: var(--text-color);
 
   font-style: italic;
 }
 
 .paginationButton:hover:not(:disabled) {
-  background-color: #f0f0f0;
+  background-color: var(--hover-background-color);
+  cursor: pointer;
 }
 
 .paginationButton.active {
-  background-color: $color-primary;
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text);
+}
+
+.paginationButton.active:hover {
+  background-color: var(--button-background);
+  cursor: default;
 }
 
 .paginationButton:disabled {
@@ -32,5 +42,38 @@
 }
 
 .paginationEllipsis {
+  user-select: none;
+  display: block;
   padding: 6px 12px;
+  height: 40px;
+  width: 40px;
+  background-color: var(--background-color);
+  border: 1px solid var(--table-border);
+  border-radius: 2px;
+}
+
+.paginationNumbers {
+  display: flex;
+  gap: 4px;
+  margin: 0 12px;
+}
+
+.paginationArrow {
+  height: 24px;
+  width: 24px;
+  background-image: url('./arrow.png');
+  background-repeat: no-repeat;
+  filter: invert(var(--filter-invert));
+}
+
+.paginationDoubleArrow {
+  height: 24px;
+  width: 24px;
+  background-image: url('./doubleArrow.png');
+  background-repeat: no-repeat;
+  filter: invert(var(--filter-invert));
+}
+
+.paginationInvertArrow {
+  transform: rotate(180deg);
 }
