@@ -1,3 +1,4 @@
+// vite.config.ts
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -7,42 +8,50 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const API_URL = env.VITE_API_URL || 'http://localhost:3000/api';
+
+  // Можно задать, напр.:
+  // VITE_API_URL=http://localhost:8080/api
+  // VITE_AUTH_URL=http://92.118.114.29:8180
+  const API_URL = env.VITE_API_URL || 'http://localhost:8080/api';
   const AUTH_URL = env.VITE_AUTH_URL || 'http://92.118.114.29:8180';
 
-  const safeOrigin = (u: string, fallback: string) => {
-    try {
-      return new URL(u).origin;
-    } catch {
-      return fallback;
-    }
-  };
+  // Разбираем URL, чтобы корректно проксировать с переписыванием префикса
+  const apiUrl = new URL(API_URL);
+  const apiOrigin = apiUrl.origin; // http://localhost:8080
+  const apiBasePath = apiUrl.pathname.replace(/\/$/, '') || '/api'; // /api (или то, что задано)
 
-  const apiTarget = safeOrigin(API_URL, 'http://localhost:3000');
-  const authTarget = safeOrigin(AUTH_URL, 'http://92.118.114.29:8180');
+  const authUrl = new URL(AUTH_URL);
+  const authOrigin = authUrl.origin; // http://92.118.114.29:8180
+  const authBasePath = authUrl.pathname.replace(/\/$/, ''); // обычно пусто
 
   return {
     plugins: [
       react(),
       tsconfigPaths(),
       compression({ algorithm: 'gzip', ext: '.gz' }),
-      visualizer(),
+      visualizer({ filename: 'dist/stats.html', gzipSize: true, brotliSize: true, open: false }),
     ],
+
     server: {
       proxy: {
+        // Все запросы к /api → на API_URL (с учётом его базового пути)
         '/api': {
-          target: apiTarget,
+          target: apiOrigin,
           changeOrigin: true,
           secure: false,
+          rewrite: (p) => p.replace(/^\/api/, apiBasePath), // если apiBasePath = /api — переписывание "всамого себя"
         },
+
+        // Авторизация: /auth → AUTH_URL (обычно без префикса)
         '/auth': {
-          target: authTarget,
+          target: authOrigin,
           changeOrigin: true,
           secure: false,
-          rewrite: (p) => p.replace(/^\/auth/, ''),
+          rewrite: (p) => p.replace(/^\/auth/, authBasePath), // если нужно, можно оставить как есть
         },
       },
     },
+
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -57,9 +66,13 @@ export default defineConfig(({ mode }) => {
         '@widgets': path.resolve(__dirname, 'src/widgets'),
       },
     },
+
     css: {
-      preprocessorOptions: { scss: { additionalData: `@use "@shared/styles/index.scss" as *;` } },
+      preprocessorOptions: {
+        scss: { additionalData: `@use "@shared/styles/index.scss" as *;` },
+      },
     },
+
     build: {
       minify: 'terser',
       terserOptions: {
@@ -67,10 +80,16 @@ export default defineConfig(({ mode }) => {
         format: { comments: false },
       },
       rollupOptions: {
-        output: { manualChunks: { react: ['react', 'react-dom'], vendor: ['lodash'] } },
+        output: {
+          manualChunks: {
+            react: ['react', 'react-dom'],
+            vendor: ['lodash'],
+          },
+        },
       },
       chunkSizeWarningLimit: 1000,
     },
+
     optimizeDeps: { include: ['react', 'react-dom'] },
   };
 });

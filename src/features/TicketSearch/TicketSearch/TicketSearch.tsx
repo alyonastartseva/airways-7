@@ -1,6 +1,7 @@
-import { useLazyGetDestinationsQuery, useSearchTicketsMutation } from '../model/ticketSearchApi';
+import { useLazyGetDestinationsQuery } from '../model/ticketSearchApi';
 import type { Destination, SearchCriteria } from '../model/types';
 import styles from './TicketSearch.module.scss';
+import { idToIata, CITY_BY_IATA, ensureOption } from '@/shared/data/iataMap';
 import { Select, Input, Checkbox, DatePicker, Radio, Button, Space, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -8,6 +9,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const { RangePicker } = DatePicker;
 const { Group: RadioGroup } = Radio;
 const DEFAULT_DEST_LIMIT = 20;
+
+type TicketSearchProps = {
+  initialCriteria?: Partial<SearchCriteria>;
+  onSubmit?: (criteria: SearchCriteria) => void;
+};
 
 const toDestArray = (raw: unknown): Destination[] => {
   if (Array.isArray(raw)) return raw as Destination[];
@@ -22,7 +28,24 @@ const toDestArray = (raw: unknown): Destination[] => {
   return [];
 };
 
-const TicketSearch: React.FC = () => {
+type DestinationLike = Destination & { code?: string; iata?: string };
+
+const normIata = (v: unknown): string => {
+  const s = String(v ?? '');
+  return /^[A-Za-z]{3}$/.test(s) ? s.toUpperCase() : s;
+};
+
+function getIataFromDest(d: DestinationLike): string {
+  const raw = d.code ?? d.iata ?? idToIata((d as Destination).id);
+  return normIata(raw ?? (d as Destination).id);
+}
+
+function getNameWithIata(d: DestinationLike, code: string): string {
+  const baseName = (d as Destination).name || CITY_BY_IATA[code] || code;
+  return `${baseName} (${code})`;
+}
+
+const TicketSearch: React.FC<TicketSearchProps> = ({ initialCriteria, onSubmit }) => {
   const [fetchOrig, { isFetching: origLoading }] = useLazyGetDestinationsQuery();
   const [fetchDest, { isFetching: destLoading }] = useLazyGetDestinationsQuery();
 
@@ -45,10 +68,29 @@ const TicketSearch: React.FC = () => {
     seatType: 'business',
   });
 
-  const [searchTickets, { isLoading: searching }] = useSearchTicketsMutation();
+  const searching = false;
 
   const initialListRef = useRef<Destination[] | null>(null);
   const didInit = useRef(false);
+
+  // гидратация из initialCriteria
+  const hydrated = useRef(false);
+  useEffect(() => {
+    if (hydrated.current) return;
+    if (initialCriteria && Object.keys(initialCriteria).length) {
+      setCriteria((prev: SearchCriteria) => ({
+        ...prev,
+        ...initialCriteria,
+        currentLocation: initialCriteria.currentLocation
+          ? String(initialCriteria.currentLocation).toUpperCase()
+          : prev.currentLocation,
+        destination: initialCriteria.destination
+          ? String(initialCriteria.destination).toUpperCase()
+          : prev.destination,
+      }));
+      hydrated.current = true;
+    }
+  }, [initialCriteria]);
 
   const loadOrig = useCallback(
     (search: string, page: number) => {
@@ -59,9 +101,7 @@ const TicketSearch: React.FC = () => {
           setOrigList((prev) => (page === 1 ? list : [...prev, ...list]));
           setOrigPage(page);
         })
-        .catch((e) => {
-          console.error('loadOrig failed', e);
-        });
+        .catch((e) => console.error('loadOrig failed', e));
     },
     [fetchOrig],
   );
@@ -75,13 +115,12 @@ const TicketSearch: React.FC = () => {
           setDestList((prev) => (page === 1 ? list : [...prev, ...list]));
           setDestPage(page);
         })
-        .catch((e) => {
-          console.error('loadDest failed', e);
-        });
+        .catch((e) => console.error('loadDest failed', e));
     },
     [fetchDest],
   );
 
+  // начальная загрузка опций
   useEffect(() => {
     if (didInit.current) return;
     didInit.current = true;
@@ -98,7 +137,6 @@ const TicketSearch: React.FC = () => {
       })
       .catch((e: unknown) => {
         type ApiError = { status?: number; data?: unknown };
-
         const toMessage = (data: unknown): string | undefined => {
           if (typeof data === 'string') return data;
           if (data && typeof data === 'object') {
@@ -108,7 +146,6 @@ const TicketSearch: React.FC = () => {
           }
           return undefined;
         };
-
         const err = e as ApiError;
         console.error('initial destinations load failed', {
           status: err?.status,
@@ -117,6 +154,7 @@ const TicketSearch: React.FC = () => {
       });
   }, [fetchOrig]);
 
+  // дебаунс поиска «Откуда»
   const origTimer = useRef<number | null>(null);
   useEffect(() => {
     if (origTimer.current) window.clearTimeout(origTimer.current);
@@ -138,6 +176,7 @@ const TicketSearch: React.FC = () => {
     };
   }, [origSearch, loadOrig]);
 
+  // дебаунс поиска «Куда»
   const destTimer = useRef<number | null>(null);
   useEffect(() => {
     if (destTimer.current) window.clearTimeout(destTimer.current);
@@ -177,18 +216,53 @@ const TicketSearch: React.FC = () => {
   };
 
   const updateField = <K extends keyof SearchCriteria>(field: K, value: SearchCriteria[K]) => {
-    setCriteria((prev) => ({ ...prev, [field]: value }));
+    setCriteria((prev: SearchCriteria) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const tickets = await searchTickets(criteria).unwrap();
-      console.log('Получили билеты:', tickets);
-    } catch (err) {
-      console.error('Ошибка поиска', err);
-    }
+  const isValid =
+    !!criteria.currentLocation &&
+    !!criteria.destination &&
+    !!criteria.dateFrom &&
+    (criteria.tripType === 'oneWay' || !!criteria.dateTo);
+
+  const onTripTypeChange = (v: 'roundTrip' | 'oneWay') => {
+    setCriteria((prev: SearchCriteria) => ({
+      ...prev,
+      tripType: v,
+      dateTo: v === 'oneWay' ? undefined : prev.dateTo,
+    }));
   };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (onSubmit) onSubmit(criteria);
+  };
+
+  const origOptionsBase = origList.map((d: DestinationLike) => {
+    const code = getIataFromDest(d);
+    return { label: getNameWithIata(d, code), value: code };
+  });
+  const selectedFrom = (criteria.currentLocation || '').toUpperCase() || undefined;
+  const origOptions = ensureOption(
+    origOptionsBase,
+    selectedFrom,
+    selectedFrom &&
+      (CITY_BY_IATA[selectedFrom]
+        ? `${CITY_BY_IATA[selectedFrom]} (${selectedFrom})`
+        : selectedFrom),
+  );
+
+  const destOptionsBase = destList.map((d: DestinationLike) => {
+    const code = getIataFromDest(d);
+    return { label: getNameWithIata(d, code), value: code };
+  });
+  const selectedTo = (criteria.destination || '').toUpperCase() || undefined;
+  const destOptions = ensureOption(
+    destOptionsBase,
+    selectedTo,
+    selectedTo &&
+      (CITY_BY_IATA[selectedTo] ? `${CITY_BY_IATA[selectedTo]} (${selectedTo})` : selectedTo),
+  );
 
   return (
     <div className={styles.searchTicketsBlock}>
@@ -200,31 +274,37 @@ const TicketSearch: React.FC = () => {
               <label>Откуда</label>
               <Select
                 showSearch
-                filterOption={false}
+                optionFilterProp="label"
+                filterOption={(input, option) =>
+                  (option?.label as string)?.toLowerCase().includes(input.toLowerCase())
+                }
                 placeholder="Город откуда"
                 className={styles.input}
                 value={criteria.currentLocation || undefined}
                 notFoundContent={origLoading ? <Spin size="small" /> : null}
                 onSearch={onOrigSearch}
                 onPopupScroll={onOrigScroll}
-                onChange={(v) => updateField('currentLocation', v as string)}
-                options={origList.map((d) => ({ label: d.name, value: d.id }))}
-                autoFocus
+                onChange={(v) => updateField('currentLocation', (v as string).toUpperCase())}
+                options={origOptions}
               />
             </div>
+
             <div className={styles.formGroup}>
               <label>Куда</label>
               <Select
                 showSearch
-                filterOption={false}
+                optionFilterProp="label"
+                filterOption={(input, option) =>
+                  (option?.label as string)?.toLowerCase().includes(input.toLowerCase())
+                }
                 placeholder="Город куда"
                 className={styles.input}
                 value={criteria.destination || undefined}
                 notFoundContent={destLoading ? <Spin size="small" /> : null}
                 onSearch={onDestSearch}
                 onPopupScroll={onDestScroll}
-                onChange={(v) => updateField('destination', v as string)}
-                options={destList.map((d) => ({ label: d.name, value: d.id }))}
+                onChange={(v) => updateField('destination', (v as string).toUpperCase())}
+                options={destOptions}
               />
             </div>
           </Space>
@@ -254,25 +334,37 @@ const TicketSearch: React.FC = () => {
           <Space className={styles.column} direction="vertical" align="center">
             <div className={styles.formGroup}>
               <label>Дата</label>
-              <RangePicker
-                className={styles.datePicker}
-                value={
-                  criteria.dateFrom && criteria.dateTo
-                    ? ([dayjs(criteria.dateFrom), dayjs(criteria.dateTo)] as [Dayjs, Dayjs])
-                    : null
-                }
-                onChange={(vals) => {
-                  const [from, to] = vals ?? [];
-                  if (from && to) {
-                    updateField('dateFrom', from.format('YYYY-MM-DD'));
-                    updateField('dateTo', to.format('YYYY-MM-DD'));
-                  } else {
-                    updateField('dateFrom', undefined);
+              {criteria.tripType === 'oneWay' ? (
+                <DatePicker
+                  className={styles.datePicker}
+                  value={criteria.dateFrom ? dayjs(criteria.dateFrom) : null}
+                  onChange={(val) => {
+                    updateField('dateFrom', val ? val.format('YYYY-MM-DD') : undefined);
                     updateField('dateTo', undefined);
+                  }}
+                  placeholder="Туда"
+                />
+              ) : (
+                <RangePicker
+                  className={styles.datePicker}
+                  value={
+                    criteria.dateFrom && criteria.dateTo
+                      ? ([dayjs(criteria.dateFrom), dayjs(criteria.dateTo)] as [Dayjs, Dayjs])
+                      : null
                   }
-                }}
-                placeholder={['Туда', 'Обратно']}
-              />
+                  onChange={(vals) => {
+                    const [from, to] = vals ?? [];
+                    if (from && to) {
+                      updateField('dateFrom', from.format('YYYY-MM-DD'));
+                      updateField('dateTo', to.format('YYYY-MM-DD'));
+                    } else {
+                      updateField('dateFrom', undefined);
+                      updateField('dateTo', undefined);
+                    }
+                  }}
+                  placeholder={['Туда', 'Обратно']}
+                />
+              )}
             </div>
           </Space>
 
@@ -281,7 +373,7 @@ const TicketSearch: React.FC = () => {
               <RadioGroup
                 className={styles.radio}
                 value={criteria.tripType}
-                onChange={(e) => updateField('tripType', e.target.value)}
+                onChange={(e) => onTripTypeChange(e.target.value)}
                 style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
               >
                 <Radio value="roundTrip">Туда и обратно</Radio>
@@ -294,6 +386,7 @@ const TicketSearch: React.FC = () => {
                 htmlType="submit"
                 className={styles.button}
                 loading={searching}
+                disabled={!isValid}
               >
                 Найти
               </Button>

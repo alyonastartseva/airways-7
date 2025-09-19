@@ -1,4 +1,4 @@
-import type { Category, Destination, SearchCriteria } from '../model/types';
+import type { Category, Destination } from '../model/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const settingLimit = 20;
@@ -27,6 +27,46 @@ function normalizeDestinations(raw: DestinationsServerResponse): Destination[] {
   return [];
 }
 
+export type ApiSegment = {
+  airportFrom: string;
+  airportTo: string;
+  cityFrom: string;
+  cityTo: string;
+  departureDateTime: string;
+  arrivalDateTime: string;
+  flightTime: string;
+  flightSeatId: number;
+};
+
+export type ApiFlight = {
+  totalPrice: number;
+  dataTo: ApiSegment;
+  dataBack: ApiSegment | null;
+};
+
+export type ApiSearchEcho = {
+  from: string;
+  to: string;
+  departureDate: string;
+  returnDate?: string | null;
+  numberOfPassengers?: number;
+  categoryOfSeats?: string;
+};
+
+export type ApiSearchResponse = {
+  flights: ApiFlight[];
+  search: ApiSearchEcho;
+};
+
+export type ApiParams = {
+  airportFrom: string;
+  airportTo: string;
+  departureDate: string;
+  returnDate?: string;
+  numberOfPassengers?: number;
+  categoryOfSeats?: string;
+};
+
 export const ticketSearchApi = createApi({
   reducerPath: 'ticketSearchApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
@@ -42,7 +82,6 @@ export const ticketSearchApi = createApi({
       query: ({ search, page = 1, limit = settingLimit } = {}) => {
         const q = (search ?? '').trim();
         const includeSearch = typeof search === 'string';
-
         return {
           url: 'destinations',
           params: {
@@ -52,20 +91,21 @@ export const ticketSearchApi = createApi({
           },
         };
       },
-
       transformResponse: (raw: DestinationsServerResponse) => normalizeDestinations(raw),
       keepUnusedDataFor: 300,
     }),
 
-    searchTickets: builder.mutation<unknown, SearchCriteria>({
-      query: (criteria) => ({
+    searchTickets: builder.query<ApiSearchResponse, ApiParams>({
+      query: (params) => ({
         url: 'search',
-        method: 'POST',
-        body: criteria,
+        method: 'GET',
+        params,
       }),
+
+      serializeQueryArgs: ({ queryArgs }) => JSON.stringify(queryArgs),
     }),
   }),
 });
 
-export const { useGetCategoriesQuery, useLazyGetDestinationsQuery, useSearchTicketsMutation } =
+export const { useGetCategoriesQuery, useLazyGetDestinationsQuery, useLazySearchTicketsQuery } =
   ticketSearchApi;

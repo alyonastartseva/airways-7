@@ -1,0 +1,22 @@
+.hero {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0 8px;
+}
+
+.img {
+  width: clamp(320px, 80vw, 726px);
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    margin: 8px 0 4px;
+  }
+  .img {
+    width: min(90vw, 560px);
+  }
+}
