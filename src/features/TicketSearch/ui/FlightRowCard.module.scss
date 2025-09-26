@@ -1,3 +1,5 @@
+@use '@/shared/styles/_colorsRowFlight.scss' as t;
+
 .row {
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr 1fr;
@@ -7,10 +9,10 @@
 }
 
 .card {
-  background: #fff;
-  border: 1px solid #e9eef5;
+  background: t.$white;
+  border: 1px solid t.$border;
   border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(18, 46, 84, 0.06);
+  box-shadow: 0 1px 2px t.$shadow;
   padding: 12px;
   font-size: 14px;
 }
@@ -30,9 +32,9 @@
 .badgeRight {
   font-size: 12px;
   font-weight: 600;
-  color: #2b6bff;
-  background: #eef4ff;
-  border: 1px solid #d9e6ff;
+  color: t.$brand;
+  background: t.$badge-bg;
+  border: 1px solid t.$badge-border;
   border-radius: 8px;
   padding: 4px 8px;
   white-space: nowrap;
@@ -49,7 +51,7 @@
 }
 .airlineName {
   font-weight: 700;
-  color: #1a1f36;
+  color: t.$text-primary;
 }
 
 .timesWrap {
@@ -65,12 +67,12 @@
 .time {
   font-size: 20px;
   font-weight: 800;
-  color: #1a1f36;
+  color: t.$text-primary;
 }
 
 .code {
   font-size: 12px;
-  color: #9aa6b2;
+  color: t.$text-muted;
   font-weight: 700;
   margin: 0 0 0 6px;
 }
@@ -80,11 +82,11 @@
 
 .city {
   font-size: 12px;
-  color: #1a1f36;
+  color: t.$text-primary;
 }
 .date {
   font-size: 12px;
-  color: #9aa6b2;
+  color: t.$text-muted;
 }
 
 .toCol {
@@ -95,7 +97,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #9aa6b2;
+  color: t.$text-muted;
   font-size: 12px;
 }
 .durationText {
@@ -112,26 +114,26 @@
 .dash {
   height: 1px;
   width: 52px;
-  background: repeating-linear-gradient(90deg, #cfd6df 0 6px, transparent 6px 12px);
+  background: repeating-linear-gradient(90deg, t.$dash 0 6px, transparent 6px 12px);
   display: inline-block;
 }
 
 .fareCard {
   display: grid;
   gap: 8px;
-  background: #f6f8ff;
-  border-color: #e7ecff;
+  background: t.$fare-bg;
+  border-color: t.$fare-border;
 }
 .fareAccent {
-  background: #e9f0ff;
-  border-color: #cfe0ff;
+  background: t.$fare-accent-bg;
+  border-color: t.$fare-accent-border;
 }
 
 .fareTitle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #687082;
+  color: t.$text-secondary;
   font-size: 16px;
   font-weight: 600;
 }
@@ -149,18 +151,18 @@
 .price {
   font-size: 18px;
   font-weight: 800;
-  color: #1a1f36;
+  color: t.$text-primary;
 }
 
 .leftNote {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #f43f5e;
+  color: t.$danger;
   font-size: 12px;
   font-weight: 600;
-  background: #fff0f2;
-  border: 1px solid #ffd5dd;
+  background: t.$danger-bg;
+  border: 1px solid t.$danger-border;
   border-radius: 8px;
   padding: 4px 8px;
   width: max-content;

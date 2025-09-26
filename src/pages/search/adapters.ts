@@ -1,4 +1,4 @@
-import type { ApiResponse, ApiFlight, ApiSegment } from './backend';
+import type { ApiResponse, ApiFlight, ApiSegment } from './api/types';
 import type { Fare } from '@/features/TicketSearch/ui/FlightRowCard';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
@@ -49,7 +49,7 @@ export function adaptApiToCards(resp: ApiResponse): CardRow[] {
     const parts = segToParts(to);
     return {
       key: `f-${i}`,
-      airlineName: 'Globus LLC', // заглушка
+      airlineName: 'Globus LLC',
       fromCity: to.cityFrom,
       fromCode: to.airportFrom,
       depTime: parts.depTime,

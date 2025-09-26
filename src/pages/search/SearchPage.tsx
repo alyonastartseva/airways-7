@@ -114,6 +114,19 @@ export default function SearchPage() {
 
   const [trigger, { data, isFetching, isError, error }] = useLazySearchTicketsQuery();
 
+  const mapUrlToCriteria = useCallback((p: typeof urlParams): SearchCriteria => {
+    return {
+      currentLocation: p.airportFrom || '',
+      destination: p.airportTo || '',
+      dateFrom: p.departureDate || undefined,
+      dateTo: p.returnDate || undefined,
+      passengers: p.numberOfPassengers ?? 1,
+      seatType: (p.categoryOfSeats || 'BUSINESS').toLowerCase() as SearchCriteria['seatType'],
+      tripType: p.returnDate ? 'roundTrip' : 'oneWay',
+      noTransfer: false,
+    };
+  }, []);
+
   const lastKey = useRef('');
   useEffect(() => {
     const ready = urlParams.airportFrom && urlParams.airportTo && urlParams.departureDate;
@@ -123,8 +136,9 @@ export default function SearchPage() {
     if (key === lastKey.current) return;
     lastKey.current = key;
 
-    void trigger(urlParams);
-  }, [urlParams, trigger]);
+    const criteria = mapUrlToCriteria(urlParams);
+    void trigger(criteria);
+  }, [urlParams, mapUrlToCriteria, trigger]);
 
   const handleSubmit = useCallback(
     (criteria: SearchCriteria) => {
@@ -158,7 +172,6 @@ export default function SearchPage() {
   );
 
   const rows: CardRow[] = useMemo(() => (data ? adaptApiToCards(data) : []), [data]);
-
   const errorText = useMemo(() => formatError(error), [error]);
 
   return (

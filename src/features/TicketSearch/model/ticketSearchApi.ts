@@ -1,71 +1,8 @@
-import type { Category, Destination } from '../model/types';
+import type { Category, SearchCriteria } from './types';
+import type { ApiResponse } from '@/pages/search/api/types';
+import type { Destination, DestinationsServerResponse } from '@/shared/model/destinations.types';
+import { DEST_PAGE_LIMIT, normalizeDestinations } from '@/shared/utils/destinations';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-const settingLimit = 20;
-
-type DestinationsServerResponse =
-  | Destination[]
-  | {
-      items?: Destination[];
-      data?: Destination[];
-      content?: Destination[];
-      results?: Destination[];
-      list?: Destination[];
-      [k: string]: unknown;
-    };
-
-function normalizeDestinations(raw: DestinationsServerResponse): Destination[] {
-  if (Array.isArray(raw)) return raw;
-  if (raw && typeof raw === 'object') {
-    const r = raw as Record<string, unknown>;
-    const candidates = ['items', 'data', 'content', 'results', 'list'] as const;
-    for (const key of candidates) {
-      const v = r[key];
-      if (Array.isArray(v)) return v as Destination[];
-    }
-  }
-  return [];
-}
-
-export type ApiSegment = {
-  airportFrom: string;
-  airportTo: string;
-  cityFrom: string;
-  cityTo: string;
-  departureDateTime: string;
-  arrivalDateTime: string;
-  flightTime: string;
-  flightSeatId: number;
-};
-
-export type ApiFlight = {
-  totalPrice: number;
-  dataTo: ApiSegment;
-  dataBack: ApiSegment | null;
-};
-
-export type ApiSearchEcho = {
-  from: string;
-  to: string;
-  departureDate: string;
-  returnDate?: string | null;
-  numberOfPassengers?: number;
-  categoryOfSeats?: string;
-};
-
-export type ApiSearchResponse = {
-  flights: ApiFlight[];
-  search: ApiSearchEcho;
-};
-
-export type ApiParams = {
-  airportFrom: string;
-  airportTo: string;
-  departureDate: string;
-  returnDate?: string;
-  numberOfPassengers?: number;
-  categoryOfSeats?: string;
-};
 
 export const ticketSearchApi = createApi({
   reducerPath: 'ticketSearchApi',
@@ -77,9 +14,13 @@ export const ticketSearchApi = createApi({
 
     getDestinations: builder.query<
       Destination[],
-      { search?: string; page?: number; limit?: number } | void
+      void | {
+        search?: string;
+        page?: number;
+        limit?: number;
+      }
     >({
-      query: ({ search, page = 1, limit = settingLimit } = {}) => {
+      query: ({ search, page = 1, limit = DEST_PAGE_LIMIT } = {}) => {
         const q = (search ?? '').trim();
         const includeSearch = typeof search === 'string';
         return {
@@ -95,14 +36,21 @@ export const ticketSearchApi = createApi({
       keepUnusedDataFor: 300,
     }),
 
-    searchTickets: builder.query<ApiSearchResponse, ApiParams>({
-      query: (params) => ({
-        url: 'search',
-        method: 'GET',
-        params,
-      }),
+    searchTickets: builder.query<ApiResponse, SearchCriteria>({
+      query: (criteria) => {
+        const params: Record<string, string> = {};
+        if (criteria.currentLocation)
+          params.airportFrom = String(criteria.currentLocation).toUpperCase();
+        if (criteria.destination) params.airportTo = String(criteria.destination).toUpperCase();
+        if (criteria.dateFrom) params.departureDate = String(criteria.dateFrom);
+        if (criteria.tripType !== 'oneWay' && criteria.dateTo)
+          params.returnDate = String(criteria.dateTo);
+        if (typeof criteria.passengers === 'number')
+          params.numberOfPassengers = String(criteria.passengers);
+        if (criteria.seatType) params.categoryOfSeats = String(criteria.seatType).toUpperCase();
 
-      serializeQueryArgs: ({ queryArgs }) => JSON.stringify(queryArgs),
+        return { url: 'search', params };
+      },
     }),
   }),
 });
